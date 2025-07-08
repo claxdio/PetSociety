@@ -1,0 +1,29 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+.env
+.DS_Store
+
+# Django
+*.log
+db.sqlite3
+/staticfiles/
+/media/
+
+# Node/React
+ClientPetSociety/node_modules/
+ClientPetSociety/dist/
+ClientPetSociety/.env
+
+# VSCode
+.vscode/
+
+# Otros
+*.swp
+*.swo
+.idea/
