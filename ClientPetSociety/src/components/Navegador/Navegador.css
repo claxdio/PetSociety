@@ -1,0 +1,43 @@
+.navegador {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: Arial, sans-serif;
+}
+
+.navegador .logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.navegador .menu {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.navegador .menu li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navegador .menu li:hover {
+  color: #e74c3c;
+}
+
+/* Variante vertical */
+.navegador.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.navegador.vertical .menu {
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}

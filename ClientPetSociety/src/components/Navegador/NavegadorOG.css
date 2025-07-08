@@ -1,0 +1,77 @@
+.navegador {
+    align-items: center;
+    background-color:#79b715;
+    position: relative;
+}
+
+.navegador .logo{
+    overflow: hidden;
+    position: relative;
+}
+
+.navegador .overlap-group {
+    background-color: #f6f2e2;
+    border-radius: 45px;
+    height: 90px;
+    position: relative;
+}
+
+.navegador .text-wrapper {
+    color: #000000;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 12px;
+    font-weight: 400;
+    height: 19px;
+    left: 29px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 34px;
+    width: 32px;
+}
+
+.navegador .perfil-foto {
+    background-color: #f6f2e2;
+    border-radius: 60px;
+    height: 120px;
+    margin-top: -5.00px;
+    position: relative;
+    width:120px;
+}
+
+.navegador .div {
+    align-self: stretch;
+    color: white;
+    flex: 1;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.navegador .horizontal-inset-instance {
+    height: 9px !important;
+    margin-bottom: -6.00px !important;
+    margin-left: -60.00px !important;
+    margin-right: -60.00px !important;
+    padding: 0px 30px !important;
+    width: 291px !important;
+}
+
+.navegador .menu {
+    display: flex;
+    flex: 1;
+    flex-grow: 1;
+    position: relativa;
+}
+
+.navegador .boton-sample-instance{
+    flex: 0 0 auto !important;
+}
+
+

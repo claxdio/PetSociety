@@ -1,0 +1,14 @@
+.pgina-principal {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.pgina-principal .div-2 {
+  background-color: #ffffff;
+  height: 960px;
+  position: relative;
+  width: 1440px;
+}
