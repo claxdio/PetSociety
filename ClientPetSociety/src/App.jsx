@@ -1,30 +1,48 @@
 import React from "react";
-import {BotonTemplate} from "./components/Boton";
-import { DateTemplate } from "./components/Cita";
-import { NotiTemplate } from "./components/Notificacion"; // ajusta el path si es distinto
-import Publicaciones from "./components/Publicaciones";
-import ScrollContainer from "./components/Scroll";
-import SearchInput from "./components/SearchInput";
-import Navegador from "./components/Navegador";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
+function Logout() {
+  localStorage.clear();
+  return <Navigate to="/login" />;
+}
+
+function RegisterAndLogout() {
+  localStorage.clear();
+  return <Register />;
+}
 
 function App() {
   return (
-    <div>
-      <h1>PetSociety</h1>
-      <Navegador />
-      <ScrollContainer>
-        <BotonTemplate property1="blanco" className=""/>
-        <BotonTemplate property1="default" className=""/>
-        <DateTemplate />
-        <SearchInput />
-        <NotiTemplate className= "property-coment" property1="coment"/>
-        {[...Array(30)].map((_, i) => ( /*para probar el scroll */
-          <div key={i}>Item {i + 1}</div>
-        ))}
-      </ScrollContainer>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route 
+          path="/"
+          element={<ProtectedRoute><Home /></ProtectedRoute>}
+        />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+        <Route
+          path="/logout"
+          element={<Logout />}
+        />
+        <Route
+          path="/register"
+          element={<RegisterAndLogout />}
+        />
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
