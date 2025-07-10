@@ -1,0 +1,11 @@
+.scroll-container {
+  height: 300px;          /* altura fija o la que necesites */
+  overflow-y: auto;       /* muestra scroll vertical si el contenido excede */
+  overflow-x: hidden;     /* evita scroll horizontal */
+  width: 100%;            /* para que tome todo el ancho del padre */
+  box-sizing: border-box; /* para que padding y borde no aumenten el ancho */
+  border: 1px solid #ccc; /* opcional, para que se vea el contenedor */
+  padding: 10px;          /* opcional, para separar contenido de borde */
+  background-color: #fafafa; /* opcional, color de fondo */
+  border-radius: 8px;     /* opcional, bordes redondeados */
+}

@@ -1,0 +1,27 @@
+.date-template {
+  display: grid;
+  grid-template-columns: 1fr 5px 1fr 5px 1fr 5px 1fr; /* textos + divisores */
+  align-items: center;
+  background-color: #f6f2e2;
+  border-radius: 15px;
+  height: 70px;
+  width: 292px;
+  padding: 0 10px;
+  gap: 0; /* opcional */
+}
+
+.item {
+  text-align: center;
+  font-family: "Inter-Regular", Helvetica, sans-serif;
+  font-size: 14px;
+  color: #000;
+  user-select: none;
+}
+
+.divider {
+  background-color: rgba(191, 191, 191, 0.25);
+  border-radius: 10px;
+  width: 2px;
+  height: 50%;
+  justify-self: center; /* para centrar horizontalmente en su celda */
+}

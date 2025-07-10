@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'coreapi',
     'tasks'
-    
 ]
 
 MIDDLEWARE = [

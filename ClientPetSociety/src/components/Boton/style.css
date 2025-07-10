@@ -1,0 +1,35 @@
+.boton-template {
+    align-items:center;
+    border-radius: 15px;
+    display:inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    min-width: 75px;
+    overflow: hidden;
+    position: relative;
+}
+
+.boton-template .boton {
+    height: 11.82px;
+    position: relative;
+    width: 41.95px;
+}
+
+.boton-template.blanco{
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px #bfbfbf80;
+    padding: 10px 15px;
+    color: #6A7D40;
+    font-family: "Integer-Regular", Helvetica;
+}
+
+.boton-template.default {
+    background-color: #f6f2e2;
+    padding: 10px 15px;
+    color:#6A7D40;
+    font-family: "Integer-Regular", Helvetica;
+    /*box-shadow: 0px 4px 10px #bfbfbfe6;
+    box-shadow: inset 0 4px 6px #bfbfbfe6;
+    */
+}

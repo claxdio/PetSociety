@@ -1,0 +1,52 @@
+.noti-template {
+  background-color: #f6f2e2;
+  border-radius: 15px;
+  overflow: hidden;
+  padding: 10px 24px;
+  position: relative;
+  width: 349px;
+
+  /* Esto se aplica sólo si hay grid content (coment) */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Solo para cuando hay grid (coment) */
+.noti-template.property-coment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  height: 20px;
+  width: 20px;
+}
+
+.nombre {
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #000
+}
+
+.comentario {
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  color: #00000080;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
