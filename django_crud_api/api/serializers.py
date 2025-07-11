@@ -3,6 +3,12 @@ from rest_framework import serializers
 from .models import Note
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
+from .models import Publicacion
+
+class PublicacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Publicacion
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

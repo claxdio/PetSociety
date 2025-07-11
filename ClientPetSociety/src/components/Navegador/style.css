@@ -1,0 +1,44 @@
+.navegador {
+  width: 100%;
+  background-color: #5ea82f;
+  padding: 10px 20px;
+  position: fixed; /* Fijarlo arriba */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.nav-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* logo, título expansivo, botón fijo */
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+}
+
+.nav-login-btn {
+  padding: 8px 16px;
+  background-color: #ffffff;
+  color: #5ea82f;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap; /* Evita que el botón se estire en varias líneas */
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.nav-login-btn:hover {
+  color: black;
+}
+
+.nav-logo {
+  color: white;
+  font-size: 20px;
+}
+
+.nav-title {
+  color: white;
+  font-size: 18px;
+}
+

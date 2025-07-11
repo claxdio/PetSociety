@@ -1,0 +1,72 @@
+.publicacion {
+  width: 100%;
+  max-width: 500px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 20px auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.pub-header {
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+
+  display: flex;           /* activa flexbox */
+  flex-direction: row;     /* los hijos en fila (izquierda a derecha) */
+  align-items: center;     /* opcional: alinea verticalmente */
+  gap: 10px;               /* opcional: espacio entre hijos */
+}
+
+.pub-imagen img {
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid #eee;
+  border-radius: 0 0 10px 10px;
+}
+
+.pub-footer {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  gap: 10px;
+}
+
+.pub-like-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  transition: transform 0.2s;
+  color: #888;
+}
+
+.pub-like-btn.liked {
+  color: #e0245e;
+  transform: scale(1.2);
+}
+
+.pub-like-btn:hover {
+  color: #e0245e;
+}
+
+.pub-likes-count {
+  font-size: 14px;
+  color: #555;
+}
+
+.pub-descripcion {
+  padding: 10px 15px 15px;
+  font-size: 14px;
+  color: #444;
+}
+
+.pub-coments {
+  padding: 10px 15px 15px;
+  font-size: 14px;
+  color: #444;
+}

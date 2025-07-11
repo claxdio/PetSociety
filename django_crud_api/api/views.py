@@ -4,6 +4,18 @@ from rest_framework import generics
 from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
+from .models import Publicacion
+from .serializers import PublicacionSerializer
+
+class PublicacionListCreateView(generics.ListCreateAPIView):
+    serializer_class = PublicacionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Publicacion.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
 
 class NoteListCreateView(generics.ListCreateAPIView):
