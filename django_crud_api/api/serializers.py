@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Note
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,3 +19,19 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ['id', 'title', 'content', 'created_at', 'author']
         extra_kwargs = {'author': {'read_only': True}}
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        username_or_email = attrs.get('username')
+        password = attrs.get('password')
+        user = None
+        # Buscar por username o email
+        if User.objects.filter(username=username_or_email).exists():
+            user = authenticate(username=username_or_email, password=password)
+        elif User.objects.filter(email=username_or_email).exists():
+            user_obj = User.objects.get(email=username_or_email)
+            user = authenticate(username=user_obj.username, password=password)
+        if user is None:
+            raise serializers.ValidationError('Credenciales inválidas.')
+        data = super().validate({'username': user.username, 'password': password})
+        return data

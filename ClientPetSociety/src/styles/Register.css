@@ -1,0 +1,213 @@
+:root {
+  --color-verde-principal: #79B716;
+  --color-texto-principal: #1C2112;
+  --color-texto-secundario: #FFFFFF;
+  --font-base: 'Poppins', Arial, sans-serif;
+}
+
+.register-bg {
+  min-height: 100vh;
+  min-width: 100vw;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: var(--font-base);
+}
+
+.register-logo-centered {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Elimina la posición absoluta del logo anterior si existe */
+.register-logo {
+  display: none;
+}
+
+.register-box {
+  width: 650px;
+  height: 800px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 48px 16px 48px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.register-logo-wrapper {
+  width: 330px;
+  height: 111px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1px auto;
+  padding: 0;
+}
+
+.register-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  min-height: 520px;
+}
+
+/* Puedes ajustar los márgenes inferiores de los elementos dentro de .register-content para mejorar el espaciado visual */
+.register-title {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  font-size: 15px;
+  color: var(--color-texto-principal);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.register-form {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 10px 8px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid #222;
+  outline: none;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.register-form input::placeholder {
+  color: var(--color-texto-principal);
+  opacity: 0.7;
+}
+
+.register-password-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.register-password-wrapper input {
+  width: 100%;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.eye-icon {
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.2s;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px 0;
+  background: #8cc40c;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 0;
+  transition: background 0.2s;
+}
+
+.register-btn:disabled {
+  background: #b5d97a;
+  cursor: not-allowed;
+}
+
+.register-error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-bottom: 8px;
+  margin-top: -8px;
+}
+
+.register-login-link {
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
+  margin: 10px 0 0 0;
+}
+.register-login-link a {
+  color: #8cc40c;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.register-separator {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  align-items: center;
+  margin: 18px 0 12px 0;
+}
+.register-separator .line {
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+.register-separator .or {
+  margin: 0 10px;
+  color: #888;
+  font-size: 15px;
+}
+
+.register-google-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 0;
+  background: #fff;
+  color: #222;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  margin: 0 auto 0 auto;
+  transition: border 0.2s;
+}
+.register-google-btn:hover {
+  border: 2px solid #8cc40c;
+}
+
+.google-icon {
+  width: 22px;
+  height: 22px;
+} 
