@@ -1,4 +1,4 @@
-.home-container {
+.search-container {
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -7,9 +7,9 @@
   height: 100vh;
 }
 
-.home-grid {
+.search-grid {
   display: grid;
-  grid-template-columns: 2fr 3fr 2fr;
+  grid-template-columns: 2fr 3fr;
   margin-top: 70px; /* espacio para el navegador fijo */
   height: calc(100vh - 70px);
   width: 100%; /* que ocupe todo el ancho disponible */
@@ -17,8 +17,7 @@
   background-color: #D9D9D9;
 }
 
-.home-calendar,
-.home-profile {
+.search-sugestions {
   background-color: #ffffff;
   display: flex;
   flex-direction: column;  /* flujo vertical */
@@ -27,14 +26,7 @@
   gap: 20px;              /* espacio vertical entre items */
   box-sizing: border-box; /* para que el padding no afecte el tamaño */
 }
-
-/* Hacemos que los hijos ocupen todo el ancho del contenedor */
-.home-calendar > *,
-.home-profile > * {
-  width: 100%;
-}
-
-.home-posts {
+.search-posts {
   background-color: #D9D9D9;
   display: flex;
   flex-direction: column;
@@ -52,30 +44,8 @@
 }
 
 
-.home-title {
+.search-title {
   font-size: 2rem;
   color: #333;
-}
-
-.div-creation {
-  position: relative; /* necesario para que el absolute del botón tome este contenedor como referencia */
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  background-color: #d9d9d980;
-  width: 100%;
-  padding: 15px;
-  gap: 20px;
-}
-
-.create-button {
-  position: static; /* o simplemente quita el position absolute */
-  background-color: transparent;
-  border: none;
-  padding: 12px 12px;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 18px;
-  background-color: rgb(255, 255, 255);
 }
 
