@@ -193,6 +193,15 @@ function Search() {
         <div className="search-sugestions">
           Buscar
           <Input></Input>
+          <div className="search-results">
+            <div className="search-results">
+              {Array.from({ length: 30 }).map((_, i) => (
+                <div key={i} className="search-result-item">
+                  <div className="search-result-text">Resultado {i + 1}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         <div className="search-posts">
           {publicaciones.map((post, i) => (

@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Navegador from "../components/Navegador";
 import Post from "../components/Publicaciones/index.jsx";
+import Form from "../components/Formulario/index.jsx";
 import api from "../api.js";
 import "../styles/Home.css";
 
 function Home() {
+
+  const camposFormulario = [
+  { nombre: "nombre", label: "Nombre", tipo: "texto" },
+  { nombre: "email", label: "Correo electrónico", tipo: "email" },
+  { nombre: "mensaje", label: "Mensaje", tipo: "textarea" },
+  { nombre: "categoria", label: "Categoría", tipo: "select", opciones: ["General", "Sugerencia", "Bug"] },
+  { nombre: "imagen", label: "Subir imagen", tipo: "file" },
+];
+
+  const [mostrarForm, setMostrarForm] = useState(false);
+
   const publicaciones = [
   {
     usuario: "Pedro",
@@ -205,12 +217,13 @@ function Home() {
         </div>
         <div className="home-profile">
           <div className="div-creation">
-            <button className="create-button">+</button>
+            <button className="create-button" onClick={() => setMostrarForm(true)}>+</button>
             Publicar
           </div>
           Mi perfil
         </div>
       </div>
+      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)}  />}
     </div>
   );
 }
