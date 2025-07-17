@@ -1,36 +1,38 @@
 import React, { useState } from "react";
 import "./style.css";
+import Comentario from "../Comentario";
 
-function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios }) {
-  const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-
-  const toggleLike = () => {
-    setLiked(!liked);
-    setLikesCount(prev => (liked ? prev - 1 : prev + 1));
-  };
+function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios, categoria, likes }) {
 
   return (
     <div className="publicacion">
-      <div className="pub-header">
-        <img src={fotoUsuario} />
-        <div className="pub-usuario">{usuario}</div>
+      <div className="user">
+        <div className="grid-item">{fotoUsuario}</div>
+        <div className="item">{usuario}</div>
+        <button className="report-button">❕</button>
       </div>
-      <div className="pub-imagen">
-        <img src={imagen} alt="Publicación" />
+      <div className="post-image-container">
+        <div className="post-image">
+          {imagen}
+        </div>
+        <button className="like-button">{likes}🖤</button>
       </div>
-      <div className="pub-footer">
-        <button
-          className={`pub-like-btn ${liked ? "liked" : ""}`}
-          onClick={toggleLike}
-          aria-label="Like"
-        >
-          ❤️
-        </button>
-        <span className="pub-likes-count">{likesCount} Me gusta</span>
+      {descripcion}
+      <div className="categoria-frame">
+      {categoria.map((cat, index) => (
+        <div key={index} className="categoria-item">{cat}</div>
+      ))}
       </div>
-      <div className="pub-descripcion">{descripcion}</div>
-      <div className="pub-coments">{comentarios}</div>
+      <div className="coment-frame-frame">
+        {comentarios.map((coment, index) => (
+          <Comentario
+            key={index}
+            usuario={coment.usuario}
+            descripcion={coment.descripcion}
+            fotoUsuario={coment.fotoUsuario}
+          />
+        ))}
+       </div>
     </div>
   );
 }

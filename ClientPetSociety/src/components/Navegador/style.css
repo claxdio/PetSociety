@@ -42,3 +42,27 @@
   font-size: 18px;
 }
 
+.logo {
+  width: 90px;   /* o cualquier tamaño */
+  height: auto;   /* mantiene proporción */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  gap: 10%; /* espacio entre ítems */
+}
+
+.link a:hover {
+  color: black;
+}
+
+.link {
+  color: white;
+  border: none;
+  outline: none; /* opcional, para quitar el borde al hacer foco */
+  background: none;
+  font-weight: bold;
+  font-family: "Integer-Regular", Helvetica;
+}

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Navegador from "../components/Navegador";
 import Post from "../components/Publicaciones/index.jsx";
+import Input from "../components/SearchInput/index.jsx";
 import api from "../api.js";
-import "../styles/Home.css";
+import "../styles/Search.css";
 
-function Home() {
+function Search() {
+
   const publicaciones = [
   {
     usuario: "Pedro",
@@ -185,11 +187,14 @@ function Home() {
 
 
   return (
-    <div className="home-container">
+    <div className="search-container">
       <Navegador />
-      <div className="home-grid">
-        <div className="home-calendar">Calendario</div>
-        <div className="home-posts">
+      <div className="search-grid">
+        <div className="search-sugestions">
+          Buscar
+          <Input></Input>
+        </div>
+        <div className="search-posts">
           {publicaciones.map((post, i) => (
                 <Post
                 key={i}
@@ -203,16 +208,9 @@ function Home() {
                 />
             ))}
         </div>
-        <div className="home-profile">
-          <div className="div-creation">
-            <button className="create-button">+</button>
-            Publicar
-          </div>
-          Mi perfil
-        </div>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default Search;

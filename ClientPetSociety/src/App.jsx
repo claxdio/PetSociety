@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function Logout() {
@@ -28,6 +29,10 @@ function App() {
         <Route
           path="/login"
           element={<Login />}
+        />
+        <Route
+          path="/search"
+          element={<Search />}
         />
         <Route
           path="/logout"
