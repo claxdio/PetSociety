@@ -7,6 +7,8 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminLogin from "./pages/AdminLogin";
+import AdminPanel from "./pages/AdminPanel";
 
 function Logout() {
   localStorage.clear();
@@ -45,6 +47,14 @@ function App() {
         <Route
           path="/profile"
           element={<ProtectedRoute><Profile /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin"
+          element={<AdminLogin />}
+        />
+        <Route
+          path="/admin/panel"
+          element={<AdminPanel />}
         />
         <Route
           path="*"
