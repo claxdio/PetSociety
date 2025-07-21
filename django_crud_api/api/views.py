@@ -6,25 +6,40 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer
-from .models import Publicacion
-from .serializers import PublicacionSerializer
+from .serializers import (
+    UserSerializer, UserRegistrationSerializer, PerfilSerializer, 
+    PublicacionSerializer, CustomTokenObtainPairSerializer
+)
+from .models import Publicacion, Perfil
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
     serializer_class = PublicacionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Publicacion.objects.all() #type: ignore
+        return Publicacion.objects.all()
 
-    def perform_create(self, serializer):   #type: ignore
+    def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
-
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
+
+class PerfilDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = PerfilSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user.perfil
+
+class UserDetailView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -37,7 +52,11 @@ def user_info(request):
         'email': user.email,
         'is_staff': user.is_staff,
         'is_superuser': user.is_superuser,
-        'is_admin': user.is_staff or user.is_superuser
+        'is_admin': user.is_staff or user.is_superuser,
+        'last_login': user.last_login,
+        'is_active': user.is_active,
+        'date_joined': user.date_joined,
+        'perfil': PerfilSerializer(user.perfil).data
     })
 
 @api_view(['POST'])
@@ -74,6 +93,20 @@ def admin_login(request):
             status=status.HTTP_403_FORBIDDEN
         )
     
+    # Verificar si la cuenta está activa
+    if not user.is_active:
+        return Response(
+            {'error': 'Cuenta desactivada.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    # Verificar si el perfil está activo
+    if hasattr(user, 'perfil') and not user.perfil.cuenta_activa:
+        return Response(
+            {'error': 'Cuenta bloqueada por administrador.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
     # Generar tokens
     refresh = RefreshToken.for_user(user)
     
@@ -86,6 +119,9 @@ def admin_login(request):
             'email': user.email,
             'is_staff': user.is_staff,
             'is_superuser': user.is_superuser,
-            'is_admin': True
+            'is_admin': True,
+            'last_login': user.last_login,
+            'is_active': user.is_active,
+            'perfil': PerfilSerializer(user.perfil).data
         }
     })
