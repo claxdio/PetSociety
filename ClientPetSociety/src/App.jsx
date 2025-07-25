@@ -9,6 +9,7 @@ import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/AdminLogin";
 import AdminPanel from "./pages/AdminPanel";
+import Locate from "./pages/Locate";
 
 function Logout() {
   localStorage.clear();
@@ -59,6 +60,10 @@ function App() {
         <Route
           path="*"
           element={<NotFound />}
+        />
+        <Route 
+          path="/locate" 
+          element={<Locate />} 
         />
       </Routes>
     </BrowserRouter>

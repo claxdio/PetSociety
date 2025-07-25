@@ -38,7 +38,7 @@ function Navegador() {
   };
 
   const ClickLocation = () => {
-    navigate("/Location");
+    navigate("/locate");
   };
 
   const ClickHome = () => {

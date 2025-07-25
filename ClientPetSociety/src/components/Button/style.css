@@ -1,0 +1,26 @@
+.custom-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 160px;          /* MISMO ancho para todos */
+  height: 55px;          /* MISMA altura */  
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #6A7D40;
+  font-family: "Integer-Regular", Helvetica;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #f1f1f1;
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px;
+}

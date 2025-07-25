@@ -1,0 +1,50 @@
+.locate-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Fila de botones (debajo del navegador) */
+.locate-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* o el alto que quieras darle al área de botones */
+  margin-top: 70px; /* esto hace que comience justo después del navbar */
+  gap: 60px;
+  background-color: #fff;
+  border-bottom: 1px solid #000
+
+  
+   
+  
+  
+  /*background-color: #fff; /* color más notorio */
+  /*padding: 10px 0;            /* más espacio vertical */
+  /*border-bottom: 2px solid #888; /* línea de separación */
+}
+
+/* Grilla de 3 columnas */
+.locate-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr 2fr;
+  width: 100%;
+  height: 100%;
+  background-color: #d9d9d9;
+  flex-grow: 1; /* ocupa todo el espacio restante */
+}
+
+/* Cada columna */
+.locate-calendar,
+.locate-profile {
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.locate-map{
+  background-color: #888;
+  padding: 20px;
+  box-sizing: border-box;
+}
