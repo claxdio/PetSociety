@@ -5,41 +5,38 @@
   min-height: 100vh;
 }
 
-/* Fila de botones (debajo del navegador) */
-.locate-buttons {
+.locate-buttons {                       /* Contenedor de los botones */ 
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px; /* o el alto que quieras darle al área de botones */
-  margin-top: 70px; /* esto hace que comience justo después del navbar */
-  gap: 60px;
+  height: 100px;                        /* alto de botones */
+  margin-top: 70px;                     /* esto hace que comience justo después del navbar */
+  gap: 80px;
   background-color: #fff;
   border-bottom: 1px solid #000
-
-  
-   
-  
-  
-  /*background-color: #fff; /* color más notorio */
-  /*padding: 10px 0;            /* más espacio vertical */
-  /*border-bottom: 2px solid #888; /* línea de separación */
 }
 
-/* Grilla de 3 columnas */
 .locate-grid {
   display: grid;
-  grid-template-columns: 2fr 3fr 2fr;
+  grid-template-columns: 2.1fr 5.6fr 2.1fr;   /* Tamaño de las columnas */
   width: 100%;
   height: 100%;
   background-color: #d9d9d9;
-  flex-grow: 1; /* ocupa todo el espacio restante */
+  flex-grow: 1; 
 }
 
-/* Cada columna */
-.locate-calendar,
-.locate-profile {
+.locate-search {
   background-color: #fff;
-  padding: 20px;
+  padding: 10px;
+  box-sizing: border-box;
+  max-height: 670px;  /* Altura máxima que puede tener la sección */
+  overflow-y: auto;   /* Habilitar scroll solo vertical cuando sea necesario */
+  padding-right: 10px; /* Para asegurarnos de que no se corte el contenido */
+}
+
+.locate-publication {
+  background-color: #fff;
+  padding: 10px;
   box-sizing: border-box;
 }
 
@@ -47,4 +44,18 @@
   background-color: #888;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.locate-title {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.locate-input {               /* Campo de texto search */
+  width: 325px;               /* Tamaño del campo de texto */
+  padding: 10px;              /* Tamaño del campo de texto de la busqueda */
+  font-size: 16px;            /* Que la letra sea mas grande o chica */ 
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }

@@ -1,26 +1,31 @@
 .custom-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 160px;          /* MISMO ancho para todos */
-  height: 55px;          /* MISMA altura */  
+  justify-content: center;
+  gap: 30px;
   padding: 10px 15px;
   border-radius: 10px;
   background-color: #ffffff;
-  color: #6A7D40;
-  font-family: "Integer-Regular", Helvetica;
+  color: #000;
   border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: bold;  
+  font-size: 15px;
   transition: background-color 0.3s;
+  transition: all 0.2s ease-in-out;  /* Transición suave */
 }
 
 .custom-button:hover {
   background-color: #f1f1f1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Sombra más marcada */
+  transform: translateY(-2px);               /* Se eleva un poco */
 }
 
 .button-icon {
-  width: 20px;
-  height: 20px;
+  object-fit: contain;
+
 }
+
+
+
