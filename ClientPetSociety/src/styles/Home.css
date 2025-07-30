@@ -14,7 +14,7 @@
   height: calc(100vh - 70px);
   width: 100%; /* que ocupe todo el ancho disponible */
   box-sizing: border-box;
-  background-color: #D9D9D9;
+  background-color: #ffffff;
 }
 
 .home-calendar,
@@ -25,7 +25,9 @@
   align-items: center;
   height: 100%;
   gap: 20px;              /* espacio vertical entre items */
+  border: 1px solid #ccc;
   box-sizing: border-box; /* para que el padding no afecte el tamaño */
+  min-height: 0; /* añade esto para evitar overflow inesperado */
 }
 
 /* Hacemos que los hijos ocupen todo el ancho del contenedor */
@@ -34,8 +36,19 @@
   width: 100%;
 }
 
+.home-center {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+
 .home-posts {
-  background-color: #D9D9D9;
+  background-color: #d9d9d940;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* para que el contenido empiece arriba */
@@ -53,8 +66,11 @@
 
 
 .home-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #333;
+  text-align: center;
+  width: 100%;
+  padding: 5%;
 }
 
 .div-creation {
@@ -62,7 +78,7 @@
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  background-color: #d9d9d980;
+  background-color: #d9d9d999;
   width: 100%;
   padding: 15px;
   gap: 20px;
@@ -77,4 +93,21 @@
   cursor: pointer;
   font-size: 18px;
   background-color: rgb(255, 255, 255);
+}
+
+.calendar-div {
+  background-color: #f6f2e2;
+  border-radius: 15px;
+  overflow-y: auto;
+  height: 80%;
+  width: 70%;
+  padding: 10px; /* espacio interno, opcional si querés separar el texto del borde */
+  box-sizing: border-box;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.calendar-div::-webkit-scrollbar {
+  display: none;
 }

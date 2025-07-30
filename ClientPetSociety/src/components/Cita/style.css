@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 1fr 5px 1fr 5px 1fr 5px 1fr; /* textos + divisores */
   align-items: center;
-  background-color: #f6f2e2;
+  background-color: #ffffff;
   border-radius: 15px;
   height: 70px;
   width: 292px;

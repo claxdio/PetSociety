@@ -29,7 +29,8 @@
 }
 
 .nav-login-btn:hover {
-  color: black;
+  color: #d9d9d9;
+  background-color: #f6f2e2;
 }
 
 .nav-logo {

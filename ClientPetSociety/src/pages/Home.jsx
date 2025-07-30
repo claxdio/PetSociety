@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Navegador from "../components/Navegador";
 import Post from "../components/Publicaciones/index.jsx";
 import Form from "../components/Formulario/index.jsx";
+import Cita from "../components/Cita/index.jsx";
+import Mascotas from "../components/Mascotas/index.jsx";
 import api from "../api.js";
 import "../styles/Home.css";
 
@@ -195,13 +197,37 @@ function Home() {
   }
 ];
 
+const listaDeMascotas = [
+  { nombre: "Fido" },
+  { nombre: "Luna" },
+  { nombre: "Max" },
+  { nombre: "Mia" },
+  { nombre: "Toby" },
+];
+
 
   return (
     <div className="home-container">
       <Navegador />
       <div className="home-grid">
-        <div className="home-calendar">Calendario</div>
-        <div className="home-posts">
+        <div className="home-calendar">
+          <div className="home-title">Agenda</div>
+          <div className="calendar-div">
+           <Cita
+              fecha="30/07/2025"
+              peso="12kg"
+              caso="Chequeo general"
+              proxima="30/08/2025"
+            />
+          </div>
+        </div>
+        
+        <div className="home-center">
+          <div className="div-creation">
+            <button className="create-button" onClick={() => setMostrarForm(true)}>+</button>
+            Publicar
+          </div>
+          <div className="home-posts">
           {publicaciones.map((post, i) => (
                 <Post
                 key={i}
@@ -214,13 +240,11 @@ function Home() {
                 comentarios={post.comentarios}
                 />
             ))}
+          </div>
         </div>
         <div className="home-profile">
-          <div className="div-creation">
-            <button className="create-button" onClick={() => setMostrarForm(true)}>+</button>
-            Publicar
-          </div>
-          Mi perfil
+          <div className="home-title">Mascotas</div>
+          <Mascotas items={listaDeMascotas} />;
         </div>
       </div>
       {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)}  />}

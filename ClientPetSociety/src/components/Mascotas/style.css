@@ -1,0 +1,56 @@
+.scrollable-list {
+  flex-grow: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;              /* por defecto: sólo vertical */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 15%;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
+}
+
+.scrollable-list::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari */
+}
+
+/* Si quieres permitir scroll horizontal también, agrega esta clase */
+.scroll-horizontal {
+  overflow-x: auto;
+  flex-direction: row;            /* ahora en fila en vez de columna */
+  flex-wrap: nowrap;              /* evita que los ítems se vayan abajo */
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.circle-normal {
+  background-color: #f6f2e2;
+}
+
+.name {
+  font-size: 16px;
+  color: #333;
+}
+
+.circle-agregar {
+  background-color: #808080; /* gris */
+}
+
+.agregar-item {
+  font-weight: bold;
+}

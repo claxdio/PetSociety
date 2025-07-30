@@ -191,7 +191,6 @@ function Search() {
       <Navegador />
       <div className="search-grid">
         <div className="search-sugestions">
-          Buscar
           <Input></Input>
           <div className="search-results">
             <div className="search-results">
