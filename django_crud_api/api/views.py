@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -8,16 +8,19 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer, 
-    PublicacionSerializer, CustomTokenObtainPairSerializer
+    PublicacionSerializer, CustomTokenObtainPairSerializer,
+    MascotaSerializer, AgendaSerializer, EventoAgendaSerializer,
+    ProcesoAdopcionSerializer, MascotaPerdidaSerializer
 )
-from .models import Publicacion, Perfil
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from django.db import models
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
     serializer_class = PublicacionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Publicacion.objects.all()
+        return Publicacion.objects.all() #type: ignore
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
@@ -40,6 +43,107 @@ class UserDetailView(generics.RetrieveAPIView):
     
     def get_object(self):
         return self.request.user
+
+class MascotaListCreateView(generics.ListCreateAPIView):
+    serializer_class = MascotaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Mascota.objects.filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+
+class MascotaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = MascotaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Mascota.objects.filter(usuario=self.request.user)
+
+class AgendaDetailView(generics.RetrieveAPIView):
+    serializer_class = AgendaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Agenda.objects.filter(mascota__usuario=self.request.user)
+
+class EventoAgendaListCreateView(generics.ListCreateAPIView):
+    serializer_class = EventoAgendaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return EventoAgenda.objects.filter(agenda__mascota__usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        # Obtener la agenda de la mascota
+        mascota_id = self.request.data.get('mascota_id')
+        try:
+            mascota = Mascota.objects.get(id=mascota_id, usuario=self.request.user)
+            agenda = mascota.agenda
+            serializer.save(agenda=agenda)
+        except Mascota.DoesNotExist:
+            raise serializers.ValidationError("Mascota no encontrada o no tienes permisos.")
+
+class EventoAgendaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventoAgendaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return EventoAgenda.objects.filter(agenda__mascota__usuario=self.request.user)
+
+class ProcesoAdopcionListCreateView(generics.ListCreateAPIView):
+    serializer_class = ProcesoAdopcionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ProcesoAdopcion.objects.filter(solicitante=self.request.user)
+
+    def perform_create(self, serializer):
+        # Verificar que la publicación es de tipo adopción
+        publicacion = serializer.validated_data['publicacion']
+        if publicacion.tipo_publicacion != 'adopcion':
+            raise serializers.ValidationError("Solo se pueden crear solicitudes para publicaciones de adopción.")
+        
+        # Verificar que no es el propietario de la mascota
+        mascota = serializer.validated_data['mascota']
+        if mascota.usuario == self.request.user:
+            raise serializers.ValidationError("No puedes solicitar adoptar tu propia mascota.")
+        
+        serializer.save(solicitante=self.request.user, propietario=mascota.usuario)
+
+class ProcesoAdopcionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProcesoAdopcionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # El usuario puede ver sus solicitudes o las solicitudes de sus mascotas
+        return ProcesoAdopcion.objects.filter(
+            models.Q(solicitante=self.request.user) | 
+            models.Q(propietario=self.request.user)
+        )
+
+class MascotaPerdidaListCreateView(generics.ListCreateAPIView):
+    serializer_class = MascotaPerdidaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return MascotaPerdida.objects.filter(publicacion__usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        # Verificar que la publicación es de tipo mascota perdida
+        publicacion = serializer.validated_data['publicacion']
+        if publicacion.tipo_publicacion != 'mascota_perdida':
+            raise serializers.ValidationError("Solo se pueden crear registros de mascota perdida para publicaciones de tipo mascota perdida.")
+        
+        serializer.save()
+
+class MascotaPerdidaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = MascotaPerdidaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return MascotaPerdida.objects.filter(publicacion__usuario=self.request.user)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

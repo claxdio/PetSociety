@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from .models import Publicacion, Perfil
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
@@ -58,6 +58,50 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         
         return user
 
+class MascotaSerializer(serializers.ModelSerializer):
+    usuario = UserSerializer(read_only=True)
+    usuario_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), 
+        source='usuario', 
+        write_only=True
+    )
+    
+    class Meta:
+        model = Mascota
+        fields = [
+            'id', 'usuario', 'usuario_id', 'nombre', 'especie', 
+            'foto', 'direccion', 'fecha_registro', 'activa'
+        ]
+        read_only_fields = ['fecha_registro']
+
+class EventoAgendaSerializer(serializers.ModelSerializer):
+    # Campos calculados
+    es_pasado = serializers.ReadOnlyField()
+    es_proximo = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = EventoAgenda
+        fields = [
+            'id', 'tipo_evento', 'motivo', 'fecha_evento', 'veterinario', 
+            'lugar', 'costo', 'estado', 'fecha_completado', 'notas_completado',
+            'fecha_creacion', 'fecha_actualizacion', 'es_pasado', 'es_proximo'
+        ]
+        read_only_fields = ['fecha_creacion', 'fecha_actualizacion']
+
+class AgendaSerializer(serializers.ModelSerializer):
+    mascota = MascotaSerializer(read_only=True)
+    eventos = EventoAgendaSerializer(many=True, read_only=True)
+    eventos_proximos = EventoAgendaSerializer(many=True, read_only=True)
+    eventos_pasados = EventoAgendaSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Agenda
+        fields = [
+            'id', 'mascota', 'titulo', 'descripcion', 'fecha_creacion', 
+            'fecha_actualizacion', 'eventos', 'eventos_proximos', 'eventos_pasados'
+        ]
+        read_only_fields = ['fecha_creacion', 'fecha_actualizacion']
+
 class PublicacionSerializer(serializers.ModelSerializer):
     usuario = UserSerializer(read_only=True)
     usuario_id = serializers.PrimaryKeyRelatedField(
@@ -70,9 +114,77 @@ class PublicacionSerializer(serializers.ModelSerializer):
         model = Publicacion
         fields = [
             'id', 'usuario', 'usuario_id', 'descripcion', 'imagen', 
-            'foto_usuario', 'comentarios', 'fecha_creacion'
+            'foto_usuario', 'comentarios', 'fecha_creacion', 'tipo_publicacion'
         ]
         read_only_fields = ['fecha_creacion']
+
+class ProcesoAdopcionSerializer(serializers.ModelSerializer):
+    publicacion = PublicacionSerializer(read_only=True)
+    mascota = MascotaSerializer(read_only=True)
+    solicitante = UserSerializer(read_only=True)
+    propietario = UserSerializer(read_only=True)
+    
+    # Campos para escritura
+    publicacion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Publicacion.objects.all(), 
+        source='publicacion', 
+        write_only=True
+    )
+    mascota_id = serializers.PrimaryKeyRelatedField(
+        queryset=Mascota.objects.all(), 
+        source='mascota', 
+        write_only=True
+    )
+    
+    # Campos calculados
+    es_activo = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = ProcesoAdopcion
+        fields = [
+            'id', 'publicacion', 'publicacion_id', 'mascota', 'mascota_id',
+            'solicitante', 'propietario', 'estado', 'motivo_adopcion',
+            'experiencia_mascotas', 'tiempo_disponible', 'vivienda_adecuada',
+            'otros_mascotas', 'descripcion_otros_mascotas', 'telefono_solicitante',
+            'direccion_solicitante', 'fecha_solicitud', 'fecha_resolucion',
+            'fecha_completado', 'comentarios_propietario', 'comentarios_solicitante',
+            'es_activo'
+        ]
+        read_only_fields = ['fecha_solicitud', 'solicitante', 'propietario']
+
+class MascotaPerdidaSerializer(serializers.ModelSerializer):
+    publicacion = PublicacionSerializer(read_only=True)
+    mascota = MascotaSerializer(read_only=True)
+    
+    # Campos para escritura
+    publicacion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Publicacion.objects.all(), 
+        source='publicacion', 
+        write_only=True
+    )
+    mascota_id = serializers.PrimaryKeyRelatedField(
+        queryset=Mascota.objects.all(), 
+        source='mascota', 
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
+    
+    # Campos calculados
+    coordenadas_validas = serializers.ReadOnlyField()
+    es_activa = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = MascotaPerdida
+        fields = [
+            'id', 'publicacion', 'publicacion_id', 'mascota', 'mascota_id',
+            'nombre', 'especie', 'raza', 'color', 'tamano', 'foto',
+            'fecha_perdida', 'lugar_perdida', 'descripcion', 'estado',
+            'telefono_contacto', 'email_contacto', 'latitud', 'longitud',
+            'direccion_aproximada', 'caracteristicas_especiales',
+            'fecha_publicacion', 'fecha_encontrada', 'coordenadas_validas', 'es_activa'
+        ]
+        read_only_fields = ['fecha_publicacion']
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
