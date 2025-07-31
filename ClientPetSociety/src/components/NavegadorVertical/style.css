@@ -1,0 +1,75 @@
+div.navegador-vertical {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #79b716;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  min-width: 250px;
+  border-radius: 0%;
+}
+
+.nav-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #cac4d0;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nav-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  padding: 12px 15px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  color: white;
+}
+
+.nav-item:hover {
+  background-color: #f8f9fa;
+  color: #333;
+  transform: translateX(5px);
+}
+
+.logout-btn {
+  margin-top: 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+  transform: translateX(5px);
+}

@@ -1,0 +1,41 @@
+div.descripcion-usuario {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  border-bottom: 2px solid #cac4d0;
+  width: 950px;
+  height: 250px;
+}
+
+.user-info {
+  gap: 20px;
+}
+
+div.user-info img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+}
+
+.user-info h4 {
+  padding-top: 50px;
+}
+
+.user-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.user-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  line-height: 1.5;
+  padding: 20px;
+  padding-top: 80px;
+}

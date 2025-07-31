@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import PetProfile from "./pages/PetProfile";
 import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/AdminLogin";
@@ -25,46 +26,31 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Home />}
-        />
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-        <Route
-          path="/search"
-          element={<Search />}
-        />
-        <Route
-          path="/logout"
-          element={<Logout />}
-        />
-        <Route
-          path="/register"
-          element={<RegisterAndLogout />}
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/register" element={<RegisterAndLogout />} />
         <Route
           path="/profile"
-          element={<ProtectedRoute><Profile /></ProtectedRoute>}
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
         />
         <Route
-          path="/admin"
-          element={<AdminLogin />}
+          path="/petProfile"
+          element={
+            <ProtectedRoute>
+              <PetProfile />
+            </ProtectedRoute>
+          }
         />
-        <Route
-          path="/admin/panel"
-          element={<AdminPanel />}
-        />
-        <Route
-          path="*"
-          element={<NotFound />}
-        />
-        <Route 
-          path="/locate" 
-          element={<Locate />} 
-        />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/panel" element={<AdminPanel />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/locate" element={<Locate />} />
       </Routes>
     </BrowserRouter>
   );
