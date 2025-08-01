@@ -1,41 +1,94 @@
 div.descripcion-usuario {
-  display: flex;
+  top: 0;
+  left: 250px; /* Posicionado justo después del navegador vertical */
+  right: 250px; /* Posicionado justo antes del componente Fechas */
+  position: fixed;
   gap: 20px;
   padding: 20px;
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 0;
-  border-bottom: 2px solid #cac4d0;
-  width: 950px;
+  border-left: 2px solid #cac4d0;
+  border-right: 2px solid #cac4d0;
   height: 250px;
+  display: flex;
+  flex-direction: row;
+  z-index: 1000;
+  overflow: hidden; /* Oculta el scroll */
+  box-sizing: border-box;
+}
+
+/* Media query para pantallas más pequeñas */
+@media (max-width: 1200px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+  }
+}
+
+@media (max-width: 1000px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+  }
+}
+
+@media (max-width: 800px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+    padding: 15px;
+  }
+}
+
+/* Asegurar que no tape el navegador vertical */
+@media (max-width: 600px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+    min-width: 150px;
+  }
 }
 
 .user-info {
   gap: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 div.user-info img {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   object-position: center;
   flex-shrink: 0;
+  border-radius: 50%;
 }
 
 .user-info h4 {
-  padding-top: 50px;
+  padding-top: 20px;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #333;
+  text-align: center;
 }
 
 .user-info h3 {
   margin: 0 0 10px 0;
   font-size: 0.9rem;
   color: #333;
+  text-align: center;
 }
 
 .user-info p {
   margin: 0 0 15px 0;
   color: #666;
   line-height: 1.5;
-  padding: 20px;
-  padding-top: 80px;
+  padding: 10px;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 0.8rem;
 }

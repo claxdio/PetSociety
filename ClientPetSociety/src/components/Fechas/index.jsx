@@ -84,7 +84,7 @@ function Fechas() {
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
           <input
             type="text"
-            placeholder="Fecha de  la cita"
+            placeholder="Fecha de la cita"
             value={formData.fechaCita}
             onChange={(e) =>
               setFormData({ ...formData, fechaCita: e.target.value })

@@ -7,58 +7,206 @@ import "../styles/PetProfile.css";
 
 function PetProfile() {
   // Datos de ejemplo para mostrar el componente Publicacion
-  const publicacionEjemplo = {
-    usuario: "Usuario Ejemplo",
-    imagen: (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#D9D9D9",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        Imagen de ejemplo
-      </div>
-    ),
-    descripcion: <p>Esta es una descripción de ejemplo para la publicación</p>,
-    fotoUsuario: (
-      <img
-        src="/src/assets/icons/user.png"
-        alt="Usuario"
-        style={{ width: "40px", height: "40px", borderRadius: "50%" }}
-      />
-    ),
-    comentarios: [
-      {
-        usuario: "Comentador 1",
-        descripcion: "¡Muy bonita publicación!",
-        fotoUsuario: (
-          <img
-            src="/src/assets/icons/user.png"
-            alt="Usuario"
-            style={{ width: "30px", height: "30px", borderRadius: "50%" }}
-          />
-        ),
-      },
-    ],
-    categoria: ["Mascotas", "Adopción"],
-    likes: 5,
-  };
+  const publicaciones = [
+    {
+      usuario: "Pedro",
+      imagen: "/fotos/gato1.jpg",
+      descripcion: "Mi gato dormido 😴",
+      fotoUsuario: "/fotos/pedro.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "Laura",
+      imagen: "/fotos/perro2.jpg",
+      descripcion: "Amo salir con Rocky 🐕",
+      fotoUsuario: "/fotos/laura.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "Ana",
+      imagen: "/fotos/conejo1.jpg",
+      descripcion: "Bruno descubriendo el pasto 🐰🌿",
+      fotoUsuario: "/fotos/ana.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "Carlos",
+      imagen: "/fotos/gato2.jpg",
+      descripcion: "Siempre se duerme encima del teclado 😹",
+      fotoUsuario: "/fotos/carlos.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "María",
+      imagen: "/fotos/perico1.jpg",
+      descripcion: "Pipo cantando a las 6 am 🎶🦜",
+      fotoUsuario: "/fotos/maria.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "Sofía",
+      imagen: "/fotos/perro3.jpg",
+      descripcion: "Toby después del baño 😂",
+      fotoUsuario: "/fotos/sofia.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+    {
+      usuario: "Sofía",
+      imagen: "/fotos/perro3.jpg",
+      descripcion: "Toby después del baño 😂",
+      fotoUsuario: "/fotos/sofia.jpg",
+      likes: 1,
+      categoria: ["#divertido"],
+      comentarios: [
+        {
+          usuario: "Lucía",
+          descripcion: "¡Este post me encantó! 😍",
+          fotoUsuario: "/fotos/lucia.jpg",
+        },
+        {
+          usuario: "Carlos",
+          descripcion: "¡Qué buena onda este post!",
+          fotoUsuario: "/fotos/carlos.jpg",
+        },
+        {
+          usuario: "Ana",
+          descripcion: "¡Increíble! 🔥",
+          fotoUsuario: "/fotos/ana.jpg",
+        },
+      ],
+    },
+  ];
 
   return (
     <div className="pet-profile">
-      <div className="profile-layout">
-        <div className="sidebar">
+      <DescripcionUsuario />
+      <div className="main-content">
+        <div className="navegadorr">
           <NavegadorVertical />
         </div>
-        <div className="main-content">
-          <DescripcionUsuario />
+        <div className="center">
+          <h2>Mis Publicaciones</h2>
           <div className="publications-section">
-            <h2>Mis Publicaciones</h2>
-            <Publicacion {...publicacionEjemplo} />
+            {publicaciones.map((post, i) => (
+              <Publicacion
+                key={i}
+                usuario={post.usuario}
+                imagen={post.imagen}
+                descripcion={post.descripcion}
+                fotoUsuario={post.fotoUsuario}
+                categoria={post.categoria}
+                likes={post.likes}
+                comentarios={post.comentarios}
+              />
+            ))}
           </div>
         </div>
         <div className="fechas">

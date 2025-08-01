@@ -1,15 +1,19 @@
 div.Fechas {
-  position: relative;
+  top: 0;
+  right: 0;
+  position: fixed;
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   min-width: 250px;
-  border-radius: 10px;
+  border-radius: 0px;
   border-left: 2px solid #cac4d0;
   overflow-y: auto;
-  display: block;
-  height: calc(100vh - 40px);
-  max-height: calc(100vh - 40px);
+  display: grid;
+  height: 100vh;
+  width: 250px;
+  align-items: center;
+  gap: 10px;
 }
 
 .fecha {
@@ -47,7 +51,8 @@ div.Fechas {
 
 .fecha button,
 .ficha button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #e2ddca;
+  background: linear-gradient(135deg);
   color: white;
   border: none;
   border-radius: 50%;
@@ -67,7 +72,7 @@ div.Fechas {
 .fecha button:hover,
 .ficha button:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilos para el formulario */
@@ -105,7 +110,7 @@ div.Fechas {
 }
 
 .Fechas form button[type="submit"] {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #79b716;
   color: white;
   border: none;
   padding: 12px 25px;
@@ -123,7 +128,7 @@ div.Fechas {
 }
 
 .tarjeta {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #e2ddca;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 15px;
@@ -141,7 +146,6 @@ div.Fechas {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
 }
 
 .tarjeta:hover {
@@ -160,7 +164,7 @@ div.Fechas {
 }
 
 .tarjeta p strong {
-  color: #ffd700;
+  color: black;
   font-weight: 600;
   min-width: 80px;
   font-size: 13px;
@@ -169,17 +173,6 @@ div.Fechas {
 }
 
 /* Estilos específicos para diferentes tipos de tarjetas */
-.fecha .tarjeta {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.ficha .tarjeta {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.ficha:nth-child(3) .tarjeta {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
 
 .fecha Lista {
   display: flex;
