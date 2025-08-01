@@ -1,0 +1,7 @@
+Como usuario registrado, quiero recibir notificaciones automáticas para que la aplicación me comunique sucesos relevantes para el cuidado de mi mascota y mensajes privados.
+
+Criterios de aceptación:
+-El sistema planifica notificaciones.
+-El sistema muestra notificaciones.
+-El sistema permite abrir las notificaciones.
+

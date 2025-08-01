@@ -1,0 +1,10 @@
+Como usuario registrado, quiero recibir notificaciones relevantes en tiempo real, para estar al tanto de las interacciones importantes dentro de la plataforma.
+
+Criterios de aceptación:
+1. El sistema debe mostrar una sección dedicada a notificaciones dentro del perfil del usuario.
+2. El sistema debe enviar notificaciones en tiempo real cuando:
+    - Otro usuario comenta una publicación del usuario.
+    - El usuario recibe un nuevo seguidor.
+    - Un usuario que sigue hace una publicación.
+3. El usuario debe poder hacer clic en la notificación para acceder directamente al contenido relacionado.
+4. Debe existir una opción en la configuración del perfil que permita activar o desactivar diferentes tipos de notificaciones (comentarios, seguidores, publicaciones, etc.).

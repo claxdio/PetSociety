@@ -1,0 +1,8 @@
+Como administrador, quiero poder bloquear o eliminar cuentas que infrinjan las normas, para mantener el orden y el espacio seguro en la plataforma.
+
+Criterios de aceptación:
+-El sistema permite acceder a cualquier perfil de usuarios.
+-El sistema muestra la opción de bloquear o eliminar la cuenta del usuario.
+-El sistema solicita confirmación de la acción.
+-El usuario bloqueado no puede acceder a su cuenta ni crear contenido.
+

@@ -1,0 +1,5 @@
+Como usuario registrado quiero tener la posibilidad de reportar y buscar mascotas de manera eficiente y facilitar el encuentro de dueños-mascotas mediante publicaciones visibles 
+
+Criterios de aceptación: 
+-El sistema debe registrar el reporte de una mascota perdida, incluyendo datos como nombre, descripción, foto, entre otros.
+-El sistema debe permitir a otros usuarios visualizar fácilmente los reportes de mascotas perdidas mediante una sección dedicada.

@@ -1,0 +1,9 @@
+Como nuevo usuario, quiero registrarme con mi correo electrónico y contraseña para crear una cuenta y acceder a la red social de dueños de mascotas.
+
+Criterios de aceptación:
+1. El formulario de registro incluye:  
+    - Campo obligatorio de correo electrónico (validado con formato estándar).  
+    - Campo obligatorio de contraseña (mín. 8 caracteres, con al menos 1 número y 1 mayúscula).  
+    - Confirmación de contraseña (debe coincidir).  
+2. El sistema valida si es que el correo ya esta registrado y notifica que lo esta si es así.
+4. El sistema permite iniciar sesión al usuario ya registrado

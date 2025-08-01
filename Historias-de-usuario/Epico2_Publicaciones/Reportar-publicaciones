@@ -1,0 +1,7 @@
+Como usuario registrado, quiero poder reportar contenido inapropiado, ofensivo o falso dentro de la red social, para contribuir a mantener un entorno seguro y confiable.
+Criterios de aceptación:
+- Cada publicación visible debe incluir un botón o enlace claramente accesible para reportarla.
+- Al seleccionar "Reportar", el sistema debe solicitar al usuario elegir un motivo del reporte (por ejemplo: contenido ofensivo, información falsa, spam, etc.).
+- El sistema debe mostrar un mensaje de confirmación una vez enviado el reporte.
+- El reporte debe ser enviado al administrador del sistema para su revisión.
+- El usuario no debe poder reportar la misma publicación varias veces seguidas sin intervención.

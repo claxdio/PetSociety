@@ -1,0 +1,6 @@
+Como usuario, me gustaría poder enviar y recibir mensajes privados con otros miembros de la comunidad para tener conversaciones más personalizadas y coordinar temas de interés como adopciones, encuentros.
+
+Criterios de aceptación:
+-El usuario debe poder iniciar una conversación privada desde el perfil de otro usuario.
+-El sistema debe notificar a los usuarios cuando reciben un nuevo mensaje.
+-El usuario debe poder visualizar, responder y eliminar mensajes dentro de una bandeja de entrada personal.

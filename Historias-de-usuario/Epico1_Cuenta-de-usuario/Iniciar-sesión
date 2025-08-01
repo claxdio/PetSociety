@@ -1,0 +1,7 @@
+Como usuario quiero poder iniciar sesión en la página web con mi correo electrónico y contraseña, para acceder a mi datos personales de manera segura.
+Criterios de aceptación: 
+
+-El sistema debe mostrar campos para correo electrónico y contraseña.  
+-Validar que el correo tenga formato válido (ej: `usuario@dominio.com`).  
+-Mostrar un mensaje de error si las credenciales son incorrectas.  
+-Redirigir al dashboard principal tras un inicio exitoso. 

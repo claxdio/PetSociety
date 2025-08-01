@@ -1,0 +1,6 @@
+Como administrador, quiero poder eliminar publicaciones que infrinjan las normas comunitarias, para mantener el orden y el espacio seguro en la plataforma.
+
+Criterios de aceptación:
+-El sistema debe mostrar al administrador todas las publicaciones reportadas.
+-El sistema solicita confirmación antes de eliminar la publicación.
+-El sistema elimina permanentemente la publicación deseada.

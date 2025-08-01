@@ -1,0 +1,7 @@
+Como usuario registrado o visitante, quiero buscar publicaciones por categoría o palabras clave, para encontrar contenido relevante fácilmente.
+Criterios de aceptación:
+- El sistema debe mostrar un campo de búsqueda accesible desde el menú principal o el feed de publicaciones.
+- El sistema debe permitir aplicar filtros por categoría (por ejemplo: Adopción, Perdidos, Recomendaciones).
+- El sistema debe permitir la búsqueda por palabras clave ingresadas por el usuario.
+- El sistema debe mostrar un mensaje claro si no se encuentran publicaciones que coincidan con los criterios de búsqueda.
+- Los resultados deben actualizarse dinámicamente o tras confirmar la búsqueda.

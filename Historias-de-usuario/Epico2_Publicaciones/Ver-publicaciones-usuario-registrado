@@ -1,0 +1,8 @@
+Como usuario registrado, quiero ver las publicaciones dentro de la red social, para explorar el contenido de otros y revisar mis propias publicaciones.
+Criterios de aceptación:
+- La red social debe tener un apartado o sección visible para ver publicaciones.
+- Las publicaciones deben cargarse correctamente y mostrarse con una resolución mínima adecuada (por ejemplo, 720p para imágenes o contenido visual).
+- El usuario debe poder acceder fácilmente a una vista separada de sus propias publicaciones.
+- Las publicaciones deben cargarse correctamente y mantenerse actualizadas.
+- El usuario debe poder acceder a una vista filtrada con únicamente sus publicaciones 
+- El usuario debe poder acceder a una vista filtrada de las publicaciones según la categoría seleccionada (General, alimentación, salud, entrenamiento, juegos, adopciones).

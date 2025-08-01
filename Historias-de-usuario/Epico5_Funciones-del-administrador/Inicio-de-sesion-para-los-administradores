@@ -1,0 +1,8 @@
+Como usuario administrador, quiero iniciar sesión para así poder acceder a la web y realizar ciertas funciones de administrador.
+
+Criterios de aceptación:
+-El sistema debe mostrar una opción para iniciar sesión como administrador.
+-El sistema permite ingresar sus datos al administrador para iniciar sesión.
+-El sistema valida los datos correctamente.
+-El sistema permite iniciar sesión.
+-El sistema muestra funciones que solo el administrador puede realizar al iniciar sesión.

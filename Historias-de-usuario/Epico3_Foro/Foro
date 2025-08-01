@@ -1,0 +1,6 @@
+Como usuario, me gustaría poder compartir y acceder a hilos de conversaciones relacionadas al tema de la red social, para poder compartir mis dudas y poder publicar mi conocimiento en dudas de otros.
+
+Criterios de aceptación:
+-El sistema debe tener una sección destinada a hilos de conversación, accesibles por usuarios e invitados.
+-El sistema debe permitir a los usuarios registrados publicar hilos o respuestas en otros hilos.
+

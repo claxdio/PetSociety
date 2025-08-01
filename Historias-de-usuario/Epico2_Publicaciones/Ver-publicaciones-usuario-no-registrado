@@ -1,0 +1,6 @@
+Como usuario sin registrar, quiero ver las publicaciones hechas dentro de la red social, para explorar el contenido de otros.
+Criterios de aceptación:
+- Debe existir una sección en la interfaz principal para visualizar publicaciones públicas de la comunidad.
+- Las publicaciones deben tener una resolución mínima (por ejemplo, 720p para imágenes y vídeos) para asegurar buena visibilidad.
+- El usuario debe poder acceder a una vista filtrada de las publicaciones según la categoría seleccionada (General, alimentación, salud, entrenamiento, juegos o adopciones).
+- Las publicaciones deben cargarse correctamente y mantenerse actualizadas.

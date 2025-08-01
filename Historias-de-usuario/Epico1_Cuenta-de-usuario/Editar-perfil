@@ -1,0 +1,9 @@
+Como usuario registrado, quiero editar mi perfil (foto, nombre, biografía, etc.) para mantener mi información actualizada y visible para otros 
+dueños de mascotas.
+
+Criterios de aceptación:
+- El sistema muestra un formulario pre-llenado con los datos actuales del usuario.  
+- El sistema permite subir/actualizar una foto de perfil (formatos: JPG, PNG; máx. 2MB).  
+- El sistema valida que se hayan llenado los campos obligatorios: Nombre y Correo electrónico (validado).  
+- El sistema guarda los cambios solo si no hay errores y muestra confirmación.  
+- El sistema actualiza los cambios en tiempo real en el perfil público. 

@@ -1,0 +1,6 @@
+Como usuario, quiero poder recuperar mi contraseña en caso de olvido para volver a acceder a mi cuenta y continuar utilizando la plataforma.
+
+Criterios de aceptación:
+-El usuario debe poder solicitar la recuperación de contraseña mediante un enlace visible en la página de inicio de sesión.
+-El sistema debe enviar un correo electrónico con un enlace seguro para restablecer la contraseña a la dirección registrada por el usuario.
+-El usuario debe poder crear una nueva contraseña a través del enlace proporcionado y recibir una confirmación de que la contraseña fue actualizada correctamente.

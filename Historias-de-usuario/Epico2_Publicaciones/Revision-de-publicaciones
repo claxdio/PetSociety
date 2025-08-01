@@ -1,0 +1,7 @@
+Como usuario, quiero poder dar mi opinión sobre publicaciones mediante un “me gusta” o un comentario, para interactuar con el contenido de otros usuarios.
+Criterios de aceptación:
+- Cada publicación debe mostrar un botón visible para dar “me gusta” (ícono de corazón).
+- Debe haber un apartado visible para escribir y publicar comentarios.
+- Los comentarios deben ser visibles tanto para el autor de la publicación como para otros usuarios que visualicen la publicación.
+- Los “me gusta” deben mostrarse con un contador visible en la interfaz de la publicación.
+- Los comentarios deben mostrarse con un contador visible en la interfaz de la publicación.

@@ -1,0 +1,5 @@
+Como usuario, quiero poder clasificar las publicaciones en categorías predefinidas, para facilitar su búsqueda y organización.
+Criterios de aceptación:
+- Al crear o editar una publicación, debe mostrarse un selector de categorías predefinidas (por ejemplo: alimentación, salud, entrenamiento, juegos, adopciones).
+- Si el usuario no selecciona una categoría, el sistema debe asignar automáticamente una categoría por defecto (por ejemplo, “General”).
+- En la vista principal del feed, el usuario debe poder filtrar las publicaciones según la categoría seleccionada

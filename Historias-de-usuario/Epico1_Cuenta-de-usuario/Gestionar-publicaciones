@@ -1,0 +1,14 @@
+Como usuario, quiero crear, editar y eliminar publicaciones sobre mi mascota para compartir contenido relevante con la comunidad.
+
+Criterios de aceptación:  
+1. Crear publicación:
+    - Campos para texto (mín. 10 caracteres) y multimedia (imágenes/videos).  
+    - Opción de etiquetar mascotas vinculadas a su perfil.  
+2. Editar publicación:  
+    - Solo el dueño puede modificar sus publicaciones.  
+    - Mantiene la fecha original pero muestra "editado".  
+3. Eliminar publicación:
+    - Solicita confirmación antes de borrar.  
+    - Desaparece del feed y perfil tras confirmación.  
+4. Validación en tiempo real si el texto está vacío al publicar.
+
