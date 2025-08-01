@@ -244,7 +244,7 @@ const listaDeMascotas = [
         </div>
         <div className="home-profile">
           <div className="home-title">Mascotas</div>
-          <Mascotas items={listaDeMascotas} />;
+          <Mascotas items={listaDeMascotas} />
         </div>
       </div>
       {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)}  />}
