@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/AdminLogin";
 import AdminPanel from "./pages/AdminPanel";
 import Locate from "./pages/Locate";
+import Forum from "./pages/Forum";
 
 function Logout() {
   localStorage.clear();
@@ -65,6 +66,10 @@ function App() {
           path="/locate" 
           element={<Locate />} 
         />
+        <Route
+          path="/forum"
+          element={<Forum />} 
+        />  
       </Routes>
     </BrowserRouter>
   );
