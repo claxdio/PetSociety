@@ -44,6 +44,17 @@ class UserDetailView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+class UserMascotaListView(generics.ListAPIView):
+    serializer_class = MascotaSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        """
+        Esta vista devuelve una lista de todas las mascotas de un usuario dado por su username.
+        """
+        username = self.kwargs['username']
+        return Mascota.objects.filter(usuario__username=username)
+
 class MascotaListCreateView(generics.ListCreateAPIView):
     serializer_class = MascotaSerializer
     permission_classes = [IsAuthenticated]

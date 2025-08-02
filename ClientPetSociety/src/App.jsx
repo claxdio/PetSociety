@@ -47,8 +47,8 @@ function App() {
           element={<RegisterAndLogout />}
         />
         <Route
-          path="/profile"
-          element={<ProtectedRoute><Profile /></ProtectedRoute>}
+          path="/perfil/:username"
+          element={<Profile />}
         />
         <Route
           path="/admin"

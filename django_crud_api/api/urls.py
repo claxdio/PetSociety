@@ -3,7 +3,7 @@ from . import views
 from .views import (
     PublicacionListCreateView, user_info, admin_login,
     PerfilDetailView, UserDetailView, CreateUserView,
-    MascotaListCreateView, MascotaDetailView,
+    MascotaListCreateView, MascotaDetailView, UserMascotaListView,
     AgendaDetailView, EventoAgendaListCreateView, EventoAgendaDetailView,
     ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,
     MascotaPerdidaListCreateView, MascotaPerdidaDetailView
@@ -16,6 +16,7 @@ urlpatterns = [
     path('user/register/', CreateUserView.as_view(), name='user-register'),
     path('user/profile/', PerfilDetailView.as_view(), name='perfil-detail'),
     path('user/detail/', UserDetailView.as_view(), name='user-detail'),
+    path('usuarios/<str:username>/mascotas/', UserMascotaListView.as_view(), name='user-mascota-list'),
     
     # Endpoints para Mascotas
     path('mascotas/', MascotaListCreateView.as_view(), name='mascota-list-create'),
