@@ -40,10 +40,11 @@
   box-sizing: border-box;
 }
 
-.locate-map{
+.locate-map {
   background-color: #888;
-  padding: 20px;
+  padding: 0;
   box-sizing: border-box;
+  height: 670px; /* Asegura un alto para que el mapa se vea */
 }
 
 .locate-title {
