@@ -10,10 +10,15 @@ from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer, 
     PublicacionSerializer, CustomTokenObtainPairSerializer,
     MascotaSerializer, AgendaSerializer, EventoAgendaSerializer,
-    ProcesoAdopcionSerializer, MascotaPerdidaSerializer
+#deaqui*/
+    ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CitaMedicaSerializer
 )
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, CitaMedica
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
+from django.core.exceptions import ValidationError
+#aaaa aqui*/
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
     serializer_class = PublicacionSerializer
@@ -229,3 +234,100 @@ def admin_login(request):
             'perfil': PerfilSerializer(user.perfil).data
         }
     })
+#deaqui*/
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def citas_medicas_list(request):
+    """Lista y crea citas médicas"""
+    if request.method == 'GET':
+        # Filtrar por mascota si se especifica
+        mascota_id = request.query_params.get('mascota_id')
+        if mascota_id:
+            citas = CitaMedica.objects.filter(mascota_id=mascota_id, mascota__usuario=request.user)
+        else:
+            citas = CitaMedica.objects.filter(mascota__usuario=request.user)
+        
+        serializer = CitaMedicaSerializer(citas, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = CitaMedicaSerializer(data=request.data)
+        if serializer.is_valid():
+            # Verificar que la mascota pertenece al usuario
+            mascota = serializer.validated_data['mascota']
+            if mascota.usuario != request.user:
+                return Response(
+                    {'error': 'No tienes permisos para crear citas para esta mascota.'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def cita_medica_detail(request, pk):
+    """Obtiene, actualiza o elimina una cita médica específica"""
+    cita = get_object_or_404(CitaMedica, pk=pk)
+    
+    # Verificar que la cita pertenece al usuario
+    if cita.mascota.usuario != request.user:
+        return Response(
+            {'error': 'No tienes permisos para acceder a esta cita.'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    if request.method == 'GET':
+        serializer = CitaMedicaSerializer(cita)
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        serializer = CitaMedicaSerializer(cita, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        cita.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def citas_proximas(request):
+    """Obtiene las citas próximas del usuario"""
+    ahora = timezone.now()
+    proxima_semana = ahora + timedelta(days=7)
+    
+    citas = CitaMedica.objects.filter(
+        mascota__usuario=request.user,
+        fecha_cita__gte=ahora,
+        fecha_cita__lte=proxima_semana
+    ).order_by('fecha_cita')
+    
+    serializer = CitaMedicaSerializer(citas, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validar_peso(request):
+    """Endpoint para validar peso sin crear cita"""
+    peso = request.data.get('peso')
+    
+    if not peso:
+        return Response(
+            {'error': 'El campo peso es requerido.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        CitaMedica.validar_peso(peso)
+        return Response({'valid': True, 'message': 'Peso válido'})
+    except ValidationError as e:
+        return Response(
+            {'valid': False, 'error': str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+        #deaqui*/

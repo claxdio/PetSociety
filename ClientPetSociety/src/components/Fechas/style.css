@@ -51,7 +51,7 @@ div.Fechas {
 
 .fecha button,
 .ficha button {
-  background-color: #e2ddca;
+  background-color: #f6f2e2;
   background: linear-gradient(135deg);
   color: white;
   border: none;
@@ -85,6 +85,19 @@ div.Fechas {
   border: 1px solid #e0e0e0;
 }
 
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
 .Fechas form input,
 .Fechas form textarea {
   width: 100%;
@@ -95,6 +108,22 @@ div.Fechas {
   font-size: 14px;
   transition: all 0.3s ease;
   box-sizing: border-box;
+}
+
+.Fechas form input[type="date"] {
+  font-family: inherit;
+  cursor: pointer;
+  background-color: #f8f9fa;
+}
+
+.Fechas form input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.5);
+  transition: filter 0.3s ease;
+}
+
+.Fechas form input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.3);
 }
 
 .Fechas form input:focus,
@@ -127,6 +156,35 @@ div.Fechas {
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
+/* Estilos para mensajes de error */
+.form-group .error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.form-group .error-message::before {
+  content: "⚠";
+  font-size: 14px;
+}
+
+/* Estilo para campos con error */
+.Fechas form input.error,
+.Fechas form textarea.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.Fechas form input.error:focus,
+.Fechas form textarea.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
 .tarjeta {
   background-color: #e2ddca;
   border-radius: 12px;
@@ -154,7 +212,7 @@ div.Fechas {
 }
 
 .tarjeta p {
-  color: white;
+  color: black;
   margin: 8px 0;
   font-size: 14px;
   line-height: 1.4;

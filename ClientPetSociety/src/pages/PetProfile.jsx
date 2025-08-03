@@ -10,7 +10,7 @@ function PetProfile() {
   const publicaciones = [
     {
       usuario: "Pedro",
-      imagen: "/fotos/gato1.jpg",
+      imagen: "../assets/icons/publicacion.png",
       descripcion: "Mi gato dormido 😴",
       fotoUsuario: "/fotos/pedro.jpg",
       likes: 1,
@@ -69,7 +69,7 @@ function PetProfile() {
         {
           usuario: "Lucía",
           descripcion: "¡Este post me encantó! 😍",
-          fotoUsuario: "/fotos/lucia.jpg",
+          fotoUsuario: "../assets/icons/publicacion.png",
         },
         {
           usuario: "Carlos",
@@ -193,7 +193,6 @@ function PetProfile() {
           <NavegadorVertical />
         </div>
         <div className="center">
-          <h2>Mis Publicaciones</h2>
           <div className="publications-section">
             {publicaciones.map((post, i) => (
               <Publicacion

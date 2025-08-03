@@ -2,7 +2,10 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+#de aqui*/
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, CitaMedica
+from django.core.exceptions import ValidationError
+#aaaa aqui*/
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
@@ -210,3 +213,64 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         data = super().validate({'username': user.username, 'password': password})
         return data
+#deaqui*/
+class CitaMedicaSerializer(serializers.ModelSerializer):
+    """Serializer para citas médicas con validación de peso"""
+    mascota = MascotaSerializer(read_only=True)
+    mascota_id = serializers.PrimaryKeyRelatedField(
+        queryset=Mascota.objects.all(), 
+        source='mascota', 
+        write_only=True
+    )
+    
+    # Campos calculados
+    peso_normalizado = serializers.ReadOnlyField()
+    es_pasada = serializers.ReadOnlyField()
+    es_proxima = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = CitaMedica
+        fields = [
+            'id', 'mascota', 'mascota_id', 'tipo_cita', 'fecha_cita', 
+            'peso', 'caso', 'proxima_cita', 'veterinario', 'lugar', 
+            'costo', 'notas_adicionales', 'fecha_creacion', 'fecha_actualizacion',
+            'peso_normalizado', 'es_pasada', 'es_proxima'
+        ]
+        read_only_fields = ['fecha_creacion', 'fecha_actualizacion']
+    
+    def validate_peso(self, value):
+        """Validación personalizada del campo peso"""
+        if not value or not value.strip():
+            raise serializers.ValidationError("El peso es requerido.")
+        
+        # Usar la misma validación del modelo
+        try:
+            CitaMedica.validar_peso(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(str(e))
+        
+        return value.strip()
+    
+    def validate_fecha_cita(self, value):
+        """Validación de la fecha de cita"""
+        from django.utils import timezone
+        
+        if value and value < timezone.now():
+            raise serializers.ValidationError("La fecha de la cita no puede ser en el pasado.")
+        
+        return value
+    
+    def validate(self, data):
+        """Validación a nivel de objeto"""
+        # Validar que la próxima cita sea después de la fecha actual
+        fecha_cita = data.get('fecha_cita')
+        proxima_cita = data.get('proxima_cita')
+        
+        if proxima_cita and fecha_cita and proxima_cita <= fecha_cita:
+            raise serializers.ValidationError({
+                'proxima_cita': "La próxima cita debe ser después de la fecha actual."
+            })
+        
+        return data
+
+        #ddddaqui*/

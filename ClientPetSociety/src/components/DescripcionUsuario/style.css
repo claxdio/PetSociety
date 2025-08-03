@@ -67,12 +67,16 @@ div.user-info img {
   flex-shrink: 0;
   border-radius: 50%;
 }
+.user-info .check-icon {
+  width: 55px;
+  height: 55px;
+}
 
 .user-info h4 {
   padding-top: 20px;
   margin: 0;
   font-size: 0.9rem;
-  color: #333;
+  color: #99a67b;
   text-align: center;
 }
 

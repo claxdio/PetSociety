@@ -592,3 +592,127 @@ def guardar_perfil_usuario(sender, instance, **kwargs):
 def crear_agenda_mascota(sender, instance, created, **kwargs):
     if created:
         Agenda.objects.create(mascota=instance)
+#deaqui*/
+class CitaMedica(models.Model):
+    """Citas médicas para mascotas con validación de peso"""
+    TIPO_CITA_CHOICES = [
+        ('vacunacion', 'Vacunación'),
+        ('desparacitacion', 'Desparasitación'),
+        ('operacion', 'Operación'),
+        ('revision', 'Revisión General'),
+        ('emergencia', 'Emergencia'),
+        ('otro', 'Otro'),
+    ]
+    
+    # Relaciones
+    mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE, related_name='citas_medicas')
+    veterinario = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Campos principales
+    tipo_cita = models.CharField(max_length=20, choices=TIPO_CITA_CHOICES)
+    fecha_cita = models.DateTimeField()
+    peso = models.CharField(max_length=20)  # Almacenamos como string para mantener formato
+    caso = models.TextField()
+    proxima_cita = models.DateTimeField(blank=True, null=True)
+    
+    # Campos adicionales
+    lugar = models.CharField(max_length=200, blank=True, null=True)
+    costo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    notas_adicionales = models.TextField(blank=True, null=True)
+    
+    # Campos de auditoría
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-fecha_cita']
+    
+    def __str__(self):
+        return f"Cita de {self.mascota.nombre} - {self.get_tipo_cita_display()} - {self.fecha_cita.strftime('%d/%m/%Y')}"
+    
+    def clean(self):
+        """Validación personalizada del modelo"""
+        super().clean()
+        
+        # Validar peso
+        if self.peso:
+            self.validar_peso(self.peso)
+        
+        # Validar que la fecha de cita no sea en el pasado
+        if self.fecha_cita and self.fecha_cita < timezone.now():
+            raise ValidationError("La fecha de la cita no puede ser en el pasado.")
+        
+        # Validar que la próxima cita sea después de la fecha actual
+        if self.proxima_cita and self.proxima_cita <= self.fecha_cita:
+            raise ValidationError("La próxima cita debe ser después de la fecha actual.")
+    
+    @staticmethod
+    def validar_peso(peso):
+        """Valida el formato y rango del peso"""
+        import re
+        
+        if not peso or not peso.strip():
+            raise ValidationError("El peso es requerido.")
+        
+        # Regex para validar formato: número + unidad opcional
+        peso_regex = r'^(\d+(?:\.\d+)?)\s*(kg|lbs|g|lb)?$'
+        match = re.match(peso_regex, peso.strip(), re.IGNORECASE)
+        
+        if not match:
+            raise ValidationError(
+                "Formato inválido. Use: número + unidad (ej: 5.2 kg, 12 lbs, 3.5)"
+            )
+        
+        valor = float(match.group(1))
+        unidad = match.group(2).lower() if match.group(2) else 'kg'
+        
+        # Validar rangos según la unidad
+        if unidad == 'kg' and (valor < 0.1 or valor > 200):
+            raise ValidationError("El peso debe estar entre 0.1 y 200 kg")
+        elif unidad == 'lbs' and (valor < 0.2 or valor > 440):
+            raise ValidationError("El peso debe estar entre 0.2 y 440 lbs")
+        elif unidad == 'g' and (valor < 100 or valor > 200000):
+            raise ValidationError("El peso debe estar entre 100g y 200kg")
+        elif unidad == 'lb' and (valor < 0.2 or valor > 440):
+            raise ValidationError("El peso debe estar entre 0.2 y 440 lb")
+    
+    def save(self, *args, **kwargs):
+        """Sobrescribir save para ejecutar validaciones"""
+        self.full_clean()
+        super().save(*args, **kwargs)
+    
+    @property
+    def peso_normalizado(self):
+        """Convierte el peso a kg para cálculos"""
+        import re
+        
+        match = re.match(r'^(\d+(?:\.\d+)?)\s*(kg|lbs|g|lb)?$', self.peso, re.IGNORECASE)
+        if not match:
+            return None
+        
+        valor = float(match.group(1))
+        unidad = match.group(2).lower() if match.group(2) else 'kg'
+        
+        # Convertir a kg
+        if unidad == 'kg':
+            return valor
+        elif unidad in ['lbs', 'lb']:
+            return valor * 0.453592
+        elif unidad == 'g':
+            return valor / 1000
+        
+        return valor
+    
+    @property
+    def es_pasada(self):
+        """Verifica si la cita ya pasó"""
+        return self.fecha_cita < timezone.now()
+    
+    @property
+    def es_proxima(self):
+        """Verifica si la cita es en los próximos 7 días"""
+        from datetime import timedelta
+        ahora = timezone.now()
+        proxima_semana = ahora + timedelta(days=7)
+        return ahora <= self.fecha_cita <= proxima_semana
+        #aaaaqui*/

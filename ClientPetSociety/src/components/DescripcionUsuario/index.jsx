@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
 import UserImage from "../../assets/icons/user.png";
+import Esterilizado from "../../assets/icons/check.png";
 
 function DescripcionUsuario() {
   const [forceUpdate, setForceUpdate] = useState(0);
@@ -33,8 +34,8 @@ function DescripcionUsuario() {
         <p>Fecha input</p>
       </div>
       <div className="user-info">
-        <h4>esterilizado </h4>
-        <p>esterilizado input</p>
+        <h4>Esterilizado </h4>
+        <img src={Esterilizado} alt="Check" className="check-icon" />
       </div>
     </div>
   );

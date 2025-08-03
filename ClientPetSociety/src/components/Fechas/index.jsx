@@ -23,9 +23,64 @@ function Fechas() {
     caso: "",
     proximaCita: "",
   });
+  const [errores, setErrores] = useState({
+    peso: "",
+  });
+
+  // Función para validar el peso
+  const validarPeso = (peso) => {
+    if (!peso.trim()) {
+      return "El peso es requerido";
+    }
+
+    // Permitir formato: número + unidad (ej: "5.2 kg", "12 lbs", "3.5")
+    const pesoRegex = /^(\d+(?:\.\d+)?)\s*(kg|lbs|g|lb)?$/i;
+    const match = peso.match(pesoRegex);
+
+    if (!match) {
+      return "Formato inválido. Use: número + unidad (ej: 5.2 kg, 12 lbs)";
+    }
+
+    const valor = parseFloat(match[1]);
+    const unidad = match[2]?.toLowerCase() || "kg";
+
+    // Validar rangos según la unidad
+    if (unidad === "kg" && (valor < 0.1 || valor > 200)) {
+      return "El peso debe estar entre 0.1 y 200 kg";
+    }
+    if (unidad === "lbs" && (valor < 0.2 || valor > 440)) {
+      return "El peso debe estar entre 0.2 y 440 lbs";
+    }
+    if (unidad === "g" && (valor < 100 || valor > 200000)) {
+      return "El peso debe estar entre 100g y 200kg";
+    }
+    if (unidad === "lb" && (valor < 0.2 || valor > 440)) {
+      return "El peso debe estar entre 0.2 y 440 lb";
+    }
+
+    return ""; // Sin errores
+  };
+
+  const handlePesoChange = (e) => {
+    const nuevoPeso = e.target.value;
+    setFormData({ ...formData, peso: nuevoPeso });
+
+    // Validar en tiempo real
+    const errorPeso = validarPeso(nuevoPeso);
+    setErrores({ ...errores, peso: errorPeso });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // evita recargar la página
+
+    // Validar todos los campos antes de enviar
+    const errorPeso = validarPeso(formData.peso);
+
+    if (errorPeso) {
+      setErrores({ peso: errorPeso });
+      return; // No enviar si hay errores
+    }
+
     const nuevoElemento = { ...formData };
 
     if (tipo === "vacunacion") {
@@ -37,13 +92,26 @@ function Fechas() {
     }
 
     setFormData({ fechaCita: "", peso: "", caso: "", proximaCita: "" }); // limpia formulario
+    setErrores({ peso: "" }); // limpia errores
     setMostrarFormulario(false); // oculta el formulario
   };
+
+  // Función para formatear la fecha para mostrar
+  const formatearFecha = (fechaString) => {
+    if (!fechaString) return "";
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="Fechas">
       <div className="fecha">
         <h1>Fechas de vacunación</h1>
-        <Lista data={vacunacion} />
+        <Lista data={vacunacion} formatearFecha={formatearFecha} />
         <button
           onClick={() => {
             setTipo("vacunacion");
@@ -56,7 +124,7 @@ function Fechas() {
 
       <div className="ficha">
         <h1>Fechas de desparacitación</h1>
-        <Lista data={desparacitacion} />
+        <Lista data={desparacitacion} formatearFecha={formatearFecha} />
         <button
           onClick={() => {
             setTipo("desparacitacion");
@@ -69,7 +137,7 @@ function Fechas() {
 
       <div className="ficha">
         <h1>Fechas de operaciones</h1>
-        <Lista data={operacion} />
+        <Lista data={operacion} formatearFecha={formatearFecha} />
         <button
           onClick={() => {
             setTipo("operacion");
@@ -82,40 +150,63 @@ function Fechas() {
 
       {mostrarFormulario && (
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-          <input
-            type="text"
-            placeholder="Fecha de la cita"
-            value={formData.fechaCita}
-            onChange={(e) =>
-              setFormData({ ...formData, fechaCita: e.target.value })
-            }
-            required
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="Peso"
-            value={formData.peso}
-            onChange={(e) => setFormData({ ...formData, peso: e.target.value })}
-            required
-          />
-          <br />
-          <textarea
-            placeholder="Descripción del caso"
-            value={formData.caso}
-            onChange={(e) => setFormData({ ...formData, caso: e.target.value })}
-            required
-          ></textarea>
-          <input
-            type="text"
-            placeholder="Fecha de la próxima cita"
-            value={formData.proximaCita}
-            onChange={(e) =>
-              setFormData({ ...formData, proximaCita: e.target.value })
-            }
-            required
-          />
-          <br />
+          <div className="form-group">
+            <label htmlFor="fechaCita">Fecha de la cita:</label>
+            <input
+              type="date"
+              id="fechaCita"
+              placeholder="Fecha de la cita"
+              value={formData.fechaCita}
+              onChange={(e) =>
+                setFormData({ ...formData, fechaCita: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="peso">Peso:</label>
+            <input
+              type="text"
+              id="peso"
+              placeholder="Ej: 5.2 kg, 12 lbs"
+              value={formData.peso}
+              onChange={handlePesoChange}
+              className={errores.peso ? "error" : ""}
+              required
+            />
+            {errores.peso && (
+              <div className="error-message">{errores.peso}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="caso">Descripción del caso:</label>
+            <textarea
+              id="caso"
+              placeholder="Descripción del caso"
+              value={formData.caso}
+              onChange={(e) =>
+                setFormData({ ...formData, caso: e.target.value })
+              }
+              required
+            ></textarea>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="proximaCita">Fecha de la próxima cita:</label>
+            <input
+              type="date"
+              id="proximaCita"
+              placeholder="Fecha de la próxima cita"
+              value={formData.proximaCita}
+              onChange={(e) =>
+                setFormData({ ...formData, proximaCita: e.target.value })
+              }
+              required
+            />
+          </div>
+
           <button type="submit">Guardar</button>
         </form>
       )}
@@ -132,15 +223,16 @@ Lista.propTypes = {
       proximaCita: PropTypes.string,
     })
   ),
+  formatearFecha: PropTypes.func.isRequired,
 };
 
-function Lista({ data }) {
+function Lista({ data, formatearFecha }) {
   return (
     <div>
       {data.map((item, index) => (
         <div key={index} className="tarjeta">
           <p>
-            <strong>Fecha:</strong> {item.fechaCita}
+            <strong>Fecha:</strong> {formatearFecha(item.fechaCita)}
           </p>
           <p>
             <strong>Peso:</strong> {item.peso}
@@ -149,7 +241,7 @@ function Lista({ data }) {
             <strong>Caso:</strong> {item.caso}
           </p>
           <p>
-            <strong>Próxima cita:</strong> {item.proximaCita}
+            <strong>Próxima cita:</strong> {formatearFecha(item.proximaCita)}
           </p>
         </div>
       ))}
