@@ -47,7 +47,7 @@ function App() {
           element={<RegisterAndLogout />}
         />
         <Route
-          path="/perfil/:username"
+          path="/profile"
           element={<Profile />}
         />
         <Route
