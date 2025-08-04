@@ -1,0 +1,41 @@
+.SpecificForum {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 70px; /* Compensar el navegador fijo */
+  background-color: white;
+}
+
+main {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-width: 13000px;
+  padding-top: 90px;
+}
+
+.specific-forum-user {
+  flex: 1;
+  min-width: 200px;
+  max-width: 250px;
+}
+
+.specific-forum-content {
+  row-gap: 20px;
+  flex: 2;
+}
+
+.specific-forum-chats {
+  flex: 1;
+  min-width: 200px;
+  max-width: 250px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px;
+  }
+}
