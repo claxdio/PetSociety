@@ -6,195 +6,30 @@ import Cita from "../components/Cita/index.jsx";
 import Mascotas from "../components/Mascotas/index.jsx";
 import api from "../api.js";
 import "../styles/Home.css";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+
 
 function Home() {
+  
 
-  const camposFormulario = [
-  { nombre: "nombre", label: "Nombre", tipo: "texto" },
-  { nombre: "email", label: "Correo electrónico", tipo: "email" },
-  { nombre: "mensaje", label: "Mensaje", tipo: "textarea" },
-  { nombre: "categoria", label: "Categoría", tipo: "select", opciones: ["General", "Sugerencia", "Bug"] },
-  { nombre: "imagen", label: "Subir imagen", tipo: "file" },
-];
-
-  const [mostrarForm, setMostrarForm] = useState(false);
-
-  const publicaciones = [
-  {
-    usuario: "Pedro",
-    imagen: "/fotos/gato1.jpg",
-    descripcion: "Mi gato dormido 😴",
-    fotoUsuario: "/fotos/pedro.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
+const camposFormulario = [
+  { 
+    nombre: "descripcion", 
+    label: "Descripción", 
+    tipo: "textarea",
+    required: true 
   },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
+  { 
+    nombre: "categoria", 
+    label: "Categoría", 
+    tipo: "select", 
+    opciones: ["General", "Adopción", "Mascota Perdida"] 
   },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
+  { 
+    nombre: "archivos", 
+    label: "Imágenes/Videos", 
+    tipo: "file" 
   },
-  {
-    usuario: "Laura",
-    imagen: "/fotos/perro2.jpg",
-    descripcion: "Amo salir con Rocky 🐕",
-    fotoUsuario: "/fotos/laura.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  },
-  {
-    usuario: "Ana",
-    imagen: "/fotos/conejo1.jpg",
-    descripcion: "Bruno descubriendo el pasto 🐰🌿",
-    fotoUsuario: "/fotos/ana.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  },
-  {
-    usuario: "Carlos",
-    imagen: "/fotos/gato2.jpg",
-    descripcion: "Siempre se duerme encima del teclado 😹",
-    fotoUsuario: "/fotos/carlos.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  },
-  {
-    usuario: "María",
-    imagen: "/fotos/perico1.jpg",
-    descripcion: "Pipo cantando a las 6 am 🎶🦜",
-    fotoUsuario: "/fotos/maria.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  },
-  {
-    usuario: "Sofía",
-    imagen: "/fotos/perro3.jpg",
-    descripcion: "Toby después del baño 😂",
-    fotoUsuario: "/fotos/sofia.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  },
-  {
-    usuario: "Sofía",
-    imagen: "/fotos/perro3.jpg",
-    descripcion: "Toby después del baño 😂",
-    fotoUsuario: "/fotos/sofia.jpg",
-    likes: 1,
-    categoria: ["#divertido"],
-    comentarios: [
-  {
-    usuario: "Lucía",
-    descripcion: "¡Este post me encantó! 😍",
-    fotoUsuario: "/fotos/lucia.jpg",
-  },
-  {
-    usuario: "Carlos",
-    descripcion: "¡Qué buena onda este post!",
-    fotoUsuario: "/fotos/carlos.jpg",
-  },
-  {
-    usuario: "Ana",
-    descripcion: "¡Increíble! 🔥",
-    fotoUsuario: "/fotos/ana.jpg",
-  }
-]
-  }
 ];
 
 const listaDeMascotas = [
@@ -204,6 +39,31 @@ const listaDeMascotas = [
   { nombre: "Mia" },
   { nombre: "Toby" },
 ];
+
+  const [mostrarForm, setMostrarForm] = useState(false);
+
+  const [publicaciones, setPublicaciones] = useState([]);
+
+  useEffect(() => {
+        const fetchPublicaciones = async () => {
+            try {
+                const token = localStorage.getItem(ACCESS_TOKEN);
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+                const response = await api.get('/api/publicaciones/');
+                setPublicaciones(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Redirige a login si es un error 401
+                if (error.response?.status === 401) {
+                    window.location.href = '/login';
+                }
+            }
+        };
+
+        fetchPublicaciones();
+    }, []);
 
 
   return (
@@ -221,7 +81,6 @@ const listaDeMascotas = [
             />
           </div>
         </div>
-        
         <div className="home-center">
           <div className="div-creation">
             <button className="create-button" onClick={() => setMostrarForm(true)}>+</button>
@@ -244,7 +103,7 @@ const listaDeMascotas = [
         </div>
         <div className="home-profile">
           <div className="home-title">Mascotas</div>
-          <Mascotas items={listaDeMascotas} />;
+          <Mascotas items={listaDeMascotas} />
         </div>
       </div>
       {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)}  />}

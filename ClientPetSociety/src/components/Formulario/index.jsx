@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./style.css";
 
-/* Ejemplo
+
 const camposFormulario = [
   { nombre: "nombre", label: "Nombre", tipo: "texto" },
   { nombre: "email", label: "Correo electrónico", tipo: "email" },
@@ -9,33 +9,22 @@ const camposFormulario = [
   { nombre: "categoria", label: "Categoría", tipo: "select", opciones: ["General", "Sugerencia", "Bug"] },
   { nombre: "imagen", label: "Subir imagen", tipo: "file" },
 ];
-*/
 
-function Form({ onClose, camposFormulario }) {
+function Form({ onClose, camposFormulario, onPublicar }) {
   const [formulario, setFormulario] = useState({});
   const [archivoNombre, setArchivoNombre] = useState("");
 
+  
+
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "imagen") {
-      if (files.length > 0) {
-        setArchivoNombre(files[0].name);
-        setFormulario((prev) => ({ ...prev, [name]: files[0] }));
-      } else {
-        setArchivoNombre("");
-        setFormulario((prev) => ({ ...prev, [name]: null }));
-      }
-    } else {
-      setFormulario((prev) => ({ ...prev, [name]: value }));
-    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Datos del formulario:", formulario);
-    // Aquí puedes enviar formulario, incluyendo formulario.imagen que es el archivo
-  };
+
+  const handleSubmit = async (e) => {
+};
+
+
+
 
   return (
     <div className="overlay-lock">

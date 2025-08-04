@@ -13,10 +13,9 @@ class Perfil(models.Model):
         ('organizacion', 'Organización'),
         ('veterinario', 'Veterinario'),
     ]
-    
     # Relación uno a uno con User de Django
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
-    
+
     # Campos del perfil
     nombre = models.CharField(max_length=100, blank=True)
     apellido = models.CharField(max_length=100, blank=True)
@@ -59,24 +58,24 @@ class Publicacion(models.Model):
         ('mascota_perdida', 'Mascota Perdida'),
         ('otro', 'Otro'),
     ]
-    
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='publicaciones')
     descripcion = models.TextField()
     # El campo 'imagen' se elimina, ahora se gestiona con ArchivoPublicacion
     foto_usuario = models.URLField(blank=True, null=True) 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    
+
     # Relaciones Many-to-Many
     mascotas_etiquetadas = models.ManyToManyField('Mascota', related_name='publicaciones_etiquetadas', blank=True)
     categorias = models.ManyToManyField(Categoria, related_name='publicaciones', blank=True)
 
     # Nuevo campo para tipo de publicación
     tipo_publicacion = models.CharField(
-        max_length=20, 
-        choices=TIPO_PUBLICACION_CHOICES, 
+        max_length=20,
+        choices=TIPO_PUBLICACION_CHOICES,
         default='general'
     )
-    
+
     class Meta:
         ordering = ['-fecha_creacion']
 
@@ -144,17 +143,17 @@ class Reaccion(models.Model):
 class Mascota(models.Model):
     # Relación con Usuario (Django) - Usuario registra Mascotas
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mascotas')
-    
+
     # Atributos según diagrama E-R
     nombre = models.CharField(max_length=100)
     especie = models.CharField(max_length=50)
     foto = models.URLField(blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
-    
+
     # Campos adicionales útiles para la lógica
     fecha_registro = models.DateTimeField(auto_now_add=True)
     activa = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return f"{self.nombre} ({self.especie}) - {self.usuario.username}"
 

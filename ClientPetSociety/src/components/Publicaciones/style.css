@@ -66,13 +66,15 @@
 
 .categoria-frame {
   height: auto;
-  overflow-y: auto;
+  overflow-x: auto; /* scroll horizontal */
+  overflow-y: hidden;
   background-color: #e2ddca;
   border-radius: 10px;
   padding: 5px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* HORIZONTAL en lugar de column */
   gap: 8px;
+  white-space: nowrap; /* evita que se rompa la línea */
 }
 
 .categoria-item {

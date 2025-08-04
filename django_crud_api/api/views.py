@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
-    UserSerializer, UserRegistrationSerializer, PerfilSerializer, 
+    UserSerializer, UserRegistrationSerializer, PerfilSerializer,
     PublicacionSerializer, CustomTokenObtainPairSerializer,
     MascotaSerializer, AgendaSerializer, EventoAgendaSerializer,
     ProcesoAdopcionSerializer, MascotaPerdidaSerializer
@@ -33,14 +33,14 @@ class CreateUserView(generics.CreateAPIView):
 class PerfilDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = PerfilSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self):
         return self.request.user.perfil
 
 class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self):
         return self.request.user
 

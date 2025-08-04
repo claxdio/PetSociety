@@ -109,11 +109,11 @@ class PublicacionSerializer(serializers.ModelSerializer):
         source='usuario', 
         write_only=True
     )
-    
+
     class Meta:
         model = Publicacion
         fields = [
-            'id', 'usuario', 'usuario_id', 'descripcion', 'imagen', 
+            'id', 'usuario', 'usuario_id', 'descripcion',
             'foto_usuario', 'comentarios', 'fecha_creacion', 'tipo_publicacion'
         ]
         read_only_fields = ['fecha_creacion']
