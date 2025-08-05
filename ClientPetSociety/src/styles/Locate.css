@@ -38,6 +38,8 @@
   background-color: #fff;
   padding: 10px;
   box-sizing: border-box;
+  overflow-y: auto;         /* 👈 Agrega scroll vertical */
+  max-height: 670px; /* 👈 Ajusta según el alto de tu navegador y el navbar */
 }
 
 .locate-map {
@@ -59,4 +61,51 @@
   font-size: 16px;            /* Que la letra sea mas grande o chica */ 
   border-radius: 8px;
   border: 1px solid #ccc;
+}
+
+.decorative-images {
+  position: relative;
+  margin-top: 40px; /* Aumentamos la distancia superior */
+}
+
+.decorative-image {
+  width: 330px; /* Más grande */
+  opacity: 0.9;
+  transform: rotate(-10deg);
+  display: block;
+  margin: 50px auto 0 auto; /* Esto la baja y la centra */
+  transition: transform 0.3s ease;
+}
+
+.decorative-image:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.mascota-foto {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 10px;
+  margin: 10px 0;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.boton-volver {  
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #000;
+  border: none;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  cursor: pointer;
+  font-weight: bold;  
+  font-size: 15px;
+  transition: background-color 0.3s;
+  transition: all 0.2s ease-in-out;  /* Transición suave */
+}
+
+.boton-volver:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Sombra más marcada */
+  transform: translateY(-2px);               /* Se eleva un poco */
 }

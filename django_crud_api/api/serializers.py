@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from .models import ArchivoPublicacion
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
@@ -109,14 +110,29 @@ class PublicacionSerializer(serializers.ModelSerializer):
         source='usuario', 
         write_only=True
     )
-    
+    imagen = serializers.SerializerMethodField()
+
     class Meta:
         model = Publicacion
         fields = [
-            'id', 'usuario', 'usuario_id', 'descripcion', 'imagen', 
+            'id', 'usuario', 'usuario_id', 'descripcion', 'imagen',
             'foto_usuario', 'comentarios', 'fecha_creacion', 'tipo_publicacion'
         ]
         read_only_fields = ['fecha_creacion']
+
+    def get_imagen(self, obj):
+        archivo = obj.archivos.filter(tipo_archivo='imagen').first()
+        return archivo.ruta_archivo if archivo else None
+    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        publicacion = super().create(validated_data)
+
+        # Verifica si al menos una imagen fue enviada en ArchivoPublicacion (puedes hacerlo por el request o por otro método)
+        if not ArchivoPublicacion.objects.filter(publicacion=publicacion, tipo_archivo='imagen').exists():
+            raise serializers.ValidationError("Debes subir al menos una imagen con la publicación.")
+
+        return publicacion
 
 class ProcesoAdopcionSerializer(serializers.ModelSerializer):
     publicacion = PublicacionSerializer(read_only=True)

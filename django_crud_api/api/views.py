@@ -136,10 +136,12 @@ class ProcesoAdopcionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class MascotaPerdidaListCreateView(generics.ListCreateAPIView):
     serializer_class = MascotaPerdidaSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return MascotaPerdida.objects.filter(publicacion__usuario=self.request.user)
+        if self.request.user.is_authenticated:
+            return MascotaPerdida.objects.filter(publicacion__usuario=self.request.user)
+        return MascotaPerdida.objects.all()
 
     def perform_create(self, serializer):
         # Verificar que la publicación es de tipo mascota perdida

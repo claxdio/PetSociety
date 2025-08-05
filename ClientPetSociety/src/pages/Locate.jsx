@@ -1,22 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import "../styles/Locate.css";
 import Navegador from "../components/Navegador";
 import Sugerencia from "../components/Sugerencia";
 import Button from "../components/Button/index";
 import Mapa from "../components/Mapa";
+import axios from "axios";
 
 import icono1 from "../assets/icons/icono1.png";
 import icono2 from "../assets/icons/icono2.png";
 import icono3 from "../assets/icons/icono3.png";
 import icono4 from "../assets/icons/icono4.png";
 import icono6 from "../assets/icons/eye-open.png";
+import icono7 from "../assets/icons/decorativo1.png";
 
 const Locate = () => {
   const [busqueda, setBusqueda] = useState("");
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [direccionMapa, setDireccionMapa] = useState("");
+  const [mascotasPerdidas, setMascotasPerdidas] = useState([]);
+  const [mascotaSeleccionada, setMascotaSeleccionada] = useState(null);
 
-  const sugerencias = [
+  const sugerenciasManuales  = [
     {
       tipo: "Veterinarios",
       nombre: "Clínica Veterinaria San Ignacio",
@@ -82,7 +86,28 @@ const Locate = () => {
     },
   ];
 
-  const sugerenciasFiltradas = sugerencias.filter(item => {
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/mascotas-perdidas/")
+      .then((response) => {
+        setMascotasPerdidas(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener mascotas perdidas:", error);
+      });
+  }, []);
+
+  const todasLasSugerencias = [
+    ...sugerenciasManuales,
+    ...mascotasPerdidas.map(mascota => ({
+      tipo: "Mascotas perdidas",
+      nombre: mascota.nombre,
+      direccion: mascota.lugar_perdida,
+      horario: `Especie: ${mascota.especie}`,
+      telefono: `Raza: ${mascota.raza}`,
+    }))
+  ];
+
+  const sugerenciasFiltradas = todasLasSugerencias.filter(item => {
     const coincideTipo = !tipoSeleccionado || item.tipo === tipoSeleccionado;
     const textoBusqueda = busqueda.toLowerCase();
     const coincideTexto =
@@ -98,40 +123,15 @@ const Locate = () => {
       <Navegador />
 
       <div className="locate-buttons">
-        <Button
-          icono={icono1}
-          texto="Mascotas perdidas"
-          onClick={() => setTipoSeleccionado("Mascotas perdidas")}
-          iconStyle={{ width: "30px", height: "30px" }}
-        />
-        <Button
-          icono={icono2}
-          texto="Veterinarios"
-          onClick={() => setTipoSeleccionado("Veterinarios")}
-          iconStyle={{ width: "30px", height: "30px" }}
-        />
-        <Button
-          icono={icono3}
-          texto="Refugios"
-          onClick={() => setTipoSeleccionado("Refugios")}
-          iconStyle={{ width: "30px", height: "30px" }}
-        />
-        <Button
-          icono={icono4}
-          texto="Tienda de mascotas"
-          onClick={() => setTipoSeleccionado("Tienda de mascotas")}
-          iconStyle={{ width: "60px", height: "30px" }}
-        />
-        <Button
-          icono={icono6}
-          texto="Todos"
-          onClick={() => setTipoSeleccionado(null)}
-          iconStyle={{ width: "30px", height: "30px" }}
-        />
+        <Button icono={icono1} texto="Mascotas perdidas" onClick={() => setTipoSeleccionado("Mascotas perdidas")} iconStyle={{ width: "30px", height: "30px" }} />
+        <Button icono={icono2} texto="Veterinarios" onClick={() => setTipoSeleccionado("Veterinarios")} iconStyle={{ width: "30px", height: "30px" }} />
+        <Button icono={icono3} texto="Refugios" onClick={() => setTipoSeleccionado("Refugios")} iconStyle={{ width: "30px", height: "30px" }} />
+        <Button icono={icono4} texto="Tienda de mascotas" onClick={() => setTipoSeleccionado("Tienda de mascotas")} iconStyle={{ width: "60px", height: "30px" }} />
+        <Button icono={icono6} texto="Todos" onClick={() => setTipoSeleccionado(null)} iconStyle={{ width: "30px", height: "30px" }} />
       </div>
 
       <div className="locate-grid">
-        {/* Columna izquierda */}
+        {/* Izquierda */}
         <div className="locate-search">
           <h2 className="locate-title">Localizador</h2>
           <div className="locate-search-bar">
@@ -153,7 +153,15 @@ const Locate = () => {
                 direccion={item.direccion}
                 horario={item.horario}
                 telefono={item.telefono}
-                onVerMas={(direccion) => setDireccionMapa(direccion)}
+                onVerMas={(direccion) => {
+                  setDireccionMapa(direccion);
+                  if (item.tipo === "Mascotas perdidas") {
+                    const mascota = mascotasPerdidas.find(m => m.nombre === item.nombre && m.lugar_perdida === item.direccion);
+                    setMascotaSeleccionada(mascota);
+                  } else {
+                    setMascotaSeleccionada(null);
+                  }
+                }}
               />
             ))}
           </div>
@@ -165,7 +173,42 @@ const Locate = () => {
         </div>
 
         {/* Derecha */}
-        <div className="locate-publication">Columna derecha</div>
+        <div className="locate-publication">
+          {mascotaSeleccionada ? (
+            <>
+              <h2>{mascotaSeleccionada.nombre}</h2>
+              <img
+                src={mascotaSeleccionada.foto}
+                alt={mascotaSeleccionada.nombre}
+                className="mascota-foto"
+              />
+              <p><strong>Especie:</strong> {mascotaSeleccionada.especie}</p>
+              <p><strong>Raza:</strong> {mascotaSeleccionada.raza}</p>
+              <p><strong>Color:</strong> {mascotaSeleccionada.color}</p>
+              <p><strong>Tamaño:</strong> {mascotaSeleccionada.tamano}</p>
+
+              {mascotaSeleccionada.fecha_perdida && (
+                <>
+                  <p><strong>Fecha pérdida:</strong> {mascotaSeleccionada.fecha_perdida.slice(0, 10)}</p>
+                  <p><strong>Hora pérdida:</strong> {mascotaSeleccionada.fecha_perdida.slice(11, 16)}</p>
+                </>
+              )}
+
+              <p><strong>Lugar pérdida:</strong> {mascotaSeleccionada.lugar_perdida}</p>
+              <p><strong>Descripción:</strong> {mascotaSeleccionada.descripcion}</p>
+              <p><strong>Estado:</strong> {mascotaSeleccionada.estado}</p>
+              <p><strong>Contacto:</strong> {mascotaSeleccionada.telefono_contacto}</p>
+              <button className="boton-volver" onClick={() => setMascotaSeleccionada(null)}> ⬅ Volver </button>
+            </>
+          ) : (
+            <>
+              <h2 className="locate-title">Explora más</h2>
+              <div className="decorative-images">
+                <img src={icono7} alt="decoración 1" className="decorative-image image-1" />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
