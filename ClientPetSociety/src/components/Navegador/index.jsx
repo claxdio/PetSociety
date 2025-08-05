@@ -9,59 +9,62 @@ function Navegador() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const now = Date.now() / 1000;
-        if (decoded.exp > now) {
-          setIsLoggedIn(true);
-        } else {
+    const checkLogin = () => {
+      const token = localStorage.getItem("access");
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const now = Date.now() / 1000;
+          setIsLoggedIn(decoded.exp > now);
+        } catch {
           setIsLoggedIn(false);
         }
-      } catch {
+      } else {
         setIsLoggedIn(false);
       }
-    }
+    };
+
+    checkLogin();
+
+    // Opción: escuchar cambios de login/logout en otras pestañas
+    window.addEventListener("storage", checkLogin);
+
+    return () => {
+      window.removeEventListener("storage", checkLogin);
+    };
   }, []);
 
+
   const handleClick = () => {
-    navigate(isLoggedIn ? "/profile" : "/login");
-  };
+  const token = localStorage.getItem("access");
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const now = Date.now() / 1000;
+      if (decoded.exp > now) {
+        const username = decoded.username; // <-- Asegúrate de que el token tenga esto
+        navigate(`/profile`);
+        return;
+      }
+    } catch {}
+  }
+  navigate("/login");
+};
 
-  const ClickSearch = () => {
-    navigate("/Search");
-  };
-
-  const ClickForum = () => {
-    navigate("/Forum");
-  };
-
-  const ClickLocation = () => {
-    navigate("/locate");
-  };
-
-  const ClickHome = () => {
-    navigate("/");
-  };
+  const ClickSearch = () => navigate("/Search");
+  const ClickForum = () => navigate("/Forum");
+  const ClickLocation = () => navigate("/locate");
+  const ClickHome = () => navigate("/");
 
   return (
     <nav className="navegador">
       <div className="nav-container">
         <img src={Logo} alt="Logo" className="logo" />
-        < div className="nav-links">
-        <button className="link"onClick={ClickHome}>
-            Principal
-          </button>
-          <button className="link"onClick={ClickSearch}>
-            Buscar
-          </button>
-          <button className="link"onClick={ClickForum}>
-            Foro
-          </button>
-          <button className="link"onClick={ClickLocation}>
-            Localizar
-          </button>
+        <div className="nav-links">
+          <button className="link" onClick={ClickHome}>Principal</button>
+          <button className="link" onClick={ClickSearch}>Buscar</button>
+          <button className="link" onClick={ClickForum}>Foro</button>
+          <button className="link" onClick={ClickLocation}>Localizar</button>
         </div>
         <button className="nav-login-btn" onClick={handleClick}>
           {isLoggedIn ? "Perfil" : "Iniciar sesión"}

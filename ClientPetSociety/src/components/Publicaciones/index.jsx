@@ -18,12 +18,23 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios, c
         <button className="like-button">{likes}🖤</button>
       </div>
       {descripcion}
-      <div className="categoria-frame">
+      <div className="categoria-frame">      {/* Me sale que esta linea esta mal o bueno el div */}
       {categoria.map((cat, index) => (
         <div key={index} className="categoria-item">{cat}</div>
       ))}
       </div>
-      <div className="coment-frame-frame">
+
+      {/* <div className="categoria-frame">
+            {Array.isArray(categoria) 
+              ? categoria.map((cat, index) => (
+                  <div key={index} className="categoria-item">{cat}</div>
+                ))
+              : <div className="categoria-item">{categoria}</div>}
+          </div> 
+          
+          yo probe con eso y se arreglo*/}
+
+      <div className="coment-frame-frame">  {/* y esta igual sale mal */}
         {comentarios.map((coment, index) => (
           <Comentario
             key={index}
@@ -32,7 +43,21 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios, c
             fotoUsuario={coment.fotoUsuario}
           />
         ))}
-       </div>
+      </div>
+
+      {/* <div className="coment-frame-frame">
+            {Array.isArray(comentarios) && comentarios.map((coment, index) => (
+              <Comentario
+                key={index}
+                usuario={coment.usuario}
+                descripcion={coment.descripcion}
+                fotoUsuario={coment.fotoUsuario}
+              />
+            ))}
+          </div> 
+          
+          Y probe este otro y me funciono de nuevo la pagina, pero despues sale error en el backend por la autenticacion o algo asi*/}
+
     </div>
   );
 }

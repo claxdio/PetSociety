@@ -169,7 +169,7 @@ const Locate = () => {
 
         {/* Centro */}
         <div className="locate-map">
-          <Mapa direccion={direccionMapa} />
+          <Mapa key={direccionMapa} direccion={direccionMapa} />
         </div>
 
         {/* Derecha */}
