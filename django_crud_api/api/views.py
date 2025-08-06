@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework import generics, status, serializers
+from rest_framework import generics, status, serializers, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
+from .models import Publicacion
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer,
@@ -15,15 +16,9 @@ from .serializers import (
 from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
 from django.db import models
 
-class PublicacionListCreateView(generics.ListCreateAPIView):
+class PublicacionViewSet(viewsets.ModelViewSet):
+    queryset = Publicacion.objects.all()
     serializer_class = PublicacionSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Publicacion.objects.all() #type: ignore
-
-    def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()

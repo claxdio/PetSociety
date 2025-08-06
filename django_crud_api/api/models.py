@@ -42,7 +42,7 @@ class Perfil(models.Model):
 class Categoria(models.Model):
     """Categorías para las publicaciones (ej. #consejos, #gracioso)"""
     nombre = models.CharField(max_length=50, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
+   # descripcion = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Categorías"
@@ -52,29 +52,32 @@ class Categoria(models.Model):
         return self.nombre
 
 class Publicacion(models.Model):
-    TIPO_PUBLICACION_CHOICES = [
-        ('general', 'General'),
-        ('adopcion', 'Adopción'),
-        ('mascota_perdida', 'Mascota Perdida'),
-        ('otro', 'Otro'),
-    ]
+    # TIPO_PUBLICACION_CHOICES = [
+    #    ('general', 'General'),
+    #    ('adopcion', 'Adopción'),
+    #    ('mascota_perdida', 'Mascota Perdida'),
+    #    ('otro', 'Otro'),
+    #]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='publicaciones')
     descripcion = models.TextField()
     # El campo 'imagen' se elimina, ahora se gestiona con ArchivoPublicacion
-    foto_usuario = models.URLField(blank=True, null=True) 
+    # foto_usuario = models.URLField(blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     # Relaciones Many-to-Many
-    mascotas_etiquetadas = models.ManyToManyField('Mascota', related_name='publicaciones_etiquetadas', blank=True)
-    categorias = models.ManyToManyField(Categoria, related_name='publicaciones', blank=True)
+
+    # luego:------------------
+    # mascotas_etiquetadas = models.ManyToManyField('Mascota', related_name='publicaciones_etiquetadas', blank=True)
+    # categorias = models.ManyToManyField(Categoria, related_name='publicaciones', blank=True)
+    # -----------------------
 
     # Nuevo campo para tipo de publicación
-    tipo_publicacion = models.CharField(
-        max_length=20,
-        choices=TIPO_PUBLICACION_CHOICES,
-        default='general'
-    )
+    #tipo_publicacion = models.CharField(
+    #    max_length=20,
+    #    choices=TIPO_PUBLICACION_CHOICES,
+    #    default='general'
+    #)
 
     class Meta:
         ordering = ['-fecha_creacion']

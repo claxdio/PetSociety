@@ -26,8 +26,10 @@ class PerfilAdmin(admin.ModelAdmin):
 
 @admin.register(Publicacion)
 class PublicacionAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'tipo_publicacion', 'descripcion_corta', 'fecha_creacion']
-    list_filter = ['tipo_publicacion', 'fecha_creacion']
+    #list_display = ['usuario', 'tipo_publicacion', 'descripcion_corta', 'fecha_creacion']
+    #list_filter = ['tipo_publicacion', 'fecha_creacion']
+    list_display = ['usuario', 'descripcion_corta', 'fecha_creacion']
+    list_filter = ['fecha_creacion']
     search_fields = ['usuario__username', 'descripcion']
     readonly_fields = ['fecha_creacion']
     

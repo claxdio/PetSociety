@@ -15,5 +15,4 @@ urlpatterns = [
     path('api/token/', CustomTokenObtainPairView.as_view(), name='get_token'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),
     path('api/', include('django_crud_api.api.urls')),
-
 ]

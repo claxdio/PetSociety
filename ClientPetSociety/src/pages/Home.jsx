@@ -10,61 +10,63 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 
 function Home() {
-  
 
-const camposFormulario = [
-  { 
-    nombre: "descripcion", 
-    label: "Descripción", 
-    tipo: "textarea",
-    required: true 
-  },
-  { 
-    nombre: "categoria", 
-    label: "Categoría", 
-    tipo: "select", 
-    opciones: ["General", "Adopción", "Mascota Perdida"] 
-  },
-  { 
-    nombre: "archivos", 
-    label: "Imágenes/Videos", 
-    tipo: "file" 
-  },
-];
 
-const listaDeMascotas = [
-  { nombre: "Fido" },
-  { nombre: "Luna" },
-  { nombre: "Max" },
-  { nombre: "Mia" },
-  { nombre: "Toby" },
-];
+  const camposFormulario = [
+    { 
+      nombre: "descripcion", 
+      label: "Descripción", 
+      tipo: "textarea",
+      required: true 
+    },
+    { 
+      nombre: "categoria", 
+      label: "Categoría", 
+      tipo: "select", 
+      opciones: ["General", "Adopción", "Mascota Perdida"] 
+    },
+    { 
+      nombre: "archivos", 
+      label: "Imágenes/Videos", 
+      tipo: "file" 
+    },
+  ];
+
+  const listaDeMascotas = [
+    { nombre: "Fido" },
+    { nombre: "Luna" },
+    { nombre: "Max" },
+    { nombre: "Mia" },
+    { nombre: "Toby" },
+  ];
 
   const [mostrarForm, setMostrarForm] = useState(false);
 
   const [publicaciones, setPublicaciones] = useState([]);
 
+  const fetchPublicaciones = async () => {
+    try {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (!token) throw new Error('No authentication token found');
+
+      const response = await api.get('/publicaciones/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setPublicaciones(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        window.location.href = '/login';
+      }
+    }
+  };
+
   useEffect(() => {
-        const fetchPublicaciones = async () => {
-            try {
-                const token = localStorage.getItem(ACCESS_TOKEN);
-                if (!token) {
-                    throw new Error('No authentication token found');
-                }
-                const response = await api.get('/api/publicaciones/');
-                setPublicaciones(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                // Redirige a login si es un error 401
-                if (error.response?.status === 401) {
-                    window.location.href = '/login';
-                }
-            }
-        };
-
-        fetchPublicaciones();
-    }, []);
-
+    fetchPublicaciones();
+  }, []);
 
   return (
     <div className="home-container">
@@ -87,17 +89,22 @@ const listaDeMascotas = [
             Publicar
           </div>
           <div className="home-posts">
-          {publicaciones.map((post, i) => (
-                <Post
-                key={i}
-                usuario={post.usuario}
-                imagen={post.imagen}
-                descripcion={post.descripcion}
-                fotoUsuario={post.fotoUsuario}
-                categoria={post.categoria}
-                likes={post.likes}
-                comentarios={post.comentarios}
-                />
+          {publicaciones.map(post => (
+              <Post
+                key={post.id}
+                usuario={post.usuario.username ?? "Desconocido"}
+                descripcion={post.descripcion ?? ""}
+                fechaCreacion={post.fecha_creacion ?? ""}
+                imagen={post.imagen ?? null}
+                fotoUsuario={post.fotoUsuario ?? null}
+                categoria={
+                  Array.isArray(post.categoria)
+                    ? post.categoria
+                    : [post.categoria ?? "General"]
+                }
+                likes={post.likes ?? []}
+                comentarios={post.comentarios ?? []}
+              />
             ))}
           </div>
         </div>
