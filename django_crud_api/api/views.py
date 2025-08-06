@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework import generics, status, serializers
+from rest_framework import generics, status, serializers, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -11,17 +11,42 @@ from .models import (Reporte)
 from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer,
     PublicacionSerializer, CustomTokenObtainPairSerializer, ReporteSerializer,
-    MascotaSerializer, AgendaSerializer, EventoAgendaSerializer,
+    MascotaSerializer, AgendaSerializer, EventoAgendaSerializer, ForoPyRSerializer,
     ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer
 )
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR
 from django.core.exceptions import ValidationError as DjangoValidationError
-
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Publicacion
-from .serializers import PublicacionSerializer
+
+class ForoPyRListCreateView(generics.ListCreateAPIView):
+    queryset = ForoPyR.objects.all()
+    serializer_class = ForoPyRSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = ForoPyR.objects.all()
+        tipo = self.request.query_params.get('tipo')  # 'pregunta' o 'respuesta'
+
+        if tipo == 'pregunta':
+            queryset = queryset.filter(parent__isnull=True)
+        elif tipo == 'respuesta':
+            queryset = queryset.filter(parent__isnull=False)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+
+class ForoPyRDeleteView(generics.DestroyAPIView):
+    queryset = ForoPyR.objects.all()
+    serializer_class = ForoPyRSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.usuario != request.user and not request.user.is_staff:
+            return Response({"detail": "No tienes permiso para eliminar esta entrada."}, status=status.HTTP_403_FORBIDDEN)
+        return super().delete(request, *args, **kwargs)
 
 class PublicacionFiltradaView(APIView):
     def get(self, request):

@@ -507,6 +507,7 @@ class ForoPyR(models.Model):
     def es_respuesta(self):
         return self.parent is not None
 
+
 class Establecimiento(models.Model):
     """Establecimientos relacionados con mascotas (veterinarias, tiendas, etc.)."""
     TIPO_ESTABLECIMIENTO_CHOICES = [

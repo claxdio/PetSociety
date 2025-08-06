@@ -5,8 +5,8 @@ from .views import (
     PerfilDetailView, UserDetailView, CreateUserView,
     MascotaListCreateView, MascotaDetailView, UserMascotaListView,
     AgendaDetailView, EventoAgendaListCreateView, EventoAgendaDetailView,
-    ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,
-    MascotaPerdidaListCreateView, MascotaPerdidaDetailView,
+    ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView,
+    MascotaPerdidaListCreateView, MascotaPerdidaDetailView, ForoPyRListCreateView,
     upload_archivo_publicacion, upload_foto_perfil, toggle_like, agregar_comentario,
     CategoriaListCreateView, ReporteCreateView, PublicacionFiltradaView
 )
@@ -21,6 +21,9 @@ urlpatterns = [
     path('usuarios/<str:username>/mascotas/', UserMascotaListView.as_view(), name='user-mascota-list'),
     path('reportes/', ReporteCreateView.as_view(), name='reporte-create'),
     path('publicaciones/filtrar/', PublicacionFiltradaView.as_view(), name='filtrar_publicaciones'),
+
+    path('foro/', ForoPyRListCreateView.as_view(), name='foro-list-create'),
+    path('foro/<int:pk>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
 
     # Endpoints para Mascotas
     path('mascotas/', MascotaListCreateView.as_view(), name='mascota-list-create'),
@@ -40,15 +43,15 @@ urlpatterns = [
     # Endpoints para Mascota Perdida
     path('mascotas-perdidas/', MascotaPerdidaListCreateView.as_view(), name='mascota-perdida-list-create'),
     path('mascotas-perdidas/<int:pk>/', MascotaPerdidaDetailView.as_view(), name='mascota-perdida-detail'),
-    
+
     # Endpoints para subida de archivos
     path('publicaciones/<int:publicacion_id>/upload/', upload_archivo_publicacion, name='upload-archivo-publicacion'),
     path('user/upload-foto-perfil/', upload_foto_perfil, name='upload-foto-perfil'),
-    
+
     # Endpoints para interacciones
     path('publicaciones/<int:publicacion_id>/like/', toggle_like, name='toggle-like'),
     path('publicaciones/<int:publicacion_id>/comentar/', agregar_comentario, name='agregar-comentario'),
-    
+
     # Endpoints para categorías
     path('categorias/', CategoriaListCreateView.as_view(), name='categoria-list-create'),
 ]

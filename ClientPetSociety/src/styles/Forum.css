@@ -107,59 +107,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.notifications-container {
-  width: 90%; 
-  max-width: 300px; 
-  margin: 0 auto; 
-  padding: 10px;
-}
-
-.notification-box {
-  background-color: #f8f9fa;
-  border-left: 4px solid rgb(71, 219, 52); 
-  padding: 12px 15px;
-  margin-bottom: 15px; 
-  border-radius: 0 4px 4px 0; 
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.notification-text {
-  margin: 0;
-  color: #333;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
 .forum-sidebar.left .sidebar-box h2 {
   margin-top: 20px; 
   margin-bottom: 15px;
-}
-
-.users-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; 
-}
-
-.user-with-avatar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar-circle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #2d8f30db; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.user-avatar-circle.with-initial::after {
-  content: attr(data-initial);
 }

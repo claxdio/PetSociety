@@ -2,8 +2,37 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
-from .models import ArchivoPublicacion, Comentario, Reaccion, Categoria, Reporte
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, Comentario, Reaccion, Categoria, Reporte, ForoPyR
+
+class ForoPyRSerializer(serializers.ModelSerializer):
+    usuario_username = serializers.CharField(source='usuario.username', read_only=True)
+    usuario = serializers.PrimaryKeyRelatedField(read_only=True)  # <-- aquí!
+    respuestas = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ForoPyR
+        fields = [
+            'id',
+            'usuario',
+            'usuario_username',
+            'contenido',
+            'fecha_creacion',
+            'parent',
+            'titulo',
+            'resuelta',
+            'es_mejor_respuesta',
+            'es_pregunta',
+            'es_respuesta',
+            'respuestas',
+        ]
+        read_only_fields = ['fecha_creacion', 'usuario_username', 'es_pregunta', 'es_respuesta', 'respuestas']
+
+    def get_respuestas(self, obj):
+        if obj.es_pregunta:
+            respuestas = obj.respuestas.all()
+            return ForoPyRSerializer(respuestas, many=True, context=self.context).data
+        return None
+    
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
