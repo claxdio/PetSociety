@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django_crud_api.api.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django_crud_api.api.serializers import CustomTokenObtainPairSerializer
@@ -16,3 +18,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),
     path('api/', include('django_crud_api.api.urls')),
 ]
+
+# Servir archivos media en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

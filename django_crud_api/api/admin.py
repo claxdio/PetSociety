@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Categoria, Comentario, Reaccion
 
 @admin.register(Perfil)
 class PerfilAdmin(admin.ModelAdmin):
@@ -24,18 +24,51 @@ class PerfilAdmin(admin.ModelAdmin):
         }),
     )
 
+class ArchivoPublicacionInline(admin.TabularInline):
+    model = ArchivoPublicacion
+    extra = 1
+    fields = ['tipo_archivo', 'ruta_archivo']
+    verbose_name = "Archivo de publicación"
+    verbose_name_plural = "Archivos de publicación"
+
+class ComentarioInline(admin.TabularInline):
+    model = Comentario
+    extra = 0
+    fields = ['usuario', 'contenido', 'fecha_creacion', 'es_oculto']
+    readonly_fields = ['fecha_creacion']
+    verbose_name = "Comentario"
+    verbose_name_plural = "Comentarios"
+    ordering = ['-fecha_creacion']
+
+class ReaccionInline(admin.TabularInline):
+    model = Reaccion
+    extra = 0
+    fields = ['usuario', 'tipo_reaccion', 'fecha_creacion']
+    readonly_fields = ['fecha_creacion']
+    verbose_name = "Reacción"
+    verbose_name_plural = "Reacciones"
+    ordering = ['-fecha_creacion']
+
 @admin.register(Publicacion)
 class PublicacionAdmin(admin.ModelAdmin):
-    #list_display = ['usuario', 'tipo_publicacion', 'descripcion_corta', 'fecha_creacion']
-    #list_filter = ['tipo_publicacion', 'fecha_creacion']
-    list_display = ['usuario', 'descripcion_corta', 'fecha_creacion']
-    list_filter = ['fecha_creacion']
+    list_display = ['usuario', 'tipo_publicacion', 'descripcion_corta', 'fecha_creacion', 'total_comentarios', 'total_reacciones']
+    list_filter = ['tipo_publicacion', 'fecha_creacion']
     search_fields = ['usuario__username', 'descripcion']
     readonly_fields = ['fecha_creacion']
+    inlines = [ArchivoPublicacionInline, ComentarioInline, ReaccionInline]
+    filter_horizontal = ['categorias', 'mascotas_etiquetadas']
     
     def descripcion_corta(self, obj):
         return obj.descripcion[:50] + '...' if len(obj.descripcion) > 50 else obj.descripcion
     descripcion_corta.short_description = 'Descripción'
+    
+    def total_comentarios(self, obj):
+        return obj.comentarios.count()
+    total_comentarios.short_description = 'Comentarios'
+    
+    def total_reacciones(self, obj):
+        return obj.reacciones.count()
+    total_reacciones.short_description = 'Reacciones'
 
 @admin.register(Mascota)
 class MascotaAdmin(admin.ModelAdmin):
@@ -164,3 +197,29 @@ class MascotaPerdidaAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('publicacion', 'publicacion__usuario', 'mascota')
+
+@admin.register(Categoria)
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'descripcion']
+    search_fields = ['nombre', 'descripcion']
+    ordering = ['nombre']
+
+@admin.register(Comentario)
+class ComentarioAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'publicacion', 'contenido_corto', 'fecha_creacion', 'es_oculto']
+    list_filter = ['fecha_creacion', 'es_oculto', 'publicacion__tipo_publicacion']
+    search_fields = ['usuario__username', 'contenido', 'publicacion__descripcion']
+    readonly_fields = ['fecha_creacion']
+    date_hierarchy = 'fecha_creacion'
+    
+    def contenido_corto(self, obj):
+        return obj.contenido[:50] + '...' if len(obj.contenido) > 50 else obj.contenido
+    contenido_corto.short_description = 'Contenido'
+
+@admin.register(Reaccion)
+class ReaccionAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'publicacion', 'tipo_reaccion', 'fecha_creacion']
+    list_filter = ['tipo_reaccion', 'fecha_creacion', 'publicacion__tipo_publicacion']
+    search_fields = ['usuario__username', 'publicacion__descripcion']
+    readonly_fields = ['fecha_creacion']
+    date_hierarchy = 'fecha_creacion'

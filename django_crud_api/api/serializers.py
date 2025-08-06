@@ -3,18 +3,51 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from .models import ArchivoPublicacion, Comentario, Reaccion, Categoria, Reporte
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
+    foto_perfil_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Perfil
         fields = [
             'id', 'nombre', 'apellido', 'nombre_completo', 'direccion', 
-            'foto_perfil', 'biografia', 'fecha_registro', 'tipo_usuario', 
+            'foto_perfil', 'foto_perfil_url', 'biografia', 'fecha_registro', 'tipo_usuario', 
             'cuenta_activa'
         ]
         read_only_fields = ['fecha_registro']
+    
+    def get_foto_perfil_url(self, obj):
+        if obj.foto_perfil:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.foto_perfil.url)
+            return obj.foto_perfil.url
+        return None
+
+class ReporteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reporte
+        fields = ['id', 'publicacion_reportada', 'motivo']
+        # usuario_reportante se completa automáticamente
+        read_only_fields = ['id']
+    
+    def validate(self, attrs):
+        user = self.context['request'].user
+        publicacion = attrs['publicacion_reportada']
+
+        if publicacion.usuario == user:
+            raise serializers.ValidationError("No puedes reportar tu propia publicación.")
+        
+        if Reporte.objects.filter(publicacion_reportada=publicacion, usuario_reportante=user).exists():
+            raise serializers.ValidationError("Ya has reportado esta publicación.")
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data['usuario_reportante'] = self.context['request'].user
+        return super().create(validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
     perfil = PerfilSerializer(read_only=True)
@@ -102,29 +135,96 @@ class AgendaSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['fecha_creacion', 'fecha_actualizacion']
 
+class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Comentario
+        fields = ['id', 'usuario', 'contenido', 'fecha_creacion', 'es_oculto']
+        read_only_fields = ['fecha_creacion']
+
+class ReaccionSerializer(serializers.ModelSerializer):
+    usuario = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Reaccion
+        fields = ['id', 'usuario', 'tipo_reaccion', 'fecha_creacion']
+        read_only_fields = ['fecha_creacion']
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nombre', 'descripcion']
+
 class PublicacionSerializer(serializers.ModelSerializer):
     usuario = UserSerializer(read_only=True)
-    #usuario_id = serializers.PrimaryKeyRelatedField(
-    #    queryset=User.objects.all(), 
-    #    source='usuario', 
-    #    write_only=True
-    #)
-
-    #class Meta:
-    #    model = Publicacion
-    #    fields = [
-    #        'id', 'usuario', 'usuario_id', 'descripcion',
-    #        'foto_usuario', 'comentarios', 'fecha_creacion', 'tipo_publicacion'
-    #    ]
-    #    read_only_fields = ['fecha_creacion']
+    usuario_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), 
+        source='usuario', 
+        write_only=True,
+        required=False  # Since it's set in perform_create
+    )
+    imagen = serializers.SerializerMethodField()
+    comentarios = ComentarioSerializer(many=True, read_only=True)
+    reacciones = ReaccionSerializer(many=True, read_only=True)
+    categorias = CategoriaSerializer(many=True, read_only=True)
+    mascotas_etiquetadas = MascotaSerializer(many=True, read_only=True)
+    likes = serializers.SerializerMethodField()
+    total_comentarios = serializers.SerializerMethodField()
+    
+    # Campos para escribir las relaciones many-to-many
+    categoria_ids = serializers.ListField(
+        child=serializers.IntegerField(), 
+        write_only=True, 
+        required=False
+    )
+    mascota_ids = serializers.ListField(
+        child=serializers.IntegerField(), 
+        write_only=True, 
+        required=False
+    )
 
     class Meta:
         model = Publicacion
         fields = [
-            'id', 'usuario', 'descripcion',
-            'fecha_creacion'
+            'id', 'usuario', 'usuario_id', 'descripcion', 'imagen', 
+            'comentarios', 'reacciones', 'categorias', 'mascotas_etiquetadas',
+            'fecha_creacion', 'tipo_publicacion', 'likes', 'total_comentarios',
+            'categoria_ids', 'mascota_ids'
         ]
         read_only_fields = ['fecha_creacion']
+
+    def get_imagen(self, obj):
+        archivo = obj.archivos.filter(tipo_archivo='imagen').first()
+        if archivo and archivo.ruta_archivo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(archivo.ruta_archivo.url)
+            return archivo.ruta_archivo.url
+        return None
+    
+    def get_likes(self, obj):
+        return obj.reacciones.count()
+    
+    def get_total_comentarios(self, obj):
+        return obj.comentarios.count()
+    
+    def create(self, validated_data):
+        # Extraer los IDs de categorías y mascotas antes de crear la publicación
+        categoria_ids = validated_data.pop('categoria_ids', [])
+        mascota_ids = validated_data.pop('mascota_ids', [])
+        
+        # Crear la publicación
+        publicacion = super().create(validated_data)
+        
+        # Agregar las relaciones many-to-many
+        if categoria_ids:
+            publicacion.categorias.set(categoria_ids)
+        
+        if mascota_ids:
+            publicacion.mascotas_etiquetadas.set(mascota_ids)
+        
+        return publicacion
 
 class ProcesoAdopcionSerializer(serializers.ModelSerializer):
     publicacion = PublicacionSerializer(read_only=True)
@@ -199,22 +299,30 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         username_or_email = attrs.get('username')
         password = attrs.get('password')
         user = None
-        # Buscar por username o email
+
         if User.objects.filter(username=username_or_email).exists():
             user = authenticate(username=username_or_email, password=password)
         elif User.objects.filter(email=username_or_email).exists():
             user_obj = User.objects.get(email=username_or_email)
             user = authenticate(username=user_obj.username, password=password)
+
         if user is None:
             raise serializers.ValidationError('Credenciales inválidas.')
-        
-        # Verificar si la cuenta está activa
+
         if not user.is_active:
             raise serializers.ValidationError('Cuenta desactivada.')
-        
-        # Verificar si el perfil está activo
+
         if hasattr(user, 'perfil') and not user.perfil.cuenta_activa:
             raise serializers.ValidationError('Cuenta bloqueada por administrador.')
-        
+
         data = super().validate({'username': user.username, 'password': password})
+
+        # ✅ Crear el token y agregarle el username al payload
+        refresh = self.get_token(user)
+        refresh['username'] = user.username  # <--- esto es lo que faltaba
+
+        data['access'] = str(refresh.access_token)
+        data['refresh'] = str(refresh)
+        data['username'] = user.username
+
         return data

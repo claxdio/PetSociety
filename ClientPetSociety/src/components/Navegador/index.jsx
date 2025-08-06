@@ -34,7 +34,7 @@ function Navegador() {
     };
   }, []);
 
-
+  
   const handleClick = () => {
   const token = localStorage.getItem("access");
   if (token) {
@@ -43,7 +43,7 @@ function Navegador() {
       const now = Date.now() / 1000;
       if (decoded.exp > now) {
         const username = decoded.username; // <-- Asegúrate de que el token tenga esto
-        navigate(`/profile`);
+        navigate(`/profile/${username}`);
         return;
       }
     } catch {}

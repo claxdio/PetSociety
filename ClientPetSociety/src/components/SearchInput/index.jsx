@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function SearchInput({ placeholder = "Buscar..." }) {
-  const [value, setValue] = useState("");
-
+function SearchInput({ placeholder = "Buscar...", value, onChange }) {
   return (
     <input
-      type="search"
+      type="text"
       value={value}
-      onChange={e => setValue(e.target.value)}
+      onChange={onChange}
       placeholder={placeholder}
       className="search-input"
     />
   );
 }
+
+export default SearchInput;

@@ -6,67 +6,159 @@ import Cita from "../components/Cita/index.jsx";
 import Mascotas from "../components/Mascotas/index.jsx";
 import api from "../api.js";
 import "../styles/Home.css";
+import axios from 'axios';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 
 function Home() {
-
-
-  const camposFormulario = [
-    { 
-      nombre: "descripcion", 
-      label: "Descripción", 
-      tipo: "textarea",
-      required: true 
-    },
-    { 
-      nombre: "categoria", 
-      label: "Categoría", 
-      tipo: "select", 
-      opciones: ["General", "Adopción", "Mascota Perdida"] 
-    },
-    { 
-      nombre: "archivos", 
-      label: "Imágenes/Videos", 
-      tipo: "file" 
-    },
-  ];
-
-  const listaDeMascotas = [
-    { nombre: "Fido" },
-    { nombre: "Luna" },
-    { nombre: "Max" },
-    { nombre: "Mia" },
-    { nombre: "Toby" },
-  ];
-
   const [mostrarForm, setMostrarForm] = useState(false);
-
   const [publicaciones, setPublicaciones] = useState([]);
-
-  const fetchPublicaciones = async () => {
-    try {
-      const token = localStorage.getItem(ACCESS_TOKEN);
-      if (!token) throw new Error('No authentication token found');
-
-      const response = await api.get('/publicaciones/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setPublicaciones(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        window.location.href = '/login';
-      }
-    }
-  };
+  const [categorias, setCategorias] = useState([]);
+  const [mascotas, setMascotas] = useState([]);
+  const [eventosAgenda, setEventosAgenda] = useState([]);
 
   useEffect(() => {
-    fetchPublicaciones();
-  }, []);
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem(ACCESS_TOKEN);
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                // Fetch publicaciones, categorías y mascotas en paralelo
+                const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
+                    api.get('/api/publicaciones/'),
+                    api.get('/api/categorias/'),
+                    api.get('/api/mascotas/'),
+                    api.get('/api/eventos-agenda/')
+                ]);
+
+                setPublicaciones(publicacionesRes.data);
+                setCategorias(categoriasRes.data);
+                setMascotas(mascotasRes.data);
+                setEventosAgenda(eventosRes.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                console.error('Error status:', error.response?.status);
+                console.error('Error data:', error.response?.data);
+                // Redirige a login si es un error 401 o 403
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    localStorage.removeItem(ACCESS_TOKEN);
+                    localStorage.removeItem(REFRESH_TOKEN);
+                    window.location.href = '/login';
+                }
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Crear campos de formulario dinámicamente
+    const camposFormulario = [
+        {
+            nombre: "descripcion",
+            label: "Descripción",
+            tipo: "textarea",
+            required: true
+        },
+        {
+            nombre: "tipo_publicacion",
+            label: "Tipo de Publicación",
+            tipo: "select",
+            opciones: ["general", "adopcion", "mascota_perdida"],
+            labels: ["General", "Adopción", "Mascota Perdida"]
+        },
+        {
+            nombre: "categorias",
+            label: "Categorías (#hashtags)",
+            tipo: "multi-select",
+            creable: true,
+            opciones: categorias.map(cat => ({value: cat.id, label: cat.nombre}))
+        },
+        {
+            nombre: "mascotas_etiquetadas",
+            label: "Etiquetar Mascotas",
+            tipo: "multi-select",
+            creable: false,
+            opciones: mascotas.map(mascota => ({value: mascota.id, label: mascota.nombre}))
+        },
+        {
+            nombre: "archivo",
+            label: "Imágenes/Videos",
+            tipo: "file",
+            accept: "image/*,video/*"
+        }
+    ];
+
+    const onCrearCategoria = async (inputValue) => {
+      try {
+        const response = await axios.post('http://localhost:8000/api/categorias/', {
+          nombre: inputValue,
+          descripcion: ''  // opcional, pero envíalo como vacío si no hay
+        });
+
+        return {
+          label: response.data.nombre,
+          value: response.data.id
+        };
+      } catch (error) {
+        console.error('Error creando categoría en API', error);
+        throw error;
+      }
+    };
+
+
+    // Función para manejar la creación de publicación
+    const handlePublicar = async (datosFormulario) => {
+        try {
+            const token = localStorage.getItem(ACCESS_TOKEN);
+
+            // Crear la publicación primero (test simple sin relaciones)
+            const publicacionData = {
+                descripcion: datosFormulario.descripcion || 'Test descripcion',
+                tipo_publicacion: datosFormulario.tipo_publicacion || 'general'
+            };
+
+            // Solo agregar arrays si tienen contenido
+            if (datosFormulario.categorias && datosFormulario.categorias.length > 0) {
+                publicacionData.categoria_ids = datosFormulario.categorias;
+            }
+
+            if (datosFormulario.mascotas_etiquetadas && datosFormulario.mascotas_etiquetadas.length > 0) {
+                publicacionData.mascota_ids = datosFormulario.mascotas_etiquetadas;
+            }
+
+            console.log('Enviando datos:', publicacionData);
+
+            const response = await api.post('/api/publicaciones/', publicacionData);
+            const nuevaPublicacion = response.data;
+
+            // Si hay archivo, subirlo
+            if (datosFormulario.archivo) {
+                const formData = new FormData();
+                formData.append('archivo', datosFormulario.archivo);
+
+                await api.post(`/api/publicaciones/${nuevaPublicacion.id}/upload/`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            }
+
+            // Actualizar la lista de publicaciones
+            const publicacionesRes = await api.get('/api/publicaciones/');
+            setPublicaciones(publicacionesRes.data);
+
+            setMostrarForm(false);
+
+        } catch (error) {
+            console.error('Error al crear publicación:', error);
+            console.error('Error data:', error.response?.data);
+            console.error('Datos enviados:', publicacionData);
+            console.error('Response status:', error.response?.status);
+        }
+    };
 
   return (
     <div className="home-container">
@@ -75,12 +167,19 @@ function Home() {
         <div className="home-calendar">
           <div className="home-title">Agenda</div>
           <div className="calendar-div">
-           <Cita
-              fecha="30/07/2025"
-              peso="12kg"
-              caso="Chequeo general"
-              proxima="30/08/2025"
-            />
+           {eventosAgenda.length === 0 ? (
+              <p>No hay eventos agendados.</p>
+            ) : (
+              eventosAgenda.map(evento => (
+                <Cita
+                  key={evento.id}
+                  fecha={evento.fecha} // o el campo correcto que tengas
+                  peso={evento.peso || "N/A"} // si tienes peso asociado, sino quita
+                  caso={evento.titulo || evento.descripcion || "Evento"} // depende de tu modelo
+                  proxima={evento.proxima_fecha || "N/A"} // ejemplo, según modelo
+                />
+              ))
+            )}
           </div>
         </div>
         <div className="home-center">
@@ -89,31 +188,29 @@ function Home() {
             Publicar
           </div>
           <div className="home-posts">
-          {publicaciones.map(post => (
-              <Post
+          {publicaciones.map((post, i) => (
+                <Post
                 key={post.id}
-                usuario={post.usuario.username ?? "Desconocido"}
-                descripcion={post.descripcion ?? ""}
-                fechaCreacion={post.fecha_creacion ?? ""}
-                imagen={post.imagen ?? null}
-                fotoUsuario={post.fotoUsuario ?? null}
-                categoria={
-                  Array.isArray(post.categoria)
-                    ? post.categoria
-                    : [post.categoria ?? "General"]
-                }
-                likes={post.likes ?? []}
-                comentarios={post.comentarios ?? []}
-              />
+                id={post.id}
+                usuario={post.usuario}
+                imagen={post.imagen}
+                descripcion={post.descripcion}
+                fotoUsuario={null}
+                categorias={post.categorias}
+                categoria={post.tipo_publicacion}
+                likes={post.likes}
+                comentarios={post.comentarios}
+                mascotas_etiquetadas={post.mascotas_etiquetadas}
+                />
             ))}
           </div>
         </div>
         <div className="home-profile">
           <div className="home-title">Mascotas</div>
-          <Mascotas items={listaDeMascotas} />
+          <Mascotas items={mascotas} />
         </div>
       </div>
-      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)}  />}
+      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)} onPublicar={handlePublicar} onCrear={onCrearCategoria} />}
     </div>
   );
 }

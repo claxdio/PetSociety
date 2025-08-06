@@ -4,56 +4,129 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* oscurece el fondo */
-  z-index: 9999; /* asegura que quede arriba de todo */
+  background: rgba(30, 30, 30, 0.7); /* fondo oscuro con algo de transparencia */
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 1.5rem;
-  backdrop-filter: blur(4px); /* opcional: desenfoca */
+  color: #f0f0f0;
+  font-size: 1.6rem;
+  backdrop-filter: blur(6px);
+  transition: background-color 0.3s ease;
 }
 
 .formulario-popup {
-  background: white;
-  color: black;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: #fff;
+  color: #222;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 90%;
-  max-width: 500px;
+  max-width: 480px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: transform 0.3s ease;
+}
+
+.formulario-popup:hover {
+  transform: translateY(-5px);
 }
 
 .formulario-popup h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 2rem;
+  color: #4a4a4a;
+  text-align: center;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
 }
 
 .form-group label {
   margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
 }
 
 input,
 textarea,
 select {
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #5ea82f;
+  box-shadow: 0 0 6px #a3d45f;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.75rem;
   background-color: #5ea82f;
   border: none;
   color: white;
-  border-radius: 8px;
-  margin: 1rem;
-  cursor: pointer;
+  border-radius: 10px;
+  margin-top: 1rem;
   margin-right: 1rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 5px 12px rgba(94, 168, 47, 0.6);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button:hover:not(:disabled) {
+  background-color: #4a7d22;
+  box-shadow: 0 8px 20px rgba(74, 125, 34, 0.8);
+}
+
+.button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.multi-select {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  background-color: #fafafa;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #444;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  accent-color: #5ea82f;
+  cursor: pointer;
+  flex-shrink: 0;
 }
