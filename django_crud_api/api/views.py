@@ -10,9 +10,9 @@ from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer,
     PublicacionSerializer, CustomTokenObtainPairSerializer,
     MascotaSerializer, AgendaSerializer, EventoAgendaSerializer,
-    ProcesoAdopcionSerializer, MascotaPerdidaSerializer
+    ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer
 )
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria
 from django.db import models
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
@@ -24,6 +24,11 @@ class PublicacionListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -36,6 +41,11 @@ class PerfilDetailView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.perfil
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
@@ -246,3 +256,142 @@ def admin_login(request):
             'perfil': PerfilSerializer(user.perfil).data
         }
     })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_archivo_publicacion(request, publicacion_id):
+    """Subir archivos a una publicación específica"""
+    try:
+        publicacion = Publicacion.objects.get(id=publicacion_id, usuario=request.user)
+    except Publicacion.DoesNotExist:
+        return Response(
+            {'error': 'Publicación no encontrada o no tienes permisos'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    archivo = request.FILES.get('archivo')
+    if not archivo:
+        return Response(
+            {'error': 'No se proporcionó ningún archivo'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Determinar tipo de archivo basado en la extensión
+    extension = archivo.name.lower().split('.')[-1]
+    tipo_archivo = 'imagen' if extension in ['jpg', 'jpeg', 'png', 'gif', 'webp'] else 'video' if extension in ['mp4', 'mov', 'avi'] else 'otro'
+    
+    # Crear el registro de archivo
+    archivo_publicacion = ArchivoPublicacion.objects.create(
+        publicacion=publicacion,
+        tipo_archivo=tipo_archivo,
+        ruta_archivo=archivo
+    )
+    
+    return Response({
+        'message': 'Archivo subido exitosamente',
+        'archivo_id': archivo_publicacion.id,
+        'url': request.build_absolute_uri(archivo_publicacion.ruta_archivo.url)
+    }, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_foto_perfil(request):
+    """Subir foto de perfil del usuario"""
+    foto = request.FILES.get('foto_perfil')
+    if not foto:
+        return Response(
+            {'error': 'No se proporcionó ningún archivo'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Actualizar el perfil del usuario
+    perfil = request.user.perfil
+    perfil.foto_perfil = foto
+    perfil.save()
+    
+    return Response({
+        'message': 'Foto de perfil actualizada exitosamente',
+        'foto_url': request.build_absolute_uri(perfil.foto_perfil.url)
+    }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_like(request, publicacion_id):
+    """Toggle like en una publicación (dar o quitar me gusta)"""
+    try:
+        publicacion = Publicacion.objects.get(id=publicacion_id)
+    except Publicacion.DoesNotExist:
+        return Response(
+            {'error': 'Publicación no encontrada'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Verificar si ya tiene like
+    reaccion_existente = Reaccion.objects.filter(
+        publicacion=publicacion, 
+        usuario=request.user, 
+        tipo_reaccion='me_gusta'
+    ).first()
+    
+    if reaccion_existente:
+        # Si ya tiene like, quitarlo
+        reaccion_existente.delete()
+        liked = False
+    else:
+        # Si no tiene like, agregarlo
+        Reaccion.objects.create(
+            publicacion=publicacion,
+            usuario=request.user,
+            tipo_reaccion='me_gusta'
+        )
+        liked = True
+    
+    # Contar likes totales
+    total_likes = publicacion.reacciones.count()
+    
+    return Response({
+        'liked': liked,
+        'total_likes': total_likes,
+        'message': 'Like agregado' if liked else 'Like removido'
+    }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def agregar_comentario(request, publicacion_id):
+    """Agregar un comentario a una publicación"""
+    try:
+        publicacion = Publicacion.objects.get(id=publicacion_id)
+    except Publicacion.DoesNotExist:
+        return Response(
+            {'error': 'Publicación no encontrada'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    contenido = request.data.get('contenido', '').strip()
+    if not contenido:
+        return Response(
+            {'error': 'El comentario no puede estar vacío'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Crear el comentario
+    comentario = Comentario.objects.create(
+        publicacion=publicacion,
+        usuario=request.user,
+        contenido=contenido
+    )
+    
+    # Serializar el comentario recién creado
+    from .serializers import ComentarioSerializer
+    comentario_serializer = ComentarioSerializer(comentario, context={'request': request})
+    
+    return Response({
+        'comentario': comentario_serializer.data,
+        'total_comentarios': publicacion.comentarios.count(),
+        'message': 'Comentario agregado exitosamente'
+    }, status=status.HTTP_201_CREATED)
+
+class CategoriaListView(generics.ListAPIView):
+    serializer_class = CategoriaSerializer
+    permission_classes = [AllowAny]
+    queryset = Categoria.objects.all()

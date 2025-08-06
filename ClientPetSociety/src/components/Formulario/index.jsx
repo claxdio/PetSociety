@@ -1,27 +1,62 @@
 import React, { useState } from "react";
 import "./style.css";
 
-
-const camposFormulario = [
-  { nombre: "nombre", label: "Nombre", tipo: "texto" },
-  { nombre: "email", label: "Correo electrónico", tipo: "email" },
-  { nombre: "mensaje", label: "Mensaje", tipo: "textarea" },
-  { nombre: "categoria", label: "Categoría", tipo: "select", opciones: ["General", "Sugerencia", "Bug"] },
-  { nombre: "imagen", label: "Subir imagen", tipo: "file" },
-];
-
 function Form({ onClose, camposFormulario, onPublicar }) {
   const [formulario, setFormulario] = useState({});
   const [archivoNombre, setArchivoNombre] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   
 
   const handleChange = (e) => {
+    const { name, value, files, type } = e.target;
+    
+    if (type === 'file') {
+      const file = files[0];
+      setFormulario(prev => ({
+        ...prev,
+        [name]: file
+      }));
+      setArchivoNombre(file ? file.name : '');
+    } else if (type === 'checkbox') {
+      // Para multi-select con checkboxes
+      const currentValue = formulario[name] || [];
+      const numericValue = parseInt(value);
+      
+      if (e.target.checked) {
+        setFormulario(prev => ({
+          ...prev,
+          [name]: [...currentValue, numericValue]
+        }));
+      } else {
+        setFormulario(prev => ({
+          ...prev,
+          [name]: currentValue.filter(item => item !== numericValue)
+        }));
+      }
+    } else {
+      setFormulario(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
-
   const handleSubmit = async (e) => {
-};
+    e.preventDefault();
+    if (enviando) return;
+    
+    console.log('Datos del formulario antes de enviar:', formulario);
+    
+    setEnviando(true);
+    try {
+      await onPublicar(formulario);
+    } catch (error) {
+      console.error('Error al enviar formulario:', error);
+    } finally {
+      setEnviando(false);
+    }
+  };
 
 
 
@@ -39,27 +74,46 @@ function Form({ onClose, camposFormulario, onPublicar }) {
               <textarea
                 id={campo.nombre}
                 name={campo.nombre}
+                value={formulario[campo.nombre] || ''}
                 onChange={handleChange}
+                required={campo.required}
               />
             ) : campo.tipo === "select" ? (
               <select
                 id={campo.nombre}
                 name={campo.nombre}
+                value={formulario[campo.nombre] || ''}
                 onChange={handleChange}
               >
-                {campo.opciones.map((opcion) => (
+                <option value="">Seleccionar...</option>
+                {campo.opciones.map((opcion, index) => (
                   <option key={opcion} value={opcion}>
-                    {opcion}
+                    {campo.labels ? campo.labels[index] : opcion}
                   </option>
                 ))}
               </select>
+            ) : campo.tipo === "multi-select" ? (
+              <div className="multi-select">
+                {campo.opciones.map((opcion) => (
+                  <label key={opcion.value} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name={campo.nombre}
+                      value={opcion.value}
+                      onChange={handleChange}
+                      checked={(formulario[campo.nombre] || []).includes(opcion.value)}
+                    />
+                    {opcion.label}
+                  </label>
+                ))}
+              </div>
             ) : campo.tipo === "file" ? (
               <>
                 <input
                   type="file"
                   id={campo.nombre}
                   name={campo.nombre}
-                  accept="image/*"
+                  accept={campo.accept || "image/*"}
                   onChange={handleChange}
                 />
                 {archivoNombre && <small>Archivo: {archivoNombre}</small>}
@@ -69,14 +123,20 @@ function Form({ onClose, camposFormulario, onPublicar }) {
                 type={campo.tipo}
                 id={campo.nombre}
                 name={campo.nombre}
+                value={formulario[campo.nombre] || ''}
                 onChange={handleChange}
+                required={campo.required}
               />
             )}
           </div>
         ))}
 
-        <button className="button" type="submit">Enviar</button>
-        <button className="button" type="button" onClick={onClose}>Cancelar</button>
+        <button className="button" type="submit" disabled={enviando}>
+          {enviando ? 'Publicando...' : 'Publicar'}
+        </button>
+        <button className="button" type="button" onClick={onClose} disabled={enviando}>
+          Cancelar
+        </button>
       </form>
     </div>
   );

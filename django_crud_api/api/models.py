@@ -20,7 +20,7 @@ class Perfil(models.Model):
     nombre = models.CharField(max_length=100, blank=True)
     apellido = models.CharField(max_length=100, blank=True)
     direccion = models.TextField(blank=True, null=True)
-    foto_perfil = models.URLField(blank=True, null=True)
+    foto_perfil = models.ImageField(upload_to='perfiles/', blank=True, null=True)
     biografia = models.TextField(blank=True, null=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     
@@ -61,8 +61,7 @@ class Publicacion(models.Model):
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='publicaciones')
     descripcion = models.TextField()
-    # El campo 'imagen' se elimina, ahora se gestiona con ArchivoPublicacion
-    foto_usuario = models.URLField(blank=True, null=True) 
+    # Las imágenes se gestionan con ArchivoPublicacion
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     # Relaciones Many-to-Many
@@ -93,7 +92,7 @@ class ArchivoPublicacion(models.Model):
 
     publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='archivos')
     tipo_archivo = models.CharField(max_length=10, choices=TIPO_ARCHIVO_CHOICES, default='imagen')
-    ruta_archivo = models.URLField(max_length=500) # Usamos URLField para consistencia
+    ruta_archivo = models.FileField(upload_to='publicaciones/archivos/') # Cambiado a FileField para archivos locales
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -147,7 +146,7 @@ class Mascota(models.Model):
     # Atributos según diagrama E-R
     nombre = models.CharField(max_length=100)
     especie = models.CharField(max_length=50)
-    foto = models.URLField(blank=True, null=True)
+    foto = models.ImageField(upload_to='mascotas/', blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
 
     # Campos adicionales útiles para la lógica
@@ -325,7 +324,7 @@ class MascotaPerdida(models.Model):
     raza = models.CharField(max_length=100, blank=True, null=True)
     color = models.CharField(max_length=100, blank=True, null=True)
     tamano = models.CharField(max_length=50, blank=True, null=True)
-    foto = models.URLField(blank=True, null=True)
+    foto = models.ImageField(upload_to='mascotas-perdidas/', blank=True, null=True)
     
     # Información del evento de pérdida
     fecha_perdida = models.DateTimeField()
