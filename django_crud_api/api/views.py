@@ -7,14 +7,15 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import (Reporte)
+from .models import (Reporte, Sancion)
 from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer,
     PublicacionSerializer, CustomTokenObtainPairSerializer, ReporteSerializer,
     MascotaSerializer, AgendaSerializer, EventoAgendaSerializer, ForoPyRSerializer,
-    ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer
+    ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer,
+    AdminUserSerializer, AdminReporteSerializer, SancionSerializer
 )
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.views import APIView
 
@@ -484,3 +485,231 @@ class CategoriaListCreateView(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer
     permission_classes = [AllowAny]
     queryset = Categoria.objects.all()
+
+class AdminUsersListView(generics.ListAPIView):
+    serializer_class = AdminUserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # Verificar si es admin
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            return User.objects.none()
+        return User.objects.all().order_by('-date_joined')
+
+class AdminUserDetailView(generics.RetrieveAPIView):
+    serializer_class = AdminUserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            return User.objects.none()
+        return User.objects.all()
+
+class AdminReportesListView(generics.ListAPIView):
+    serializer_class = AdminReporteSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            return Reporte.objects.none()
+        return Reporte.objects.all().order_by('-fecha_reporte')
+
+class AdminReporteDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = AdminReporteSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            return Reporte.objects.none()
+        return Reporte.objects.all()
+
+class AdminSancionesListView(generics.ListAPIView):
+    serializer_class = SancionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            return Sancion.objects.none()
+        return Sancion.objects.all().order_by('-fecha_sancion')
+
+def is_admin_user(user):
+    return user and user.is_authenticated and (user.is_staff or user.is_superuser)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_apply_sanction(request):
+    if not is_admin_user(request.user):
+        return Response(
+            {'error': 'Acceso denegado. Solo administradores.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    usuario_id = request.data.get('usuario_id')
+    tipo_sancion = request.data.get('tipo_sancion')
+    motivo = request.data.get('motivo')
+    fecha_termino = request.data.get('fecha_termino')
+    
+    if not all([usuario_id, tipo_sancion, motivo]):
+        return Response(
+            {'error': 'Faltan campos requeridos: usuario_id, tipo_sancion, motivo'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        usuario = User.objects.get(id=usuario_id)
+    except User.DoesNotExist:
+        return Response(
+            {'error': 'Usuario no encontrado'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if usuario.is_staff or usuario.is_superuser:
+        return Response(
+            {'error': 'No se puede sancionar a un administrador'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    from datetime import datetime
+    fecha_termino_parsed = None
+    if fecha_termino:
+        try:
+            fecha_termino_parsed = datetime.fromisoformat(fecha_termino.replace('Z', '+00:00'))
+        except ValueError:
+            return Response(
+                {'error': 'Formato de fecha inválido'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    sancion = Sancion.objects.create(
+        moderador=request.user,
+        usuario_sancionado=usuario,
+        tipo_sancion=tipo_sancion,
+        motivo=motivo,
+        fecha_termino=fecha_termino_parsed
+    )
+    
+    if tipo_sancion in ['suspension_temporal', 'suspension_permanente', 'baneo']:
+        usuario.perfil.cuenta_activa = False
+        usuario.perfil.save()
+    
+    serializer = SancionSerializer(sancion)
+    return Response({
+        'message': 'Sanción aplicada exitosamente',
+        'sancion': serializer.data
+    }, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_resolve_report(request, reporte_id):
+    if not is_admin_user(request.user):
+        return Response(
+            {'error': 'Acceso denegado. Solo administradores.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    try:
+        reporte = Reporte.objects.get(id=reporte_id)
+    except Reporte.DoesNotExist:
+        return Response(
+            {'error': 'Reporte no encontrado'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    accion = request.data.get('accion')
+    notas = request.data.get('notas', '')
+    
+    if accion not in ['resuelto', 'desestimado']:
+        return Response(
+            {'error': 'Acción inválida. Use "resuelto" o "desestimado"'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    from django.utils import timezone
+    reporte.estado = accion
+    reporte.moderador_asignado = request.user
+    reporte.fecha_resolucion = timezone.now()
+    reporte.notas_moderador = notas
+    reporte.save()
+    
+    # Serializar el reporte ANTES de eliminar la publicación
+    serializer = AdminReporteSerializer(reporte)
+    reporte_data = serializer.data
+    
+    eliminar_publicacion = request.data.get('eliminar_publicacion', False)
+    mensaje_extra = ""
+    if accion == 'resuelto' and eliminar_publicacion:
+        try:
+            reporte.publicacion_reportada.delete()
+            mensaje_extra = " y publicación eliminada"
+        except Exception as e:
+            return Response({
+                'error': f'Error al eliminar la publicación: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response({
+        'message': f'Reporte {accion} exitosamente{mensaje_extra}',
+        'reporte': reporte_data
+    }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_remove_sanction(request, sancion_id):
+    if not is_admin_user(request.user):
+        return Response(
+            {'error': 'Acceso denegado. Solo administradores.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    try:
+        sancion = Sancion.objects.get(id=sancion_id)
+    except Sancion.DoesNotExist:
+        return Response(
+            {'error': 'Sanción no encontrada'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Reactivar la cuenta del usuario
+    usuario = sancion.usuario_sancionado
+    sancion.activa = False
+    sancion.save()
+    
+    # Si era una suspensión/baneo, reactivar la cuenta
+    if sancion.tipo_sancion in ['suspension_temporal', 'suspension_permanente', 'baneo']:
+        # Verificar si no tiene otras sanciones activas que impliquen bloqueo
+        otras_sanciones_activas = Sancion.objects.filter(
+            usuario_sancionado=usuario,
+            activa=True,
+            tipo_sancion__in=['suspension_temporal', 'suspension_permanente', 'baneo']
+        ).exists()
+        
+        if not otras_sanciones_activas:
+            usuario.perfil.cuenta_activa = True
+            usuario.perfil.save()
+    
+    return Response({
+        'message': 'Sanción removida exitosamente',
+        'usuario_reactivado': usuario.perfil.cuenta_activa
+    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_stats(request):
+    if not is_admin_user(request.user):
+        return Response(
+            {'error': 'Acceso denegado. Solo administradores.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    total_users = User.objects.count()
+    active_users = User.objects.filter(is_active=True).count()
+    total_publications = Publicacion.objects.count()
+    total_reports = Reporte.objects.count()
+    pending_reports = Reporte.objects.filter(estado='pendiente').count()
+    total_sanctions = Sancion.objects.filter(activa=True).count()
+    
+    return Response({
+        'total_users': total_users,
+        'active_users': active_users,
+        'total_publications': total_publications,
+        'total_reports': total_reports,
+        'pending_reports': pending_reports,
+        'total_sanctions': total_sanctions
+    }, status=status.HTTP_200_OK)

@@ -8,7 +8,10 @@ from .views import (
     ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView,
     MascotaPerdidaListCreateView, MascotaPerdidaDetailView, ForoPyRListCreateView,
     upload_archivo_publicacion, upload_foto_perfil, toggle_like, agregar_comentario,
-    CategoriaListCreateView, ReporteCreateView, PublicacionFiltradaView
+    CategoriaListCreateView, ReporteCreateView, PublicacionFiltradaView,
+    AdminUsersListView, AdminUserDetailView, AdminReportesListView, 
+    AdminReporteDetailView, AdminSancionesListView, admin_apply_sanction,
+    admin_resolve_report, admin_stats, admin_remove_sanction
 )
 
 urlpatterns = [
@@ -54,4 +57,15 @@ urlpatterns = [
 
     # Endpoints para categorías
     path('categorias/', CategoriaListCreateView.as_view(), name='categoria-list-create'),
+    
+    # Admin endpoints
+    path('admin/users/', AdminUsersListView.as_view(), name='admin-users-list'),
+    path('admin/users/<int:pk>/', AdminUserDetailView.as_view(), name='admin-user-detail'),
+    path('admin/reportes/', AdminReportesListView.as_view(), name='admin-reportes-list'),
+    path('admin/reportes/<int:pk>/', AdminReporteDetailView.as_view(), name='admin-reporte-detail'),
+    path('admin/reportes/<int:reporte_id>/resolve/', admin_resolve_report, name='admin-resolve-report'),
+    path('admin/sanciones/', AdminSancionesListView.as_view(), name='admin-sanciones-list'),
+    path('admin/sanciones/<int:sancion_id>/remove/', admin_remove_sanction, name='admin-remove-sanction'),
+    path('admin/apply-sanction/', admin_apply_sanction, name='admin-apply-sanction'),
+    path('admin/stats/', admin_stats, name='admin-stats'),
 ]

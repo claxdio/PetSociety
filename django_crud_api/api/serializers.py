@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, Comentario, Reaccion, Categoria, Reporte, ForoPyR
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, Comentario, Reaccion, Categoria, Reporte, ForoPyR, Sancion
 
 class ForoPyRSerializer(serializers.ModelSerializer):
     usuario_username = serializers.CharField(source='usuario.username', read_only=True)
@@ -355,3 +355,62 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = user.username
 
         return data
+
+class SancionSerializer(serializers.ModelSerializer):
+    moderador = UserSerializer(read_only=True)
+    usuario_sancionado = UserSerializer(read_only=True)
+    moderador_username = serializers.CharField(source='moderador.username', read_only=True)
+    usuario_sancionado_username = serializers.CharField(source='usuario_sancionado.username', read_only=True)
+    
+    class Meta:
+        model = Sancion
+        fields = [
+            'id', 'moderador', 'moderador_username', 'usuario_sancionado', 
+            'usuario_sancionado_username', 'tipo_sancion', 'motivo', 
+            'fecha_sancion', 'fecha_termino', 'activa', 'es_permanente', 'duracion'
+        ]
+        read_only_fields = ['fecha_sancion', 'es_permanente', 'duracion']
+
+class AdminReporteSerializer(serializers.ModelSerializer):
+    publicacion_reportada = PublicacionSerializer(read_only=True)
+    usuario_reportante = UserSerializer(read_only=True)
+    moderador_asignado = UserSerializer(read_only=True)
+    usuario_reportante_username = serializers.CharField(source='usuario_reportante.username', read_only=True)
+    moderador_asignado_username = serializers.CharField(source='moderador_asignado.username', read_only=True)
+    
+    class Meta:
+        model = Reporte
+        fields = [
+            'id', 'publicacion_reportada', 'usuario_reportante', 'usuario_reportante_username',
+            'moderador_asignado', 'moderador_asignado_username', 'motivo', 'estado', 
+            'fecha_reporte', 'fecha_resolucion', 'notas_moderador'
+        ]
+        read_only_fields = ['fecha_reporte', 'usuario_reportante']
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    perfil = PerfilSerializer(read_only=True)
+    total_publicaciones = serializers.SerializerMethodField()
+    total_reportes = serializers.SerializerMethodField()
+    ultima_sancion = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'is_active', 
+            'is_staff', 'is_superuser', 'date_joined', 'last_login', 'perfil',
+            'total_publicaciones', 'total_reportes', 'ultima_sancion'
+        ]
+        read_only_fields = ['date_joined', 'last_login']
+    
+    def get_total_publicaciones(self, obj):
+        return obj.publicaciones.count()
+    
+    def get_total_reportes(self, obj):
+        # Contar reportes de las publicaciones del usuario
+        return Reporte.objects.filter(publicacion_reportada__usuario=obj).count()
+    
+    def get_ultima_sancion(self, obj):
+        ultima_sancion = obj.sanciones_recibidas.filter(activa=True).first()
+        if ultima_sancion:
+            return SancionSerializer(ultima_sancion).data
+        return None

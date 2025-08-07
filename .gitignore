@@ -20,6 +20,9 @@ ClientPetSociety/node_modules/
 ClientPetSociety/dist/
 ClientPetSociety/.env
 
+# Ignorar cualquier node_modules en el proyecto
+node_modules/
+
 # VSCode
 .vscode/
 
