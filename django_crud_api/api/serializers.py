@@ -32,7 +32,6 @@ class ForoPyRSerializer(serializers.ModelSerializer):
             respuestas = obj.respuestas.all()
             return ForoPyRSerializer(respuestas, many=True, context=self.context).data
         return None
-    
 
 class PerfilSerializer(serializers.ModelSerializer):
     nombre_completo = serializers.ReadOnlyField()
@@ -56,23 +55,50 @@ class PerfilSerializer(serializers.ModelSerializer):
         return None
 
 class ReporteSerializer(serializers.ModelSerializer):
+    publicacion_reportada = serializers.PrimaryKeyRelatedField(
+        queryset=Publicacion.objects.all(),
+        error_messages={
+            'does_not_exist': 'La publicación especificada no existe',
+            'incorrect_type': 'El ID de publicación debe ser un número'
+        }
+    )
     class Meta:
         model = Reporte
-        fields = ['id', 'publicacion_reportada', 'motivo']
-        # usuario_reportante se completa automáticamente
-        read_only_fields = ['id']
-    
-    def validate(self, attrs):
-        user = self.context['request'].user
-        publicacion = attrs['publicacion_reportada']
+        fields = [
+            'id',
+            'publicacion_reportada',
+            'usuario_reportante',
+            'moderador_asignado',
+            'motivo',
+            'estado',
+            'fecha_reporte',
+            'fecha_resolucion',
+            'notas_moderador',
+        ]
+        read_only_fields = [
+            'usuario_reportante',
+            'estado',
+            'fecha_reporte',
+            'fecha_resolucion',
+            'notas_moderador',
+            'moderador_asignado',
+        ]
 
-        if publicacion.usuario == user:
-            raise serializers.ValidationError("No puedes reportar tu propia publicación.")
-        
-        if Reporte.objects.filter(publicacion_reportada=publicacion, usuario_reportante=user).exists():
-            raise serializers.ValidationError("Ya has reportado esta publicación.")
+    def validate(self, data):
+        publicacion = data.get('publicacion_reportada')
+        usuario = self.context['request'].user
 
-        return attrs
+        if publicacion.usuario == usuario:
+            raise serializers.ValidationError({
+                "publicacion_reportada": "No puedes reportar tu propia publicación."
+            })
+
+        if Reporte.objects.filter(publicacion_reportada=publicacion, usuario_reportante=usuario).exists():
+            raise serializers.ValidationError({
+                "publicacion_reportada": "Ya has reportado esta publicación."
+            })
+
+        return data
 
     def create(self, validated_data):
         validated_data['usuario_reportante'] = self.context['request'].user

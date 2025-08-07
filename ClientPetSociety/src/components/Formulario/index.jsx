@@ -3,9 +3,8 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import "./style.css";
 
-function Form({ onClose, camposFormulario, onPublicar, onCrear}) {
+function Form({ onClose, camposFormulario, onPublicar, onCrear, title}) {
   const [formulario, setFormulario] = useState({});
-  // Opciones locales para los campos que permitan crear opciones nuevas
   const [opcionesDinamicas, setOpcionesDinamicas] = useState(() => {
     const initial = {};
     camposFormulario.forEach(campo => {
@@ -72,7 +71,7 @@ function Form({ onClose, camposFormulario, onPublicar, onCrear}) {
   return (
     <div className="overlay-lock">
       <form className="formulario-popup" onSubmit={handleSubmit}>
-        <h2>Crear Publicación</h2>
+        <h2>{title}</h2>
 
         {camposFormulario.map((campo) => (
           <div key={campo.nombre} className="form-group">

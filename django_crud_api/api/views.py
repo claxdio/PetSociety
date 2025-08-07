@@ -1,13 +1,16 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User
+from rest_framework.views import APIView
 from rest_framework import generics, status, serializers, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.db.models import Q
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import (Reporte, Sancion)
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.shortcuts import render
+from django.contrib.auth.models import User
+from django_filters import rest_framework as filters
+
 from .serializers import (
     UserSerializer, UserRegistrationSerializer, PerfilSerializer,
     PublicacionSerializer, CustomTokenObtainPairSerializer, ReporteSerializer,
@@ -15,9 +18,8 @@ from .serializers import (
     ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer,
     AdminUserSerializer, AdminReporteSerializer, SancionSerializer
 )
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion
-from django.core.exceptions import ValidationError as DjangoValidationError
-from rest_framework.views import APIView
+from .models import (Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion,
+    MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion)
 
 class ForoPyRListCreateView(generics.ListCreateAPIView):
     queryset = ForoPyR.objects.all()
@@ -49,68 +51,44 @@ class ForoPyRDeleteView(generics.DestroyAPIView):
             return Response({"detail": "No tienes permiso para eliminar esta entrada."}, status=status.HTTP_403_FORBIDDEN)
         return super().delete(request, *args, **kwargs)
 
-class PublicacionFiltradaView(APIView):
-    def get(self, request):
-        publicaciones = Publicacion.objects.all()
-
-        q = request.GET.get("q")
-        tipo_publicacion = request.GET.getlist("tipo_publicacion")
-
-        if q:
-            if q.startswith("#"):
-                publicaciones = publicaciones.filter(categorias__nombre__icontains=q[1:])
-            else:
-                publicaciones = publicaciones.filter(
-                    Q(usuario__nombre__icontains=q) |
-                    Q(descripcion__icontains=q)
-                )
-
-        if tipo_publicacion:
-            publicaciones = publicaciones.filter(tipo_publicacion__in=tipo_publicacion)
-
-        serializer = PublicacionSerializer(publicaciones, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ReporteCreateView(generics.CreateAPIView):
+class ReporteListCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
     queryset = Reporte.objects.all()
     serializer_class = ReporteSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
+    def perform_create(self, serializer):
+        serializer.save(usuario_reportante=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        publicacion_id = request.data.get('publicacion_reportada')
-        user = request.user
+    def get_queryset(self):
+        return self.queryset.filter(usuario_reportante=self.request.user)
 
-        from .models import Publicacion, Reporte  # ajusta import si es necesario
+class PublicacionFiltradaView(filters.FilterSet):
+    usuario = filters.CharFilter(field_name='usuario__username', lookup_expr='iexact')
+    tipo = filters.ChoiceFilter(
+        field_name='tipo_publicacion',
+        choices=Publicacion.TIPO_PUBLICACION_CHOICES
+    )
+    categoria = filters.CharFilter(field_name='categorias__nombre', lookup_expr='iexact')
 
-        try:
-            publicacion = Publicacion.objects.get(id=publicacion_id)
-        except Publicacion.DoesNotExist:
-            return Response({"detail": "La publicación no existe."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Si el usuario reporta su propia publicación, eliminarla
-        if publicacion.usuario == user:
-            publicacion.delete()
-            return Response({"detail": "Has eliminado tu propia publicación por autorreporte."}, status=status.HTTP_200_OK)
-
-        # Sino, continuar con creación del reporte
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    class Meta:
+        model = Publicacion
+        fields = ['usuario', 'tipo', 'categoria']
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
     serializer_class = PublicacionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PublicacionFiltradaView
+
+    def create(self, request, *args, **kwargs):
+        print("Datos recibidos:", request.data)  # Verifica qué está llegando
+        return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Publicacion.objects.all() #type: ignore
+        queryset = Publicacion.objects.all()
+        
+        # Optimización de consultas
+        return queryset.select_related('usuario').prefetch_related('categorias')
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)

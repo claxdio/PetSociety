@@ -62,14 +62,14 @@ function App() {
           path="*"
           element={<NotFound />}
         />
-        <Route 
-          path="/locate" 
-          element={<Locate />} 
+        <Route
+          path="/locate"
+          element={<Locate />}
         />
         <Route
           path="/forum"
-          element={<Forum />} 
-        />  
+          element={<Forum />}
+        />
       </Routes>
     </BrowserRouter>
   );

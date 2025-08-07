@@ -9,19 +9,23 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 function Search() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [query, setQuery] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
-  const [searchType, setSearchType] = useState("text"); // 'text' o 'category'
+  const [filters, setFilters] = useState({
+    usuario: '',
+    categoria: ''
+  });
+  const [suggestions, setSuggestions] = useState({
+    usuarios: [],
+    categorias: []
+  });
+  const [showSuggestions, setShowSuggestions] = useState({
+    usuario: false,
+    categoria: false
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        if (!token) {
-          window.location.href = '/login';
-          return;
-        }
-
         const [publicacionesRes, categoriasRes] = await Promise.all([
           api.get('/api/publicaciones/'),
           api.get('/api/categorias/'),
@@ -29,12 +33,22 @@ function Search() {
 
         setPublicaciones(publicacionesRes.data);
         setCategorias(categoriasRes.data);
+
+        const usuariosUnicos = [...new Map(
+          publicacionesRes.data
+            .filter(pub => pub.usuario?.username)
+            .map(pub => [pub.usuario.username, pub.usuario])
+        ).values()];
+
+        setSuggestions({
+          usuarios: usuariosUnicos,
+          categorias: categoriasRes.data
+        });
       } catch (error) {
         console.error(error);
         if (error.response?.status === 401 || error.response?.status === 403) {
           localStorage.removeItem(ACCESS_TOKEN);
           localStorage.removeItem(REFRESH_TOKEN);
-          window.location.href = '/login';
         }
       }
     };
@@ -43,98 +57,125 @@ function Search() {
   }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!query) {
-        setFilteredResults([]);
-        setSearchType("text");
-        return;
+    const fetchFilteredData = async () => {
+      try {
+        const params = {};
+        if (filters.usuario) params.usuario = filters.usuario;
+        if (filters.categoria) params.categoria = filters.categoria;
+
+        const response = await api.get('/api/publicaciones/filtrar/', { params });
+        setFilteredResults(response.data);
+      } catch (error) {
+        console.error(error);
       }
+    };
 
-      const lowerQuery = query.toLowerCase();
+    fetchFilteredData();
+  }, [filters]);
 
-      if (lowerQuery.startsWith("#")) {
-        setSearchType("category");
-        // Mostrar categorías que coinciden
-        const cleanQuery = lowerQuery.slice(1);
-        const matchedCategories = categorias
-          .filter(cat => cat.nombre.toLowerCase().includes(cleanQuery))
-          .map(cat => ({ type: "category", nombre: cat.nombre, id: cat.id }));
-        setFilteredResults(matchedCategories);
-      } else {
-        setSearchType("text");
-        // Mostrar publicaciones que coinciden en descripción o usuario
-        const filteredPubs = publicaciones
-          .filter(pub =>
-            pub.descripcion?.toLowerCase().includes(lowerQuery) ||
-            pub.usuario?.username?.toLowerCase().includes(lowerQuery)
-          )
-          .map(pub => ({ type: "post", ...pub }));
-        setFilteredResults(filteredPubs);
-      }
-    }, 300);
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
 
-    return () => clearTimeout(timeoutId);
-  }, [query, publicaciones, categorias]);
-
-  // Cuando el usuario hace click en una categoría sugerida, mostramos solo posts con esa categoría
-  const filterPostsByCategory = (categoryName) => {
-    setQuery(`#${categoryName}`);
-    setSearchType("category");
-    const filteredPosts = publicaciones
-      .filter(pub =>
-        pub.categorias?.some(cat => cat.nombre.toLowerCase() === categoryName.toLowerCase())
-      )
-      .map(pub => ({ type: "post", ...pub }));
-    setFilteredResults(filteredPosts);
+    if (name === 'usuario' && value) {
+      setShowSuggestions(prev => ({ ...prev, usuario: true }));
+    } else if (name === 'categoria' && value) {
+      setShowSuggestions(prev => ({ ...prev, categoria: true }));
+    } else {
+      setShowSuggestions({ usuario: false, categoria: false });
+    }
   };
 
-  // Qué posts mostrar: si estamos buscando categoría y ya filtramos posts, mostrar esos,
-  // si estamos buscando texto, mostrar los resultados (posts),
-  // o si no hay query mostrar todos
-  const postsToShow = searchType === "category"
-    ? filteredResults.filter(item => item.type === "post")
-    : (query && filteredResults.length > 0
-      ? filteredResults.filter(item => item.type === "post")
-      : publicaciones);
+  const selectSuggestion = (type, value) => {
+    if (type === 'usuario') {
+      setFilters(prev => ({ ...prev, usuario: value }));
+    } else if (type === 'categoria') {
+      setFilters(prev => ({ ...prev, categoria: value }));
+    }
+    setShowSuggestions({ usuario: false, categoria: false });
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      usuario: '',
+      categoria: ''
+    });
+  };
+
+  const filteredSuggestions = {
+    usuarios: suggestions.usuarios.filter(user =>
+      user.username.toLowerCase().includes(filters.usuario.toLowerCase())
+    ),
+    categorias: suggestions.categorias.filter(cat =>
+      cat.nombre.toLowerCase().includes(filters.categoria.toLowerCase())
+    )
+  };
 
   return (
     <div className="search-container">
       <Navegador />
       <div className="search-grid">
-        <div className="search-sugestions">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar publicaciones o #categoría..."
-          />
-
-          <div className="search-results">
-            {filteredResults.length > 0 ? (
-              filteredResults.map((item, i) => (
-                <div
-                  key={item.id || i}
-                  className="search-result-item"
-                  style={{ cursor: item.type === "category" ? "pointer" : "default" }}
-                  onClick={() => {
-                    if (item.type === "category") filterPostsByCategory(item.nombre);
-                  }}
-                >
-                  <div className="search-result-text">
-                    {item.type === "category"
-                      ? `#${item.nombre}`
-                      : `${item.usuario.username}: ${item.descripcion}`}
+        <div className="search-filters">
+          <div className="filter-group">
+            <label htmlFor="usuario">Usuario</label>
+            <input
+              id="usuario"
+              name="usuario"
+              type="text"
+              value={filters.usuario}
+              onChange={handleFilterChange}
+              placeholder="Buscar usuario..."
+              autoComplete="off"
+            />
+            {showSuggestions.usuario && filteredSuggestions.usuarios.length > 0 && (
+              <div className="suggestions-dropdown">
+                {filteredSuggestions.usuarios.map(user => (
+                  <div
+                    key={user.username}
+                    className="suggestion-item"
+                    onClick={() => selectSuggestion('usuario', user.username)}
+                  >
+                    @{user.username}
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="search-result-text">Sin resultados</div>
+                ))}
+              </div>
             )}
           </div>
+
+          <div className="filter-group">
+            <label htmlFor="categoria">Categoría</label>
+            <input
+              id="categoria"
+              name="categoria"
+              type="text"
+              value={filters.categoria}
+              onChange={handleFilterChange}
+              placeholder="Buscar categoría..."
+              autoComplete="off"
+            />
+            {showSuggestions.categoria && filteredSuggestions.categorias.length > 0 && (
+              <div className="suggestions-dropdown">
+                {filteredSuggestions.categorias.map(cat => (
+                  <div
+                    key={cat.id}
+                    className="suggestion-item"
+                    onClick={() => selectSuggestion('categoria', cat.nombre)}
+                  >
+                    #{cat.nombre}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button onClick={clearFilters} className="clear-filters">
+            Limpiar filtros
+          </button>
         </div>
 
         <div className="search-posts">
-          {postsToShow.length > 0 ? (
-            postsToShow.map(post => (
+          {filteredResults.length > 0 ? (
+            filteredResults.map(post => (
               <Post
                 key={post.id}
                 id={post.id}
@@ -150,7 +191,7 @@ function Search() {
               />
             ))
           ) : (
-            <div>No hay publicaciones</div>
+            <div>No hay publicaciones que coincidan con los filtros</div>
           )}
         </div>
       </div>

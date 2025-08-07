@@ -21,40 +21,41 @@ function Home() {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem(ACCESS_TOKEN);
-                if (!token) {
-                    window.location.href = '/login';
-                    return;
-                }
 
-                // Fetch publicaciones, categorías y mascotas en paralelo
-                const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
+                if(!token){
+                  const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
                     api.get('/api/publicaciones/'),
                     api.get('/api/categorias/'),
-                    api.get('/api/mascotas/'),
-                    api.get('/api/eventos-agenda/')
-                ]);
-
-                setPublicaciones(publicacionesRes.data);
-                setCategorias(categoriasRes.data);
-                setMascotas(mascotasRes.data);
-                setEventosAgenda(eventosRes.data);
+                  ]);
+                  setPublicaciones(publicacionesRes.data);
+                  setCategorias(categoriasRes.data);
+                }else{
+                  const config = {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  };
+                  const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
+                    api.get('/api/publicaciones/'),
+                    api.get('/api/categorias/', config),
+                    api.get('/api/mascotas/', config),
+                    api.get('/api/eventos-agenda/', config)
+                  ]);
+                  setPublicaciones(publicacionesRes.data);
+                  setCategorias(categoriasRes.data);
+                  setMascotas(mascotasRes.data);
+                  setEventosAgenda(eventosRes.data);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 console.error('Error status:', error.response?.status);
                 console.error('Error data:', error.response?.data);
-                // Redirige a login si es un error 401 o 403
-                if (error.response?.status === 401 || error.response?.status === 403) {
-                    localStorage.removeItem(ACCESS_TOKEN);
-                    localStorage.removeItem(REFRESH_TOKEN);
-                    window.location.href = '/login';
-                }
             }
         };
 
         fetchData();
     }, []);
 
-    // Crear campos de formulario dinámicamente
     const camposFormulario = [
         {
             nombre: "descripcion",
@@ -95,7 +96,7 @@ function Home() {
       try {
         const response = await axios.post('http://localhost:8000/api/categorias/', {
           nombre: inputValue,
-          descripcion: ''  // opcional, pero envíalo como vacío si no hay
+          descripcion: ''
         });
 
         return {
@@ -109,12 +110,8 @@ function Home() {
     };
 
 
-    // Función para manejar la creación de publicación
     const handlePublicar = async (datosFormulario) => {
         try {
-            const token = localStorage.getItem(ACCESS_TOKEN);
-
-            // Crear la publicación primero (test simple sin relaciones)
             const publicacionData = {
                 descripcion: datosFormulario.descripcion || 'Test descripcion',
                 tipo_publicacion: datosFormulario.tipo_publicacion || 'general'
@@ -144,19 +141,17 @@ function Home() {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-            }
-
-            // Actualizar la lista de publicaciones
             const publicacionesRes = await api.get('/api/publicaciones/');
             setPublicaciones(publicacionesRes.data);
 
             setMostrarForm(false);
-
+            }
         } catch (error) {
-            console.error('Error al crear publicación:', error);
-            console.error('Error data:', error.response?.data);
-            console.error('Datos enviados:', publicacionData);
-            console.error('Response status:', error.response?.status);
+            if (error.response?.status === 401 || error.response?.status === 403) {
+              localStorage.removeItem(ACCESS_TOKEN);
+              localStorage.removeItem(REFRESH_TOKEN);
+              window.location.href = '/login';
+            }
         }
     };
 
@@ -184,7 +179,20 @@ function Home() {
         </div>
         <div className="home-center">
           <div className="div-creation">
-            <button className="create-button" onClick={() => setMostrarForm(true)}>+</button>
+            <button
+              className="create-button"
+              onClick={() => {
+                const token = localStorage.getItem(ACCESS_TOKEN);
+                if (!token) {
+                  window.location.href = '/login';
+                  return;
+                } else {
+                  setMostrarForm(true);
+                }
+              }}
+            >
+              +
+            </button>
             Publicar
           </div>
           <div className="home-posts">
@@ -210,7 +218,7 @@ function Home() {
           <Mascotas items={mascotas} />
         </div>
       </div>
-      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)} onPublicar={handlePublicar} onCrear={onCrearCategoria} />}
+      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)} onPublicar={handlePublicar} onCrear={onCrearCategoria} title="Crear Publicacion"/>}
     </div>
   );
 }

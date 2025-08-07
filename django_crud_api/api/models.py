@@ -23,7 +23,7 @@ class Perfil(models.Model):
     foto_perfil = models.ImageField(upload_to='perfiles/', blank=True, null=True)
     biografia = models.TextField(blank=True, null=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
-    
+
     # Campos adicionales del usuario
     tipo_usuario = models.CharField(
         max_length=20, 
@@ -31,10 +31,10 @@ class Perfil(models.Model):
         default='normal'
     )
     cuenta_activa = models.BooleanField(default=True) #type: ignore
-    
+
     def __str__(self):
         return f"Perfil de {self.usuario.username}" #type: ignore
-    
+
     @property
     def nombre_completo(self):
         return f"{self.nombre} {self.apellido}".strip()

@@ -8,7 +8,7 @@ from .views import (
     ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView,
     MascotaPerdidaListCreateView, MascotaPerdidaDetailView, ForoPyRListCreateView,
     upload_archivo_publicacion, upload_foto_perfil, toggle_like, agregar_comentario,
-    CategoriaListCreateView, ReporteCreateView, PublicacionFiltradaView,
+    CategoriaListCreateView, ReporteListCreateDestroyView, PublicacionFiltradaView,
     AdminUsersListView, AdminUserDetailView, AdminReportesListView, 
     AdminReporteDetailView, AdminSancionesListView, admin_apply_sanction,
     admin_resolve_report, admin_stats, admin_remove_sanction
@@ -22,8 +22,8 @@ urlpatterns = [
     path('user/profile/', PerfilDetailView.as_view(), name='perfil-detail'),
     path('user/detail/', UserDetailView.as_view(), name='user-detail'),
     path('usuarios/<str:username>/mascotas/', UserMascotaListView.as_view(), name='user-mascota-list'),
-    path('reportes/', ReporteCreateView.as_view(), name='reporte-create'),
-    path('publicaciones/filtrar/', PublicacionFiltradaView.as_view(), name='filtrar_publicaciones'),
+    path('reportes/', ReporteListCreateDestroyView.as_view(), name='reporte-create'),
+    path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
 
     path('foro/', ForoPyRListCreateView.as_view(), name='foro-list-create'),
     path('foro/<int:pk>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
