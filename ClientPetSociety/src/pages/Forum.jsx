@@ -34,6 +34,20 @@ function Forum() {
   fetchPosts();
 }, []);
 
+const getAvatarContent = (username, fotoPerfil) => {
+  if (fotoPerfil) {
+    return <img src={fotoPerfil} alt="Avatar" className="user-avatar" />;
+  }
+  
+  // Obtener la primera letra del username
+  const initial = username ? username.charAt(0).toUpperCase() : 'U';
+  
+  return (
+    <div className="avatar-initial">
+      {initial}
+    </div>
+  );
+};
 
 
   const handleSubmit = async (e) => {
@@ -105,7 +119,8 @@ function Forum() {
               posts.map((post) => (
                 <div key={post.id} className="post-box">
                   <div className="post-header">
-                    <span className="post-user">{post.usuario.username}</span>
+                     {getAvatarContent(post.usuario_username, post.usuario_foto_perfil)}
+                    <span className="post-user">{post.usuario_username}</span>
                   </div>
                   <h3 className="post-question">{post.titulo}</h3>
                   <p className="post-description">{post.contenido}</p>

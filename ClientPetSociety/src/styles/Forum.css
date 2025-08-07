@@ -111,3 +111,33 @@
   margin-top: 20px; 
   margin-bottom: 15px;
 }
+
+.avatar-initial {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4CAF50db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+
+}
+/* Estilos para el avatar - Añade esto al final sin modificar nada más */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 2px solid #4CAF50db;
+}
+
+.post-header {
+  display: flex;
+  align-items: center; /* Añade esto para alinear verticalmente */
+  margin-bottom: 10px;
+}
