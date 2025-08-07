@@ -1,68 +1,27 @@
 .pet-profile {
-  display: flex;
   width: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
 }
 
 .main-content {
   display: grid;
   grid-template-columns: 250px 1fr 250px; /* Ancho fijo para navegador y fechas */
-  margin-top: 70px; /* espacio para el navegador fijo */
-  height: calc(100vh - 70px);
-  width: 100%; /* que ocupe todo el ancho disponible */
-  box-sizing: border-box;
-  background-color: #ffffff;
-}
-
-.navegadorr,
-.fechas {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column; /* flujo vertical */
-  align-items: center;
-  height: 100%;
-  gap: 20px; /* espacio vertical entre items */
-  border: 1px solid #ccc;
-  box-sizing: border-box; /* para que el padding no afecte el tamaño */
-  min-height: 0; /* añade esto para evitar overflow inesperado */
-}
-
-.navegadorr > *,
-.fechas > * {
-  width: 100%;
 }
 
 .center {
   height: 100%;
-  width: 100%;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  min-height: 0;
-  margin-top: 250px; /* Espacio para el DescripcionUsuario fijo */
 }
 
 .publications-section {
-  background-color: #d9d9d940;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* para que el contenido empiece arriba */
   align-items: center;
-  max-height: calc(
-    100vh - 320px
-  ); /* Altura considerando navegador, descripción y márgenes */
-  overflow-y: auto;
-  overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;
   min-height: 0;
   flex-grow: 1;
   padding: 10%;
-  gap: 3%;
+  gap: 5%;
 }
 
 /* Ocultar scrollbar para webkit browsers */
@@ -77,19 +36,19 @@
 /* Media queries para responsividad */
 @media (max-width: 1200px) {
   .center {
-    margin-top: 250px;
+    margin-top: 50px;
   }
 }
 
 @media (max-width: 1000px) {
   .center {
-    margin-top: 250px;
+    margin-top: 50px;
   }
 }
 
 @media (max-width: 800px) {
   .center {
-    margin-top: 250px;
+    margin-top: 50px;
   }
 }
 
@@ -99,6 +58,6 @@
   }
 
   .center {
-    margin-top: 250px;
+    margin-top: 50px;
   }
 }

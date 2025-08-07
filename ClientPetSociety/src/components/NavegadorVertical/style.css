@@ -1,14 +1,17 @@
-div.navegador-vertical {
+.navegador-vertical {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  background-color: #79b716;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  background: linear-gradient(180deg, #5ea82f 0%, #4a8c26 100%);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  color: rgb(0, 0, 0);
   padding: 20px;
   min-width: 70px;
   border-radius: 0%;
   width: 250px;
+  padding-top: 30px;
 }
 
 .nav-header {
@@ -16,47 +19,63 @@ div.navegador-vertical {
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   padding-bottom: 20px;
   border-bottom: 2px solid #cac4d0;
-  flex-shrink: 0;
 }
 
 .user-avatar {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 5px;
   border-radius: 50%;
+  transition: transform 0.3s ease;
   object-fit: cover;
 }
 
-.nav-header h3 {
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.nav-header span {
   margin: 0;
-  color: white;
-  font-size: 1.2rem;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #2c4a1d;
 }
 
 .nav-menu {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 40px;
+  padding: 0 15px;
 }
 
 .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: none;
   border: none;
   padding: 12px 15px;
   text-align: left;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1rem;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   color: white;
 }
 
 .nav-item:hover {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.2);
   color: #333;
   transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn {

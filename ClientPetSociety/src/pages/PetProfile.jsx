@@ -1,9 +1,9 @@
 import React from "react";
 import NavegadorVertical from "../components/NavegadorVertical";
-import Fechas from "../components/Fechas";
+import Agenda from "../components/Agenda/index.jsx";
 import Publicacion from "../components/Publicaciones/index.jsx";
-import DescripcionUsuario from "../components/DescripcionUsuario/index.jsx";
 import "../styles/PetProfile.css";
+import DescripcionMascota from "../components/DescripcionMacota/index.jsx";
 
 function PetProfile() {
   // Datos de ejemplo para mostrar el componente Publicacion
@@ -187,7 +187,7 @@ function PetProfile() {
 
   return (
     <div className="pet-profile">
-      <DescripcionUsuario />
+      <DescripcionMascota />
       <div className="main-content">
         <div className="navegadorr">
           <NavegadorVertical />
@@ -209,7 +209,7 @@ function PetProfile() {
           </div>
         </div>
         <div className="fechas">
-          <Fechas />
+          <Agenda />
         </div>
       </div>
     </div>

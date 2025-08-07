@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 //   proximaCita: PropTypes.string.isRequired,
 // };
 
-function Fechas() {
+function Agenda() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [vacunacion, setVacunacion] = useState([]);
   const [desparacitacion, setDesparacitacion] = useState([]);
@@ -19,67 +19,12 @@ function Fechas() {
   const [tipo, setTipo] = useState("vacunacion");
   const [formData, setFormData] = useState({
     fechaCita: "",
-    peso: "",
     caso: "",
     proximaCita: "",
   });
-  const [errores, setErrores] = useState({
-    peso: "",
-  });
-
-  // Función para validar el peso
-  const validarPeso = (peso) => {
-    if (!peso.trim()) {
-      return "El peso es requerido";
-    }
-
-    // Permitir formato: número + unidad (ej: "5.2 kg", "12 lbs", "3.5")
-    const pesoRegex = /^(\d+(?:\.\d+)?)\s*(kg|lbs|g|lb)?$/i;
-    const match = peso.match(pesoRegex);
-
-    if (!match) {
-      return "Formato inválido. Use: número + unidad (ej: 5.2 kg, 12 lbs)";
-    }
-
-    const valor = parseFloat(match[1]);
-    const unidad = match[2]?.toLowerCase() || "kg";
-
-    // Validar rangos según la unidad
-    if (unidad === "kg" && (valor < 0.1 || valor > 200)) {
-      return "El peso debe estar entre 0.1 y 200 kg";
-    }
-    if (unidad === "lbs" && (valor < 0.2 || valor > 440)) {
-      return "El peso debe estar entre 0.2 y 440 lbs";
-    }
-    if (unidad === "g" && (valor < 100 || valor > 200000)) {
-      return "El peso debe estar entre 100g y 200kg";
-    }
-    if (unidad === "lb" && (valor < 0.2 || valor > 440)) {
-      return "El peso debe estar entre 0.2 y 440 lb";
-    }
-
-    return ""; // Sin errores
-  };
-
-  const handlePesoChange = (e) => {
-    const nuevoPeso = e.target.value;
-    setFormData({ ...formData, peso: nuevoPeso });
-
-    // Validar en tiempo real
-    const errorPeso = validarPeso(nuevoPeso);
-    setErrores({ ...errores, peso: errorPeso });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // evita recargar la página
-
-    // Validar todos los campos antes de enviar
-    const errorPeso = validarPeso(formData.peso);
-
-    if (errorPeso) {
-      setErrores({ peso: errorPeso });
-      return; // No enviar si hay errores
-    }
 
     const nuevoElemento = { ...formData };
 
@@ -91,9 +36,13 @@ function Fechas() {
       setOperacion([...operacion, nuevoElemento]);
     }
 
-    setFormData({ fechaCita: "", peso: "", caso: "", proximaCita: "" }); // limpia formulario
-    setErrores({ peso: "" }); // limpia errores
+    setFormData({ fechaCita: "", caso: "", proximaCita: "" }); // limpia formulario
     setMostrarFormulario(false); // oculta el formulario
+  };
+
+  const cancelarFormulario = () => {
+    setFormData({ fechaCita: "", caso: "", proximaCita: "" }); // limpia formulario
+    setMostrarFormulario(false);
   };
 
   // Función para formatear la fecha para mostrar
@@ -165,22 +114,6 @@ function Fechas() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="peso">Peso:</label>
-            <input
-              type="text"
-              id="peso"
-              placeholder="Ej: 5.2 kg, 12 lbs"
-              value={formData.peso}
-              onChange={handlePesoChange}
-              className={errores.peso ? "error" : ""}
-              required
-            />
-            {errores.peso && (
-              <div className="error-message">{errores.peso}</div>
-            )}
-          </div>
-
-          <div className="form-group">
             <label htmlFor="caso">Descripción del caso:</label>
             <textarea
               id="caso"
@@ -206,8 +139,12 @@ function Fechas() {
               required
             />
           </div>
-
-          <button type="submit">Guardar</button>
+          <div className="form-btns">
+            <button type="submit">Guardar</button>
+            <button type="button" onClick={cancelarFormulario}>
+              Cancelar
+            </button>
+          </div>
         </form>
       )}
     </div>
@@ -218,7 +155,6 @@ Lista.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       fechaCita: PropTypes.string,
-      peso: PropTypes.string,
       caso: PropTypes.string,
       proximaCita: PropTypes.string,
     })
@@ -235,9 +171,6 @@ function Lista({ data, formatearFecha }) {
             <strong>Fecha:</strong> {formatearFecha(item.fechaCita)}
           </p>
           <p>
-            <strong>Peso:</strong> {item.peso}
-          </p>
-          <p>
             <strong>Caso:</strong> {item.caso}
           </p>
           <p>
@@ -249,4 +182,4 @@ function Lista({ data, formatearFecha }) {
   );
 }
 
-export default Fechas;
+export default Agenda;

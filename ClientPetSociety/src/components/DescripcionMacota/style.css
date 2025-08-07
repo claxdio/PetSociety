@@ -1,0 +1,260 @@
+.descripcion-mascota {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(94, 168, 47, 0.1);
+  border: 1px solid #e1e8da;
+  text-align: center;
+}
+
+.descripcion-mascota h2 {
+  margin: 0.5rem 0 0.2rem;
+  font-size: 1.4rem;
+  color: #2c4a1d;
+}
+
+.informacion {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.mascota-info {
+  background-color: #e9f0e3;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 80px;
+  border: 1px solid #c8d8bb;
+}
+
+.mascota-info h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #5a8c3a;
+}
+
+.mascota-info p {
+  font-size: 0.85rem;
+  color: #2c4a1d;
+  margin-top: 1rem;
+}
+
+.mascota-info faCheck {
+  margin-top: 1rem;
+}
+
+.descripcion-mascota img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.descripcion-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.descripcion-buttons button {
+  background-color: #5ea82f;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.descripcion-buttons button:hover {
+  background-color: #4a8c26;
+  transform: translateY(-2px);
+}
+
+/* Media query para pantallas más pequeñas */
+@media (max-width: 1200px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+  }
+}
+
+@media (max-width: 1000px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+  }
+}
+
+@media (max-width: 800px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+    padding: 15px;
+  }
+}
+
+/* Asegurar que no tape el navegador vertical */
+@media (max-width: 600px) {
+  div.descripcion-usuario {
+    left: 250px;
+    right: 250px;
+    min-width: 150px;
+  }
+}
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilos para el formulario */
+.formulario-item {
+  padding: 25px;
+  border-radius: 15px;
+  align-items: center;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 400px;
+  margin: 0 auto; /* centra horizontalmente */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #f9f9f9;
+}
+
+.formulario-item label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.formulario-item form input {
+  width: 70%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.formulario-item form input[type="date"] {
+  font-family: inherit;
+  cursor: pointer;
+  background-color: #f8f9fa;
+}
+
+.formulario-item form input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.5);
+  transition: filter 0.3s ease;
+}
+
+.formulario-item
+  form
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.3);
+}
+
+.formulario-item form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-buttons button[type="submit"] {
+  background-color: #5ea82f;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 40%;
+}
+
+.form-buttons button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.form-buttons button[type="button"] {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 40%;
+}
+
+.form-buttons button[type="button"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.user-info {
+  gap: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-info .check-icon {
+  width: 55px;
+  height: 55px;
+}
+
+.user-info h4 {
+  padding-top: 20px;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #99a67b;
+  text-align: center;
+}
+
+.user-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #333;
+  text-align: center;
+}
+
+.user-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  line-height: 1.5;
+  padding: 10px;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 0.8rem;
+}

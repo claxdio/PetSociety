@@ -1,11 +1,15 @@
+//import React from "react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./style.css";
 import UserImage from "../../assets/icons/user.png";
+import { FaHome, FaSearch, FaComments, FaMapMarkerAlt } from "react-icons/fa";
 
 function NavegadorVertical() {
   const navigate = useNavigate();
+  const userName = "User";
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -31,23 +35,27 @@ function NavegadorVertical() {
   };
 
   return (
-    <div className="navegador-vertical">
+    <nav className="navegador-vertical">
       <div className="nav-header">
         <img src={UserImage} alt="User" className="user-avatar" />
-        <h3>Mi Perfil</h3>
+        <span>{userName}</span>
       </div>
       <div className="nav-menu">
         <button className="nav-item" onClick={() => navigate("/")}>
-          Página principal
+          <FaHome className="link-icon" />
+          <span>Principal</span>
         </button>
         <button className="nav-item" onClick={() => navigate("/search")}>
-          Buscar
+          <FaSearch className="link-icon" />
+          <span>Buscar</span>
         </button>
         <button className="nav-item" onClick={() => navigate("/locate")}>
-          Foro
+          <FaComments className="link-icon" />
+          <span>Foro</span>
         </button>
         <button className="nav-item" onClick={() => navigate("/locate")}>
-          Localizar
+          <FaMapMarkerAlt className="link-icon" />
+          <span>Localización</span>
         </button>
         {isLoggedIn && (
           <button className="nav-item logout-btn" onClick={handleLogout}>
@@ -55,7 +63,7 @@ function NavegadorVertical() {
           </button>
         )}
       </div>
-    </div>
+    </nav>
   );
 }
 export default NavegadorVertical;
