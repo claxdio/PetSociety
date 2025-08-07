@@ -188,7 +188,7 @@ function PetProfile() {
   return (
     <div className="pet-profile">
       <DescripcionMascota />
-      <div className="main-content">
+      <div className="main-cont">
         <div className="navegadorr">
           <NavegadorVertical />
         </div>

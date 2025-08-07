@@ -34,22 +34,8 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
-        <Route
-          path="/profile/:username"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/petProfile"
-          element={
-            <ProtectedRoute>
-              <PetProfile />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/mascota/:nombreMascota" element={<PetProfile />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/panel" element={<AdminPanel />} />
         <Route path="*" element={<NotFound />} />

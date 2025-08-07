@@ -6,6 +6,7 @@ from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoA
 
 class ForoPyRSerializer(serializers.ModelSerializer):
     usuario_username = serializers.CharField(source='usuario.username', read_only=True)
+    usuario_perfil = serializers.SerializerMethodField()
     usuario = serializers.PrimaryKeyRelatedField(read_only=True)  # <-- aquí!
     respuestas = serializers.SerializerMethodField()
 
@@ -15,6 +16,7 @@ class ForoPyRSerializer(serializers.ModelSerializer):
             'id',
             'usuario',
             'usuario_username',
+            'usuario_perfil',
             'contenido',
             'fecha_creacion',
             'parent',
@@ -27,6 +29,11 @@ class ForoPyRSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['fecha_creacion', 'usuario_username', 'es_pregunta', 'es_respuesta', 'respuestas']
 
+    def get_usuario_perfil(self, obj):
+        perfil = Perfil.objects.filter(usuario=obj.usuario).first()
+        if perfil:
+            return PerfilSerializer(perfil, context=self.context).data
+        return None
     def get_respuestas(self, obj):
         if obj.es_pregunta:
             respuestas = obj.respuestas.all()

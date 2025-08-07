@@ -21,6 +21,8 @@ from .serializers import (
 from .models import (Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion,
     MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion)
 
+from rest_framework.generics import RetrieveAPIView
+
 class ForoPyRListCreateView(generics.ListCreateAPIView):
     queryset = ForoPyR.objects.all()
     serializer_class = ForoPyRSerializer
@@ -50,6 +52,12 @@ class ForoPyRDeleteView(generics.DestroyAPIView):
         if instance.usuario != request.user and not request.user.is_staff:
             return Response({"detail": "No tienes permiso para eliminar esta entrada."}, status=status.HTTP_403_FORBIDDEN)
         return super().delete(request, *args, **kwargs)
+
+class ForoPyRDetailView(RetrieveAPIView):
+    queryset = ForoPyR.objects.all()
+    serializer_class = ForoPyRSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAuthenticated]
 
 class ReporteListCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
     queryset = Reporte.objects.all()

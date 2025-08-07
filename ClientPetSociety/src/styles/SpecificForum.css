@@ -39,3 +39,8 @@ main {
     padding: 15px;
   }
 }
+
+.post-box-link {
+  text-decoration: none;
+  color: inherit;
+}
