@@ -1,0 +1,63 @@
+.owner-description {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #cac4d0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+}
+
+.description-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #cac4d0;
+  flex-shrink: 0;
+}
+
+.description-head img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.description-head h3 {
+  margin: 0;
+  color: black;
+  font-size: 1.2rem;
+}
+
+.description-body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.description-body {
+  gap: 20px;
+}
+
+.description-body-item {
+  background: none;
+  border: none;
+  padding: 12px 15px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+}
+
+.description-body h4 {
+  padding-top: 50px;
+}
+
+.description-body p {
+  margin: 0 0 15px 0;
+  color: #666;
+  line-height: 1.5;
+  padding: 10px 0;
+}

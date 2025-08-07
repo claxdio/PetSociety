@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -12,6 +12,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminPanel from "./pages/AdminPanel";
 import Locate from "./pages/Locate";
 import Forum from "./pages/Forum";
+import SpecificForum from "./pages/SpecificForum";
+//
 
 function Logout() {
   localStorage.clear();
@@ -53,6 +55,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/locate" element={<Locate />} />
         <Route path="/forum" element={<Forum />} />
+        <Route path="/forum/:id" element={<SpecificForum />} />
       </Routes>
     </BrowserRouter>
   );
