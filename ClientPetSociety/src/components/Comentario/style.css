@@ -1,28 +1,29 @@
 .coment-frame-frame{
   background-color: #d4ceb8;
-  padding: 2%;
+  padding: 12px;
   width: 100%;
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* para que el contenido empiece arriba */
+  justify-content: flex-start;
   align-items: center;
-  max-height: 100px;    /* limita altura para scroll */
+  max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: none;        /* Firefox */
+  scrollbar-width: none;
   -ms-overflow-style: none;
   min-height: 0;
   flex-grow: 1;
+  margin-top: 8px;
 }
 
 .coment-frame {
-    padding: 5%;
-    margin: 1%;
+    padding: 10px;
+    margin: 4px 0;
     height: auto;
     width: 100%;
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.777);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .coment {

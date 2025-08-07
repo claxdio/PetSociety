@@ -16,6 +16,21 @@ function Home() {
   const [mascotas, setMascotas] = useState([]);
   const [eventosAgenda, setEventosAgenda] = useState([]);
 
+  // Limpiar datos del usuario al hacer logout
+  useEffect(() => {
+    const handleLogout = () => {
+      setMascotas([]);
+      setEventosAgenda([]);
+      // Limpiar likes guardados localmente
+      localStorage.removeItem("likedPosts");
+    };
+
+    window.addEventListener("userLogout", handleLogout);
+    return () => {
+      window.removeEventListener("userLogout", handleLogout);
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -154,11 +169,13 @@ function Home() {
             },
           }
         );
-        const publicacionesRes = await api.get("/api/publicaciones/");
-        setPublicaciones(publicacionesRes.data);
-
-        setMostrarForm(false);
       }
+
+      // Actualizar lista de publicaciones (tanto con imagen como sin imagen)
+      const publicacionesRes = await api.get("/api/publicaciones/");
+      setPublicaciones(publicacionesRes.data);
+
+      setMostrarForm(false);
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem(ACCESS_TOKEN);
@@ -222,6 +239,7 @@ function Home() {
                 likes={post.likes}
                 comentarios={post.comentarios}
                 mascotas_etiquetadas={post.mascotas_etiquetadas}
+                user_has_liked={post.user_has_liked}
               />
             ))}
           </div>

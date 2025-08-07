@@ -7,6 +7,8 @@ import Logo from "../../assets/logo/logoBlanco.png";
 function Navegador() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const checkLogin = () => {
@@ -15,12 +17,20 @@ function Navegador() {
         try {
           const decoded = jwtDecode(token);
           const now = Date.now() / 1000;
-          setIsLoggedIn(decoded.exp > now);
+          if (decoded.exp > now) {
+            setIsLoggedIn(true);
+            setUsername(decoded.username || "Usuario");
+          } else {
+            setIsLoggedIn(false);
+            setUsername("");
+          }
         } catch {
           setIsLoggedIn(false);
+          setUsername("");
         }
       } else {
         setIsLoggedIn(false);
+        setUsername("");
       }
     };
 
@@ -34,22 +44,49 @@ function Navegador() {
     };
   }, []);
 
-  
-  const handleClick = () => {
-  const token = localStorage.getItem("access");
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      const now = Date.now() / 1000;
-      if (decoded.exp > now) {
-        const username = decoded.username; // <-- Asegúrate de que el token tenga esto
-        navigate(`/profile/${username}`);
-        return;
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest('.user-dropdown')) {
+        setShowDropdown(false);
       }
-    } catch {}
-  }
-  navigate("/login");
-};
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
+  
+  const handleProfileClick = () => {
+    if (isLoggedIn) {
+      navigate(`/profile/${username}`);
+      setShowDropdown(false);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setIsLoggedIn(false);
+    setUsername("");
+    setShowDropdown(false);
+    
+    // Disparar evento para limpiar datos del usuario
+    window.dispatchEvent(new Event('userLogout'));
+    navigate("/");
+  };
+
+  const toggleDropdown = () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else {
+      setShowDropdown(!showDropdown);
+    }
+  };
 
   const ClickSearch = () => navigate("/Search");
   const ClickForum = () => navigate("/Forum");
@@ -66,9 +103,17 @@ function Navegador() {
           <button className="link" onClick={ClickForum}>Foro</button>
           <button className="link" onClick={ClickLocation}>Localizar</button>
         </div>
-        <button className="nav-login-btn" onClick={handleClick}>
-          {isLoggedIn ? "Perfil" : "Iniciar sesión"}
-        </button>
+        <div className="user-dropdown">
+          <button className="nav-login-btn" onClick={toggleDropdown}>
+            {isLoggedIn ? username : "Iniciar sesión"}
+          </button>
+          {isLoggedIn && showDropdown && (
+            <div className="dropdown-menu">
+              <button onClick={handleProfileClick}>Mi Perfil</button>
+              <button onClick={handleLogout}>Cerrar Sesión</button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

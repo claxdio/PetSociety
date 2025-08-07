@@ -3,7 +3,6 @@ import "../styles/Register.css";
 import logo from "../assets/logo/logo.svg";
 import eyeOpen from "../assets/icons/eye-open.png";
 import eyeClose from "../assets/icons/eye-close.png";
-import googleIcon from "../assets/icons/google.png";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
@@ -30,10 +29,6 @@ const Register = () => {
     }
   };
 
-  const handleGoogle = (e) => {
-    e.preventDefault();
-    navigate("/en-proceso");
-  };
 
   return (
     <div className="register-bg">
@@ -89,15 +84,6 @@ const Register = () => {
           <div className="register-login-link">
             ¿Ya tienes cuenta? <a href="/login">Inicia Sesión</a>
           </div>
-          <div className="register-separator">
-            <span className="line"></span>
-            <span className="or">o</span>
-            <span className="line"></span>
-          </div>
-          <button className="register-google-btn" onClick={handleGoogle}>
-            <img src={googleIcon} alt="Google" className="google-icon" />
-            Registrarse con Google
-          </button>
         </div>
       </div>
     </div>
