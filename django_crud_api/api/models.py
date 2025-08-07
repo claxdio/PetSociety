@@ -5,7 +5,6 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-# Create your models here.
 
 class Perfil(models.Model):
     TIPO_USUARIO_CHOICES = [

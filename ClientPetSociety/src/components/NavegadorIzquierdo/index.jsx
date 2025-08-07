@@ -14,11 +14,6 @@ function Navegador() {
 
   return (
     <nav className="sidebar">
-      <div className="profile-section">
-        <div className="profile-circle"></div>
-        <span className="user-name">{userName}</span>
-      </div>
-      
       <div className="sidebar-links">
         <button className="sidebar-link" onClick={() => navigate("/")}>
           <FaHome className="link-icon" />

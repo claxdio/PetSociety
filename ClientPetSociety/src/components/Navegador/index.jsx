@@ -7,6 +7,7 @@ import Logo from "../../assets/logo/logoBlanco.png";
 function Navegador() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const checkLogin = () => {
@@ -15,18 +16,20 @@ function Navegador() {
         try {
           const decoded = jwtDecode(token);
           const now = Date.now() / 1000;
-          setIsLoggedIn(decoded.exp > now);
+          const isValid = decoded.exp > now;
+          setIsLoggedIn(isValid);
+          if (isValid) setUsername(decoded.username);
         } catch {
           setIsLoggedIn(false);
+          setUsername("");
         }
       } else {
         setIsLoggedIn(false);
+        setUsername("");
       }
     };
 
     checkLogin();
-
-    // Opción: escuchar cambios de login/logout en otras pestañas
     window.addEventListener("storage", checkLogin);
 
     return () => {
@@ -34,27 +37,26 @@ function Navegador() {
     };
   }, []);
 
-  
-  const handleClick = () => {
-  const token = localStorage.getItem("access");
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      const now = Date.now() / 1000;
-      if (decoded.exp > now) {
-        const username = decoded.username; // <-- Asegúrate de que el token tenga esto
-        navigate(`/profile/${username}`);
-        return;
-      }
-    } catch {}
-  }
-  navigate("/login");
-};
-
+  const ClickHome = () => navigate("/");
   const ClickSearch = () => navigate("/Search");
   const ClickForum = () => navigate("/Forum");
   const ClickLocation = () => navigate("/locate");
-  const ClickHome = () => navigate("/");
+
+  const ClickProfile = () => {
+    if (isLoggedIn && username) {
+      navigate(`/profile/${username}`);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setIsLoggedIn(false);
+    setUsername("");
+    navigate("/login");
+  };
 
   return (
     <nav className="navegador">
@@ -65,10 +67,17 @@ function Navegador() {
           <button className="link" onClick={ClickSearch}>Buscar</button>
           <button className="link" onClick={ClickForum}>Foro</button>
           <button className="link" onClick={ClickLocation}>Localizar</button>
+          <button className="link" onClick={ClickProfile}>Perfil</button>
         </div>
-        <button className="nav-login-btn" onClick={handleClick}>
-          {isLoggedIn ? "Perfil" : "Iniciar sesión"}
-        </button>
+        {isLoggedIn ? (
+          <button className="nav-login-btn" onClick={handleLogout}>
+            Cerrar sesión
+          </button>
+        ) : (
+          <button className="nav-login-btn" onClick={() => navigate("/login")}>
+            Iniciar sesión
+          </button>
+        )}
       </div>
     </nav>
   );

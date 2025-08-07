@@ -148,19 +148,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class MascotaSerializer(serializers.ModelSerializer):
     usuario = UserSerializer(read_only=True)
-    usuario_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), 
-        source='usuario', 
-        write_only=True
-    )
     
     class Meta:
         model = Mascota
         fields = [
-            'id', 'usuario', 'usuario_id', 'nombre', 'especie', 
+            'id', 'usuario', 'nombre', 'especie', 
             'foto', 'direccion', 'fecha_registro', 'activa'
         ]
-        read_only_fields = ['fecha_registro']
+        read_only_fields = ['fecha_registro', 'usuario']
 
 class EventoAgendaSerializer(serializers.ModelSerializer):
     # Campos calculados

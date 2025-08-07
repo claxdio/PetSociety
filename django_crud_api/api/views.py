@@ -134,11 +134,9 @@ class UserMascotaListView(generics.ListAPIView):
         return Mascota.objects.filter(usuario__username=username)
 
 class MascotaListCreateView(generics.ListCreateAPIView):
+    queryset = Mascota.objects.all()
     serializer_class = MascotaSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Mascota.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)

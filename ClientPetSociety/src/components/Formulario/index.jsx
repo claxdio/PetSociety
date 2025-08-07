@@ -3,7 +3,7 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import "./style.css";
 
-function Form({ onClose, camposFormulario, onPublicar, onCrear, title}) {
+function Form({ onClose, camposFormulario, onPublicar, onCrear, title="Formulario"}) {
   const [formulario, setFormulario] = useState({});
   const [opcionesDinamicas, setOpcionesDinamicas] = useState(() => {
     const initial = {};
@@ -56,7 +56,6 @@ function Form({ onClose, camposFormulario, onPublicar, onCrear, title}) {
     e.preventDefault();
     if (enviando) return;
 
-    // console.log('Datos del formulario antes de enviar:', formulario);
 
     setEnviando(true);
     try {
