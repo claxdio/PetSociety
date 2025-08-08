@@ -2,11 +2,14 @@ import React from "react";
 import "./style.css";
 
 const Mascotas = ({ items }) => {
+  const handleMascotaClick = (mascotaId) => {
+    window.location.href = `/mascota/${mascotaId}`;
+  };
   return (
     <div className="scrollable-list">
       {items.map((item, index) => (
         <div key={index} className="list-item">
-          <div className="circle circle-normal">
+          <div className="circle circle-normal" onClick={() => handleMascotaClick(items.id)}>
             {item.foto ? (
               <img 
                 src={item.foto} 

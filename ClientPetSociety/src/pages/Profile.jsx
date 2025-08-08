@@ -24,7 +24,7 @@ const Profile = () => {
       reptil: '🦎',
       default: '🐾'
     };
-    
+
     return iconos[especie?.toLowerCase()] || iconos.default;
   };
   const cargarDatosPerfil = async () => {
@@ -57,21 +57,18 @@ const Profile = () => {
         // 1. Obtener información del usuario actual
         const userInfoRes = await api.get('/api/user/info/', config);
         const perfilRes = await api.get('/api/user/profile/', config);
-        
+
         setUsuarioActual({
           ...userInfoRes.data,
           ...perfilRes.data
         });
 
-        // 2. Obtener mascotas del usuario
         const mascotasRes = await api.get(`/api/usuarios/${userInfoRes.data.username}/mascotas/`, config);
         setMascotas(mascotasRes.data);
 
-        // 3. Obtener categorías
         const categoriasRes = await api.get('/api/categorias/', config);
         setCategorias(categoriasRes.data);
 
-        // 4. Obtener publicaciones del usuario
         const publicacionesRes = await api.get('/api/publicaciones/', config);
         const publicacionesUsuario = publicacionesRes.data.filter(
           pub => pub.usuario?.username === userInfoRes.data.username
@@ -151,32 +148,28 @@ const Profile = () => {
   const handleCrearMascota = async (datosMascota) => {
     try {
       const token = localStorage.getItem(ACCESS_TOKEN);
-      const config = { 
-        headers: { 
+      const config = {
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
-        } 
+        }
       };
 
       const formData = new FormData();
-      
-      // Campos obligatorios
+
       formData.append('nombre', datosMascota.nombre);
       formData.append('especie', datosMascota.especie);
-      
-      // Campo de imagen (llamado 'foto' en el modelo)
+
       if (datosMascota.imagen) {
         formData.append('foto', datosMascota.imagen);
       }
-      
-      // DEBUG: Verificar datos enviados
+
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
       }
 
       const response = await api.post('/api/mascotas/', formData, config);
-      
-      // Actualizar lista de mascotas
+
       const mascotasRes = await api.get(`/api/usuarios/${usuarioActual.username}/mascotas/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -204,35 +197,31 @@ const Profile = () => {
       };
 
       const formDataToSend = new FormData();
-      
-      // Agregar todos los campos editables
+
       formDataToSend.append('nombre', formData.nombre || '');
       formDataToSend.append('apellido', formData.apellido || '');
       formDataToSend.append('biografia', formData.biografia || '');
       formDataToSend.append('direccion', formData.direccion || '');
-      formDataToSend.append('tipo_usuario', formData.tipo_usuario);
       if (formData.foto_perfil) {
         formDataToSend.append('foto_perfil', formData.foto_perfil);
       }
 
       const response = await api.patch('/api/user/profile/', formDataToSend, config);
-      
-      // Actualiza TODOS los estados relevantes
+
       setUsuarioActual(prev => ({
         ...prev,
         nombre: response.data.nombre,
         apellido: response.data.apellido,
-        bio: response.data.biografia, // Asegúrate que coincida con tu estado
+        bio: response.data.biografia,
         direccion: response.data.direccion,
-        tipo_usuario: response.data.tipo_usuario,
-        foto_perfil: response.data.foto_perfil // Si usas este campo
+        foto_perfil: response.data.foto_perfil
       }));
-      
-      // Vuelve a cargar los datos completos del perfil
+
       await cargarDatosPerfilCompletos();
-      
+
       setMostrarFormularioPerfil(false);
-      
+      window.location.reload();
+
     } catch (error) {
       console.error("Error actualizando perfil:", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -253,11 +242,9 @@ const Profile = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // 1. Obtener información del usuario actual
       const userInfoRes = await api.get('/api/user/info/', config);
       const perfilRes = await api.get('/api/user/profile/', config);
-      
-      // Construir objeto de usuario con foto de perfil completa
+
       const usuarioData = {
         ...userInfoRes.data,
         ...perfilRes.data,
@@ -268,7 +255,6 @@ const Profile = () => {
 
       setUsuarioActual(usuarioData);
 
-      // ... resto de la carga de datos ...
     } catch (error) {
       console.error("Error cargando perfil", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -277,6 +263,10 @@ const Profile = () => {
         window.location.href = '/login';
       }
     }
+  };
+
+  const handleMascotaClick = (mascotaID) => {
+    window.location.href = `/mascota/${mascotaID}`;
   };
 
   const camposFormulario = [
@@ -364,14 +354,6 @@ const Profile = () => {
       required: false
     },
     {
-      nombre: "tipo_usuario",
-      label: "Tipo de Usuario",
-      tipo: "select",
-      opciones: ["normal", "organizacion", "veterinario"],
-      labels: ["Normal", "Organización", "Veterinario"],
-      required: true
-    },
-    {
       nombre: "foto_perfil",
       label: "Foto de Perfil",
       tipo: "file",
@@ -387,7 +369,6 @@ const Profile = () => {
         <div className="main-content">
           <div className="profile-section">
             <div className="profile-header">
-              {/* Foto de perfil - Versión similar a Publicacion.jsx */}
               {usuarioActual?.foto_perfil ? (
                 <img 
                   src={usuarioActual.foto_perfil} 
@@ -401,12 +382,10 @@ const Profile = () => {
                 </div>
               )}
 
-              {/* Nombre de usuario */}
               <h2 className="profile-name">
                 {usuarioActual?.nombre_completo || usuarioActual?.username || 'Usuario'}
               </h2>
 
-              {/* Biografía */}
               <p className="profile-description">
                 {usuarioActual?.bio || usuarioActual?.biografia || 'Amante de los animales y la naturaleza'}
               </p>
@@ -428,7 +407,7 @@ const Profile = () => {
             <h3 className="section-title">Mis Mascotas</h3>
             <div className="mascotas-grid">
               {mascotas.map((mascota, index) => (
-                <div key={index} className="mascota-item">
+                <div key={index} className="mascota-item" onClick={() => handleMascotaClick(mascota.id)}>
                   <div className="mascota-content">
                     <div className="mascota-icon">
                       {getIconoMascota(mascota.especie)}
@@ -437,8 +416,8 @@ const Profile = () => {
                   </div>
                 </div>
               ))}
-              <div 
-                className="mascota-item" 
+              <div
+                className="mascota-item"
                 onClick={() => setMostrarFormMascota(true)}
                 style={{ cursor: 'pointer' }}
               >

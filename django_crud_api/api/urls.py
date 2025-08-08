@@ -16,7 +16,7 @@ from .views import (
 
 urlpatterns = [
     path('publicaciones/', PublicacionListCreateView.as_view(), name='publicacion-list-create'),
-    path('api/publicaciones/<int:pk>/eliminar/', PublicacionDestroyView.as_view(), name='publicacion-delete'),
+    path('publicaciones/<int:pk>/eliminar/', PublicacionDestroyView.as_view(), name='publicacion-delete'),
     path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
     path('user/info/', user_info, name='user-info'),
     path('admin/login/', admin_login, name='admin-login'),

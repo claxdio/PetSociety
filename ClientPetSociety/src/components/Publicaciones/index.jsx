@@ -117,6 +117,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
       
       alert(mensajeError);
     }
+    window.location.reload();
   };
 
   // Función para dar/quitar like
@@ -192,6 +193,27 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
   useEffect(() => {
     setComentariosList(comentarios);
   }, [comentarios]);
+
+  const handleEnviarReporte = async (formulario) => {
+    try {
+      console.log(id)
+      console.log(formulario.motivo)
+      const response = await api.post('/api/reportes/', {
+        publicacion_reportada: id,
+        motivo: formulario.motivo
+      });
+
+      alert("Reporte enviado correctamente.");
+      setShowReporteForm(false);
+    } catch (error) {
+      const data = error.response?.data;
+      const mensaje =
+        data?.publicacion_reportada?.[0] ||
+        data?.non_field_errors?.[0] ||
+        "Error desconocido.";
+      alert("Hubo un problema al enviar el reporte: " + mensaje);
+    }
+  };
 
   useEffect(() => {
     setCurrentLikes(likes);
