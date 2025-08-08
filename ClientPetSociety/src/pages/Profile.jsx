@@ -1,4 +1,5 @@
 import '../styles/Profile.css';
+import { Link } from 'react-router-dom';
 import Navegador from '../components/NavegadorIzquierdo/index';
 import Publicacion from '../components/Publicaciones/index.jsx';
 import Form from '../components/Formulario/index.jsx';
@@ -427,16 +428,23 @@ const Profile = () => {
           <div className="pets-section">
             <h3 className="section-title">Mis Mascotas</h3>
             <div className="mascotas-grid">
-              {mascotas.map((mascota, index) => (
-                <div key={index} className="mascota-item">
-                  <div className="mascota-content">
-                    <div className="mascota-icon">
-                      {getIconoMascota(mascota.especie)}
+              {mascotas.map((mascota, index) => {
+                const fotoUrl = mascota.foto ? `http://localhost:8000${mascota.foto}` : null;
+                return (
+                  <a href={`/mascota/${mascota.id}`} key={index} className="mascota-item">
+                    <div className="mascota-content">
+                      <div className="mascota-icon">
+                        {fotoUrl ? (
+                          <img src={fotoUrl} alt={mascota.nombre} className="mascota-photo" />
+                        ) : (
+                          getIconoMascota(mascota.especie)
+                        )}
+                      </div>
+                      <span className="mascota-name">{mascota.nombre}</span>
                     </div>
-                    <span className="mascota-name">{mascota.nombre}</span>
-                  </div>
-                </div>
-              ))}
+                  </a>
+                );
+              })}
               <div 
                 className="mascota-item" 
                 onClick={() => setMostrarFormMascota(true)}

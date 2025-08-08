@@ -148,16 +148,21 @@
 }
 
 .mascota-icon {
-  width: 60px;
-  height: 60px;
-  background-color: #e9f0e3; 
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  border: 2px solid #5ea82f; 
+  align-items: center;
+  font-size: 24px;
+  background-color: #f0f0f0;
+}
+
+.mascota-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .mascota-name {
