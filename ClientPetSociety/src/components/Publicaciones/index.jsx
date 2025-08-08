@@ -36,7 +36,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
   // Manejo seguro de datos
   const nombreUsuario = typeof usuario === 'object' ? usuario.username : usuario;
   const fotoPerfilUsuario = typeof usuario === 'object' && usuario.perfil && usuario.perfil.foto_perfil_url 
-    ? usuario.perfil.foto_perfil_url 
+    ? usuario.perfil.foto_perfil_url
     : fotoUsuario;
 
   const [showReporteForm, setShowReporteForm] = useState(false);
@@ -49,24 +49,73 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
         },
     ];
 
-  const handleEnviarReporte = async (formulario) => {
-    try {
-      console.log(id)
-      console.log(formulario.motivo)
-      const response = await api.post('/api/reportes/', {
-        publicacion_reportada: id,
-        motivo: formulario.motivo
-      });
+  const [isOwner, setIsOwner] = useState(false);
 
-      alert("Reporte enviado correctamente.");
-      setShowReporteForm(false);
+  useEffect(() => {
+    const checkOwnership = async () => {
+      try {
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        if (!token) return;
+        
+        const response = await api.get('/api/user/info/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        setIsOwner(
+          typeof usuario === 'object' 
+            ? usuario.username === response.data.username
+            : false
+        );
+      } catch (error) {
+        console.error('Error checking ownership:', error);
+      }
+    };
+
+    checkOwnership();
+  }, [usuario]);
+
+  const handleEliminarPublicacion = async () => {
+    const confirmar = window.confirm('¿Estás seguro de eliminar esta publicación?');
+    if (!confirmar) return;
+
+    try {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+
+      // Usar el endpoint seguro con /eliminar/
+      const response = await api.delete(`/api/publicaciones/${id}/eliminar/`, config);
+      
+      if (response.status === 200) {
+        alert('Publicación eliminada correctamente');
+        window.location.reload(); // Recargar para ver cambios
+        
+        // O si usas manejo de estado:
+        // onDelete && onDelete(id); // Notificar al componente padre
+      }
     } catch (error) {
-      const data = error.response?.data;
-      const mensaje =
-        data?.publicacion_reportada?.[0] ||
-        data?.non_field_errors?.[0] ||
-        "Error desconocido.";
-      alert("Hubo un problema al enviar el reporte: " + mensaje);
+      console.error('Error eliminando publicación:', error);
+      
+      let mensajeError = 'Error al eliminar la publicación';
+      if (error.response) {
+        if (error.response.status === 404) {
+          mensajeError = 'La publicación no existe o ya fue eliminada';
+        } else if (error.response.status === 403) {
+          mensajeError = 'No tienes permiso para eliminar esta publicación';
+        } else if (error.response.data?.detail) {
+          mensajeError = error.response.data.detail;
+        }
+      }
+      
+      alert(mensajeError);
     }
   };
 
@@ -180,7 +229,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
                     onClick={() => handleMascotaClick(mascota.id)}
                     style={{ cursor: 'pointer', color: '#28a745' }}
                   >
-                    con {mascota.nombre} 🐾
+                    <span style={{ color: '#666' }}>con</span> {mascota.nombre} 🐾
                   </span>
                 ))}
               </div>
@@ -200,19 +249,30 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
             {currentLikes || 0}{isLiked ? '❤️' : '🤍'}
           </button>
         )}
-        <button className="report-button"
-          onClick={() => {
-            const token = localStorage.getItem(ACCESS_TOKEN);
-            if (!token) {
-              window.location.href = '/login';
-              return;
-            } else {
-              setShowReporteForm(true)
-            }}}
-          title="Reportar publicación"
-        >
-          ❕
-        </button>
+        <div className="user-buttons">
+          {isOwner && (
+            <button 
+              className="delete-button"
+              onClick={handleEliminarPublicacion}
+              title="Eliminar publicación"
+            >
+              🗑️
+            </button>
+          )}
+          <button className="report-button"
+            onClick={() => {
+              const token = localStorage.getItem(ACCESS_TOKEN);
+              if (!token) {
+                window.location.href = '/login';
+                return;
+              } else {
+                setShowReporteForm(true)
+              }}}
+            title="Reportar publicación"
+          >
+            ❕
+          </button>
+        </div>
       </div>
 
       <div className="post-image-container">

@@ -1,11 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-# Create your models here.
 
 class Perfil(models.Model):
     TIPO_USUARIO_CHOICES = [
@@ -80,6 +79,17 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username}: {self.descripcion[:20]}" #type: ignore
+    
+    def delete(self, *args, **kwargs):
+        # Eliminar archivos asociados primero
+        self.archivos.all().delete()
+        
+        # Limpiar relaciones ManyToMany
+        self.mascotas_etiquetadas.clear()
+        self.categorias.clear()
+        
+        # Llamar al delete original
+        super().delete(*args, **kwargs)
 
 class ArchivoPublicacion(models.Model):
     """Archivos multimedia asociados a una publicación"""
@@ -100,6 +110,10 @@ class ArchivoPublicacion(models.Model):
 
     def __str__(self):
         return f"Archivo de {self.publicacion.id} - {self.tipo_archivo}"
+    
+    def delete(self, *args, **kwargs):
+        self.archivo.delete(save=False)
+        super().delete(*args, **kwargs)
 
 
 class Comentario(models.Model):
@@ -506,6 +520,28 @@ class ForoPyR(models.Model):
     @property
     def es_respuesta(self):
         return self.parent is not None
+    
+    @property
+    def total_votos(self):
+        """Calcula el total de votos (upvotes - downvotes)"""
+        upvotes = self.votos.filter(es_upvote=True).count()
+        downvotes = self.votos.filter(es_upvote=False).count()
+        return upvotes - downvotes
+
+class VotoForo(models.Model):
+    """Votos para preguntas y respuestas del foro"""
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votos_foro')
+    entrada_foro = models.ForeignKey(ForoPyR, on_delete=models.CASCADE, related_name='votos')
+    es_upvote = models.BooleanField()  # True para upvote, False para downvote
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('usuario', 'entrada_foro')  # Un usuario solo puede votar una vez por entrada
+        ordering = ['-fecha_creacion']
+    
+    def __str__(self):
+        voto_tipo = "Upvote" if self.es_upvote else "Downvote"
+        return f"{voto_tipo} de {self.usuario.username} en entrada {self.entrada_foro.id}"
 
 
 class Establecimiento(models.Model):
@@ -575,22 +611,6 @@ class Resena(models.Model):
     def __str__(self):
         return f"Reseña de {self.usuario.username} para {self.establecimiento.nombre}"
 
-# Señal para crear perfil automáticamente cuando se crea un usuario
-@receiver(post_save, sender=User)
-def crear_perfil_usuario(sender, instance, created, **kwargs):
-    if created:
-        Perfil.objects.create(usuario=instance) #type: ignore
-
-@receiver(post_save, sender=User)
-def guardar_perfil_usuario(sender, instance, **kwargs):
-    if hasattr(instance, 'perfil'):
-        instance.perfil.save()
-
-# Señal para crear agenda automáticamente cuando se crea una mascota
-@receiver(post_save, sender=Mascota)
-def crear_agenda_mascota(sender, instance, created, **kwargs):
-    if created:
-        Agenda.objects.create(mascota=instance)
 #deaqui*/
 class CitaMedica(models.Model):
     """Citas médicas para mascotas con validación de peso"""
@@ -715,3 +735,25 @@ class CitaMedica(models.Model):
         proxima_semana = ahora + timedelta(days=7)
         return ahora <= self.fecha_cita <= proxima_semana
         #aaaaqui*/
+
+# Señal para crear perfil automáticamente cuando se crea un usuario
+@receiver(post_save, sender=User)
+def crear_perfil_usuario(sender, instance, created, **kwargs):
+    if created:
+        Perfil.objects.create(usuario=instance) #type: ignore
+
+@receiver(post_save, sender=User)
+def guardar_perfil_usuario(sender, instance, **kwargs):
+    if hasattr(instance, 'perfil'):
+        instance.perfil.save()
+
+# Señal para crear agenda automáticamente cuando se crea una mascota
+@receiver(post_save, sender=Mascota)
+def crear_agenda_mascota(sender, instance, created, **kwargs):
+    if created:
+        Agenda.objects.create(mascota=instance)
+
+@receiver(pre_delete, sender=Publicacion)
+def eliminar_archivos_publicacion(sender, instance, **kwargs):
+    for archivo in instance.archivos.all():
+        archivo.archivo.delete(save=False)

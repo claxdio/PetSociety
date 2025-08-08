@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 import UserImage from "../../assets/icons/user.png";
 
-function DescripcionMascota() {
+function DescripcionMascota({ mascotaData, isOwner }) {
   const [mostrarFormularioEditar, setMostrarFormularioEditar] = useState(false);
-  const [mascotaData, setMascotaData] = useState({
-    nombreMascota: "",
-    especie: "",
+  const [mascotaLocal, setMascotaLocal] = useState({
+    nombreMascota: mascotaData?.nombre || "",
+    especie: mascotaData?.especie || "",
   });
 
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ function DescripcionMascota() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // evita recargar la página
-    setMascotaData({ ...formData });
+    setMascotaLocal({ ...formData });
 
     setFormData({ nombreMascota: "", especie: "" }); // limpia formulario
     setMostrarFormularioEditar(false); // oculta el formulario
@@ -27,28 +27,43 @@ function DescripcionMascota() {
     setMostrarFormularioEditar(false);
   };
 
+  // Actualizar estado local cuando cambien los datos de la mascota
+  useEffect(() => {
+    if (mascotaData) {
+      setMascotaLocal({
+        nombreMascota: mascotaData.nombre || "",
+        especie: mascotaData.especie || "",
+      });
+    }
+  }, [mascotaData]);
+
   return (
     <div className="descripcion-mascota">
-      <img src={UserImage} alt="User" />
-      <h2>{mascotaData.nombreMascota}</h2>
+      <img 
+        src={mascotaData?.foto || UserImage} 
+        alt={mascotaData?.nombre || "Mascota"} 
+      />
+      <h2>{mascotaData?.nombre || mascotaLocal.nombreMascota || "Nombre de mascota"}</h2>
       <div className="informacion">
         <div className="mascota-info">
           <h4>Especie </h4>
-          <p>{mascotaData.especie}</p>
+          <p>{mascotaData?.especie || mascotaLocal.especie || "Especie"}</p>
         </div>
       </div>
-      <div className="descripcion-buttons">
-        <button
-          onClick={() => {
-            setMostrarFormularioEditar(true);
-          }}
-        >
-          Editar perfil
-        </button>
-        <button>Compartir</button>
-      </div>
+      {isOwner && (
+        <div className="descripcion-buttons">
+          <button
+            onClick={() => {
+              setMostrarFormularioEditar(true);
+            }}
+          >
+            Editar perfil
+          </button>
+          <button>Compartir</button>
+        </div>
+      )}
       <div className="form-wrapper">
-        {mostrarFormularioEditar && (
+        {mostrarFormularioEditar && isOwner && (
           <form
             onSubmit={handleSubmit}
             style={{ marginTop: "20px" }}
@@ -58,7 +73,7 @@ function DescripcionMascota() {
               <label htmlFor="nombreMascota">Nombre de la mascota:</label>
               <input
                 id="nombreMascota"
-                placeholder="Nombre de la mascota"
+                placeholder={mascotaData?.nombre || "Nombre de la mascota"}
                 value={formData.nombreMascota}
                 onChange={(e) =>
                   setFormData({ ...formData, nombreMascota: e.target.value })
@@ -71,13 +86,13 @@ function DescripcionMascota() {
               <label htmlFor="especie">Descripción del caso:</label>
               <input
                 id="especie"
-                placeholder="Especie de la mascota"
+                placeholder={mascotaData?.especie || "Especie de la mascota"}
                 value={formData.especie}
                 onChange={(e) =>
                   setFormData({ ...formData, especie: e.target.value })
                 }
                 required
-              ></input>
+              />
             </div>
             <div className="form-buttons">
               <button type="submit">Guardar</button>

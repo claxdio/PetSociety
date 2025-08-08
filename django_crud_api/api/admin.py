@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Categoria, Comentario, Reaccion
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, ArchivoPublicacion, Categoria, Comentario, Reaccion, ForoPyR, VotoForo
 
 @admin.register(Perfil)
 class PerfilAdmin(admin.ModelAdmin):
@@ -223,3 +223,17 @@ class ReaccionAdmin(admin.ModelAdmin):
     search_fields = ['usuario__username', 'publicacion__descripcion']
     readonly_fields = ['fecha_creacion']
     date_hierarchy = 'fecha_creacion'
+
+@admin.register(ForoPyR)
+class ForoPyRAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'titulo', 'es_pregunta', 'es_respuesta', 'total_votos', 'fecha_creacion']
+    list_filter = ['fecha_creacion']
+    search_fields = ['usuario__username', 'titulo', 'contenido']
+    readonly_fields = ['fecha_creacion', 'total_votos']
+    
+@admin.register(VotoForo)
+class VotoForoAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'entrada_foro', 'es_upvote', 'fecha_creacion']
+    list_filter = ['es_upvote', 'fecha_creacion']
+    search_fields = ['usuario__username', 'entrada_foro__titulo']
+    readonly_fields = ['fecha_creacion']

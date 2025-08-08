@@ -9,25 +9,21 @@
 
 .center {
   height: 100%;
-}
-
-.publications-section {
+  width: 100%;
+  background-color: white;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* para que el contenido empiece arriba */
-  align-items: center;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;
-  min-height: 0;
   flex-grow: 1;
-  padding: 10%;
-  gap: 5%;
+  min-height: 0;
 }
 
-/* Ocultar scrollbar para webkit browsers */
-.publications-section::-webkit-scrollbar {
-  display: none;
+/* Anula el padding horizontal de home.css para hacer las publicaciones más anchas */
+.pet-profile .home-posts {
+  padding-left: 10%;
+  padding-right: 10%;
 }
+
+
 
 .descripcion {
   display: none; /* Ocultamos este contenedor ya que DescripcionUsuario ahora es fijo */
@@ -54,7 +50,7 @@
 
 @media (max-width: 600px) {
   .main-content {
-    grid-template-columns: 250px 1fr 250px;
+    grid-template-columns: 2500px 1fr 250px;
   }
 
   .center {

@@ -23,8 +23,53 @@
 }
 
 /* Estilo para el botón de like cuando no hay imagen */
-.user {
-  position: relative; /* Para posicionar el botón de like */
+.publicacion .user {
+  position: relative !important; /* Para posicionar el botón de like */
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  gap: 12px;
+  width: 100%;
+}
+
+.publicacion .grid-item {
+  flex-shrink: 0 !important;
+}
+
+.publicacion .item {
+  flex: 1 !important;
+  text-align: left !important;
+}
+
+.publicacion .user-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  gap: 2px;
+}
+
+.mascotas-etiquetadas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.publicacion .username {
+  font-size: 14px !important;
+  font-weight: bold;
+  color: #28a745 !important;
+}
+
+.mascota-tag {
+  font-size: 14px;
+  color: #28a745;
+}
+
+.mascota-tag .con-palabra {
+  color: #666 !important;
+  font-weight: normal;
 }
 
 .like-button.no-image {
@@ -154,6 +199,24 @@
   background-color: white;
 }
 
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 8px;
+  color: #ff4444;
+  transition: color 0.2s;
+}
+
+.delete-button:hover {
+  color: #cc0000;
+}
+
+.delete-button:disabled {
+  color: #cccccc;
+  cursor: not-allowed;
+}
 .custom-input:focus {
   border-color: #5ea82f;
 }

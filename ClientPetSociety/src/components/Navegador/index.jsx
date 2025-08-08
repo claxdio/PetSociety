@@ -27,16 +27,16 @@ function Navegador() {
         } catch {
           setIsLoggedIn(false);
           setUsername("");
+          setUsername("");
         }
       } else {
         setIsLoggedIn(false);
+        setUsername("");
         setUsername("");
       }
     };
 
     checkLogin();
-
-    // Opción: escuchar cambios de login/logout en otras pestañas
     window.addEventListener("storage", checkLogin);
 
     return () => {
@@ -88,10 +88,18 @@ function Navegador() {
     }
   };
 
+  const ClickHome = () => navigate("/");
   const ClickSearch = () => navigate("/Search");
   const ClickForum = () => navigate("/Forum");
   const ClickLocation = () => navigate("/locate");
-  const ClickHome = () => navigate("/");
+
+  const ClickProfile = () => {
+    if (isLoggedIn && username) {
+      navigate(`/profile/${username}`);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <nav className="navegador">
@@ -102,6 +110,7 @@ function Navegador() {
           <button className="link" onClick={ClickSearch}>Buscar</button>
           <button className="link" onClick={ClickForum}>Foro</button>
           <button className="link" onClick={ClickLocation}>Localizar</button>
+          <button className="link" onClick={ClickProfile}>Perfil</button>
         </div>
         <div className="user-dropdown">
           <button className="nav-login-btn" onClick={toggleDropdown}>
