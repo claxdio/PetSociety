@@ -506,6 +506,28 @@ class ForoPyR(models.Model):
     @property
     def es_respuesta(self):
         return self.parent is not None
+    
+    @property
+    def total_votos(self):
+        """Calcula el total de votos (upvotes - downvotes)"""
+        upvotes = self.votos.filter(es_upvote=True).count()
+        downvotes = self.votos.filter(es_upvote=False).count()
+        return upvotes - downvotes
+
+class VotoForo(models.Model):
+    """Votos para preguntas y respuestas del foro"""
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votos_foro')
+    entrada_foro = models.ForeignKey(ForoPyR, on_delete=models.CASCADE, related_name='votos')
+    es_upvote = models.BooleanField()  # True para upvote, False para downvote
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('usuario', 'entrada_foro')  # Un usuario solo puede votar una vez por entrada
+        ordering = ['-fecha_creacion']
+    
+    def __str__(self):
+        voto_tipo = "Upvote" if self.es_upvote else "Downvote"
+        return f"{voto_tipo} de {self.usuario.username} en entrada {self.entrada_foro.id}"
 
 
 class Establecimiento(models.Model):

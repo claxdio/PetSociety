@@ -180,7 +180,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
                     onClick={() => handleMascotaClick(mascota.id)}
                     style={{ cursor: 'pointer', color: '#28a745' }}
                   >
-                    con {mascota.nombre} 🐾
+                    <span style={{ color: '#666' }}>con</span> {mascota.nombre} 🐾
                   </span>
                 ))}
               </div>

@@ -66,6 +66,7 @@ function SpecificForum() {
             usuario={post?.usuario_username}
             titulo={post?.titulo}
             contenido={post?.contenido || "Contenido"}
+            usuarioPerfil={post?.usuario_perfil}
           />
         </div>
 

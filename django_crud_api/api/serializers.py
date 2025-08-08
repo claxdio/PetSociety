@@ -2,13 +2,15 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, Comentario, Reaccion, Categoria, Reporte, ForoPyR, Sancion
+from .models import Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion, MascotaPerdida, Comentario, Reaccion, Categoria, Reporte, ForoPyR, Sancion, VotoForo
 
 class ForoPyRSerializer(serializers.ModelSerializer):
     usuario_username = serializers.CharField(source='usuario.username', read_only=True)
     usuario_perfil = serializers.SerializerMethodField()
     usuario = serializers.PrimaryKeyRelatedField(read_only=True)  # <-- aquí!
     respuestas = serializers.SerializerMethodField()
+    total_votos = serializers.ReadOnlyField()
+    user_vote = serializers.SerializerMethodField()
 
     class Meta:
         model = ForoPyR
@@ -26,8 +28,10 @@ class ForoPyRSerializer(serializers.ModelSerializer):
             'es_pregunta',
             'es_respuesta',
             'respuestas',
+            'total_votos',
+            'user_vote',
         ]
-        read_only_fields = ['fecha_creacion', 'usuario_username', 'es_pregunta', 'es_respuesta', 'respuestas']
+        read_only_fields = ['fecha_creacion', 'usuario_username', 'es_pregunta', 'es_respuesta', 'respuestas', 'total_votos']
 
     def get_usuario_perfil(self, obj):
         perfil = Perfil.objects.filter(usuario=obj.usuario).first()
@@ -38,6 +42,15 @@ class ForoPyRSerializer(serializers.ModelSerializer):
         if obj.es_pregunta:
             respuestas = obj.respuestas.all()
             return ForoPyRSerializer(respuestas, many=True, context=self.context).data
+        return None
+    
+    def get_user_vote(self, obj):
+        """Obtiene el voto del usuario actual para esta entrada"""
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            voto = VotoForo.objects.filter(usuario=request.user, entrada_foro=obj).first()
+            if voto:
+                return 'up' if voto.es_upvote else 'down'
         return None
 
 class PerfilSerializer(serializers.ModelSerializer):

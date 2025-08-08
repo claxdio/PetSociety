@@ -351,6 +351,7 @@ const UsersTab = ({ users, loading, onApplySanction }) => {
             <tr>
               <th>Usuario</th>
               <th>Email</th>
+              <th>Tipo</th>
               <th>Registro</th>
               <th>Publicaciones</th>
               <th>Reportes</th>
@@ -370,6 +371,14 @@ const UsersTab = ({ users, loading, onApplySanction }) => {
                   </div>
                 </td>
                 <td>{user.email}</td>
+                <td>
+                  <span className={`user-type-badge user-type-${user.perfil?.tipo_usuario || 'normal'}`}>
+                    {user.perfil?.tipo_usuario === 'normal' ? 'Usuario' :
+                     user.perfil?.tipo_usuario === 'veterinario' ? 'Veterinario' :
+                     user.perfil?.tipo_usuario === 'organizacion' ? 'Refugio' :
+                     'Usuario'}
+                  </span>
+                </td>
                 <td>{new Date(user.date_joined).toLocaleDateString()}</td>
                 <td>{user.total_publicaciones}</td>
                 <td>{user.total_reportes}</td>

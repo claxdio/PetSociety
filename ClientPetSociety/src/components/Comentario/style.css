@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: stretch;
   max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -28,12 +28,11 @@
 
 .coment {
   width: 100%;
-
   display: grid;
-  grid-template-columns: 1fr 5fr;
+  grid-template-columns: auto 1fr;
   grid-auto-rows: auto;
-  gap: 2%;
-  align-items: start;
+  gap: 12px;
+  align-items: center;
   justify-items: start;
 }
 
@@ -46,6 +45,35 @@
   font-weight: bold;
   display: flex;
   align-items: center;
+}
+
+.item.descripcion {
+  color: #333 !important;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  font-weight: normal;
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  text-align: left !important;
+  padding-left: 0 !important;
+}
+
+.usuario-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.foto-usuario {
+  flex-shrink: 0;
+}
+
+.nombre-usuario {
+  font-size: 13px;
+  color: #28a745;
+  font-weight: bold;
 }
 
 .avatar {
