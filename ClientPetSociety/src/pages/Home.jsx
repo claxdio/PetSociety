@@ -37,7 +37,7 @@ function Home() {
                 const token = localStorage.getItem(ACCESS_TOKEN);
 
                 if(!token){
-                  const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
+                  const [publicacionesRes, categoriasRes] = await Promise.all([
                     api.get('/api/publicaciones/'), 
                     api.get('/api/categorias/'), 
                   ]);
@@ -49,10 +49,11 @@ function Home() {
                       Authorization: `Bearer ${token}`,
                     },
                   };
+                  const userInfoRes = await api.get('/api/user/info/', config);
                   const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
                     api.get('/api/publicaciones/'),
                     api.get('/api/categorias/', config),
-                    api.get('/api/mascotas/', config),
+                    api.get(`/api/usuarios/${userInfoRes.data.username}/mascotas/`, config),
                     api.get('/api/eventos-agenda/', config)
                   ]);
                   setPublicaciones(publicacionesRes.data);

@@ -93,14 +93,6 @@ function Navegador() {
   const ClickForum = () => navigate("/Forum");
   const ClickLocation = () => navigate("/locate");
 
-  const ClickProfile = () => {
-    if (isLoggedIn && username) {
-      navigate(`/profile/${username}`);
-    } else {
-      navigate("/login");
-    }
-  };
-
   return (
     <nav className="navegador">
       <div className="nav-container">
@@ -110,7 +102,6 @@ function Navegador() {
           <button className="link" onClick={ClickSearch}>Buscar</button>
           <button className="link" onClick={ClickForum}>Foro</button>
           <button className="link" onClick={ClickLocation}>Localizar</button>
-          <button className="link" onClick={ClickProfile}>Perfil</button>
         </div>
         <div className="user-dropdown">
           <button className="nav-login-btn" onClick={toggleDropdown}>

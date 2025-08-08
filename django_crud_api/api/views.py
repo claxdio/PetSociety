@@ -122,6 +122,13 @@ class PublicacionDestroyView(generics.DestroyAPIView):
     serializer_class = PublicacionDeleteSerializer
     permission_classes = [IsAuthenticated]
 
+    def get(self, request, *args, **kwargs):
+        return Response({"detail": "Esta ruta existe"}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, *args, **kwargs):
+        print("Llegó petición DELETE")  # Verifica en la terminal de Django
+        return super().delete(request, *args, **kwargs)
+
     def get_object(self):
         try:
             return Publicacion.objects.get(
