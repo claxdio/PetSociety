@@ -53,6 +53,19 @@ function Forum() {
     return <div className="avatar-initial">{initial}</div>;
   };
 
+  const timeAgo = (date) => {
+    const now = new Date();
+    const seconds = Math.round((now - new Date(date)) / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    if (seconds < 60) return `hace ${seconds} segundos`;
+    if (minutes < 60) return `hace ${minutes} minutos`;
+    if (hours < 24) return `hace ${hours} horas`;
+    return `hace ${days} días`;
+  };
+
   // Función para filtrar y ordenar posts
   const filterAndSortPosts = (searchText, sortType, postsArray) => {
     let filtered = postsArray;
@@ -75,6 +88,12 @@ function Forum() {
 
     return filtered;
   };
+
+  // Efecto para actualizar solo cuando cambian los posts originales
+  React.useEffect(() => {
+    const filtered = filterAndSortPosts(searchTerm, sortOrder, posts);
+    setFilteredPosts(filtered);
+  }, [posts]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -103,7 +122,6 @@ function Forum() {
         }
       );
 
-      // Actualizar el estado local
       const updatedPosts = posts.map(post => 
         post.id === postId 
           ? { ...post, total_votos: response.data.total_votos, user_vote: response.data.user_vote }
@@ -264,6 +282,7 @@ function Forum() {
                             </span>
                           )}
                         </div>
+                        <span className="post-date">{timeAgo(post.fecha_creacion)}</span>
                       </div>
                       <h3 className="post-question">{post.titulo}</h3>
                       <p className="post-description">{post.contenido}</p>

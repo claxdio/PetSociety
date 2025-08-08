@@ -170,7 +170,14 @@
 .post-header {
   display: flex;
   align-items: center;
+  gap: 10px;
   margin-bottom: 10px;
+}
+
+.post-date {
+  color: #888;
+  font-size: 12px;
+  margin-left: auto;
 }
 
 .post-user {

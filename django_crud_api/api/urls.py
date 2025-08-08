@@ -26,8 +26,8 @@ urlpatterns = [
     path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
 
     path('foro/', ForoPyRListCreateView.as_view(), name='foro-list-create'),
-    path('foro/<int:pk>/', ForoPyRDetailView.as_view(), name='foro-detail'),
-    path('foro/<int:pk>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
+    path('foro/<int:id>/', ForoPyRDetailView.as_view(), name='foro-detail'),
+    path('foro/<int:id>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
     path('foro/<int:entrada_id>/vote/', votar_foro, name='votar-foro'),
 
     # Endpoints para Mascotas
