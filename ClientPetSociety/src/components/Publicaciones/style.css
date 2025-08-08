@@ -1,12 +1,11 @@
 .publicacion {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 5%;
+  gap: 8px;
+  padding: 16px;
   margin: 1%;
   background-color: #f6f2e2;
   width: 100%;
-  /* Elimina height: auto y deja que el contenido determine la altura */
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -24,13 +23,58 @@
 }
 
 /* Estilo para el botón de like cuando no hay imagen */
-.user {
-  position: relative; /* Para posicionar el botón de like */
+.publicacion .user {
+  position: relative !important; /* Para posicionar el botón de like */
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  gap: 12px;
+  width: 100%;
+}
+
+.publicacion .grid-item {
+  flex-shrink: 0 !important;
+}
+
+.publicacion .item {
+  flex: 1 !important;
+  text-align: left !important;
+}
+
+.publicacion .user-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  gap: 2px;
+}
+
+.mascotas-etiquetadas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.publicacion .username {
+  font-size: 14px !important;
+  font-weight: bold;
+  color: #28a745 !important;
+}
+
+.mascota-tag {
+  font-size: 14px;
+  color: #28a745;
+}
+
+.mascota-tag .con-palabra {
+  color: #666 !important;
+  font-weight: normal;
 }
 
 .like-button.no-image {
   position: absolute;
-  right: 50px; /* Ajusta según el espacio que necesites */
+  right: 50px;
   top: 50%;
   transform: translateY(-50%);
   background-color: rgba(255, 255, 255, 0.7);
@@ -67,15 +111,16 @@
 
 .categoria-frame {
   height: auto;
-  overflow-x: auto; /* scroll horizontal */
+  overflow-x: auto;
   overflow-y: hidden;
   background-color: #e2ddca;
   border-radius: 10px;
-  padding: 5px;
+  padding: 8px;
   display: flex;
-  flex-direction: row; /* HORIZONTAL en lugar de column */
-  gap: 8px;
-  white-space: nowrap; /* evita que se rompa la línea */
+  flex-direction: row;
+  gap: 6px;
+  white-space: nowrap;
+  margin: 4px 0;
 }
 
 .categoria-item {
@@ -109,27 +154,49 @@
   box-shadow: 0 8px 20px rgba(74, 125, 34, 0.8);
 }
 
+.comentario-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  margin-top: 8px;
+}
+
 .button-small {
-    align-items:center;
-    border-radius: 15px;
-    display:inline-flex;
-    flex-direction: column;
+    align-items: center;
+    border-radius: 12px;
+    display: inline-flex;
     justify-content: center;
-    width: 30%;
-    overflow: hidden;
-    position: relative;
-    background-color: #f6f2e2;
-    padding: 1%;
-    color:#6A7D40;
+    width: 80px;
+    height: 36px;
+    background-color: #5ea82f;
+    color: white;
     font-family: "Integer-Regular", Helvetica;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button-small:hover:not(:disabled) {
+    background-color: #4a7d22;
+}
+
+.button-small:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .custom-input {
-  height: 5%;
-  width: 70%;
-  font-size: 16px;
-  padding: 1%;
+  flex: 1;
+  height: 36px;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  outline: none;
+  background-color: white;
 }
 
 .delete-button {
@@ -149,4 +216,7 @@
 .delete-button:disabled {
   color: #cccccc;
   cursor: not-allowed;
+}
+.custom-input:focus {
+  border-color: #5ea82f;
 }

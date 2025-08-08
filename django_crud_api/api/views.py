@@ -19,7 +19,9 @@ from .serializers import (
     AdminUserSerializer, AdminReporteSerializer, SancionSerializer, PublicacionDeleteSerializer
 )
 from .models import (Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion,
-    MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion)
+    MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion, VotoForo)
+
+from rest_framework.generics import RetrieveAPIView
 
 class ForoPyRListCreateView(generics.ListCreateAPIView):
     queryset = ForoPyR.objects.all()
@@ -50,6 +52,12 @@ class ForoPyRDeleteView(generics.DestroyAPIView):
         if instance.usuario != request.user and not request.user.is_staff:
             return Response({"detail": "No tienes permiso para eliminar esta entrada."}, status=status.HTTP_403_FORBIDDEN)
         return super().delete(request, *args, **kwargs)
+
+class ForoPyRDetailView(RetrieveAPIView):
+    queryset = ForoPyR.objects.all()
+    serializer_class = ForoPyRSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAuthenticated]
 
 class ReporteListCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
     queryset = Reporte.objects.all()
@@ -717,4 +725,99 @@ def admin_stats(request):
         'total_reports': total_reports,
         'pending_reports': pending_reports,
         'total_sanctions': total_sanctions
+    }, status=status.HTTP_200_OK)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_update_user_type(request, user_id):
+    if not is_admin_user(request.user):
+        return Response(
+            {'error': 'Acceso denegado. Solo administradores.'}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(
+            {'error': 'Usuario no encontrado'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    new_type = request.data.get('tipo_usuario')
+    
+    if new_type not in ['normal', 'veterinario', 'organizacion']:
+        return Response(
+            {'error': 'Tipo de usuario inválido. Debe ser: normal, veterinario u organizacion'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Actualizar el tipo de usuario en el perfil
+    user.perfil.tipo_usuario = new_type
+    user.perfil.save()
+    
+    serializer = AdminUserSerializer(user)
+    return Response({
+        'message': 'Tipo de usuario actualizado exitosamente',
+        'user': serializer.data
+    }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def votar_foro(request, entrada_id):
+    """Votar en una entrada del foro (upvote/downvote)"""
+    try:
+        entrada = ForoPyR.objects.get(id=entrada_id)
+    except ForoPyR.DoesNotExist:
+        return Response(
+            {'error': 'Entrada del foro no encontrada'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # No permitir que el usuario vote su propia entrada
+    if entrada.usuario == request.user:
+        return Response(
+            {'error': 'No puedes votar tu propia publicación'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    tipo_voto = request.data.get('tipo_voto')  # 'up' o 'down'
+    
+    if tipo_voto not in ['up', 'down']:
+        return Response(
+            {'error': 'Tipo de voto inválido. Debe ser "up" o "down"'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    es_upvote = tipo_voto == 'up'
+    
+    # Verificar si ya existe un voto del usuario para esta entrada
+    voto_existente = VotoForo.objects.filter(usuario=request.user, entrada_foro=entrada).first()
+    
+    if voto_existente:
+        if voto_existente.es_upvote == es_upvote:
+            # Si es el mismo tipo de voto, eliminar el voto (toggle)
+            voto_existente.delete()
+            user_vote = None
+        else:
+            # Si es diferente tipo de voto, actualizar
+            voto_existente.es_upvote = es_upvote
+            voto_existente.save()
+            user_vote = tipo_voto
+    else:
+        # Crear nuevo voto
+        VotoForo.objects.create(
+            usuario=request.user,
+            entrada_foro=entrada,
+            es_upvote=es_upvote
+        )
+        user_vote = tipo_voto
+    
+    # Calcular totales actualizados
+    total_votos = entrada.total_votos
+    
+    return Response({
+        'total_votos': total_votos,
+        'user_vote': user_vote,
+        'message': 'Voto registrado exitosamente'
     }, status=status.HTTP_200_OK)

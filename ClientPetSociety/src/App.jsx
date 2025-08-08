@@ -1,16 +1,19 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import PetProfile from "./pages/PetProfile";
 import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/AdminLogin";
 import AdminPanel from "./pages/AdminPanel";
 import Locate from "./pages/Locate";
 import Forum from "./pages/Forum";
+import SpecificForum from "./pages/SpecificForum";
+//
 
 function Logout() {
   localStorage.clear();
@@ -26,50 +29,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Home />}
-        />
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-        <Route
-          path="/search"
-          element={<Search />}
-        />
-        <Route
-          path="/logout"
-          element={<Logout />}
-        />
-        <Route
-          path="/register"
-          element={<RegisterAndLogout />}
-        />
-        <Route
-          path="/profile/:username"
-          element={<Profile />}
-        />
-        <Route
-          path="/admin"
-          element={<AdminLogin />}
-        />
-        <Route
-          path="/admin/panel"
-          element={<AdminPanel />}
-        />
-        <Route
-          path="*"
-          element={<NotFound />}
-        />
-        <Route
-          path="/locate"
-          element={<Locate />}
-        />
-        <Route
-          path="/forum"
-          element={<Forum />}
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/mascota/:nombreMascota" element={<PetProfile />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/panel" element={<AdminPanel />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/locate" element={<Locate />} />
+        <Route path="/forum" element={<Forum />} />
+        <Route path="/forum/:id" element={<SpecificForum />} />
       </Routes>
     </BrowserRouter>
   );

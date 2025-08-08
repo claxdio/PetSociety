@@ -5,11 +5,28 @@ import { ACCESS_TOKEN } from "../../constants";
 import Form from "../Formulario";
 import api from '../../api';
 
-function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = [], categorias = [], categoria, likes = 0, mascotas_etiquetadas = [], id }) {
+function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = [], categorias = [], categoria, likes = 0, mascotas_etiquetadas = [], id, user_has_liked = false }) {
+
+  // Función para obtener el estado del like desde localStorage
+  const getLikeStateFromStorage = () => {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+    return likedPosts[id] || user_has_liked;
+  };
+
+  // Función para guardar el estado del like en localStorage
+  const saveLikeStateToStorage = (liked) => {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+    if (liked) {
+      likedPosts[id] = true;
+    } else {
+      delete likedPosts[id];
+    }
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  };
 
   // Estado para manejar likes
   const [currentLikes, setCurrentLikes] = useState(likes);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(getLikeStateFromStorage());
 
   // Estado para comentarios
   const [comentariosList, setComentariosList] = useState(comentarios);
@@ -115,11 +132,21 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
       
       if (response.ok) {
         const data = await response.json();
-        setCurrentLikes(data.total_likes);
-        setIsLiked(data.liked);
+        const newLikedState = data.liked !== undefined ? data.liked : !isLiked;
+        
+        setCurrentLikes(data.total_likes || currentLikes + (newLikedState ? 1 : -1));
+        setIsLiked(newLikedState);
+        
+        // Guardar en localStorage
+        saveLikeStateToStorage(newLikedState);
       }
     } catch (error) {
       console.error('Error al dar like:', error);
+      // En caso de error, toggle local y guardar en localStorage
+      const newLikedState = !isLiked;
+      setCurrentLikes(currentLikes + (newLikedState ? 1 : -1));
+      setIsLiked(newLikedState);
+      saveLikeStateToStorage(newLikedState);
     }
   };
 
@@ -168,7 +195,10 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
 
   useEffect(() => {
     setCurrentLikes(likes);
-  }, [likes]);
+    // Priorizar localStorage sobre la prop
+    const storedLikeState = getLikeStateFromStorage();
+    setIsLiked(storedLikeState);
+  }, [likes, user_has_liked, id]);
 
   return (
     <div className="publicacion">
@@ -199,7 +229,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
                     onClick={() => handleMascotaClick(mascota.id)}
                     style={{ cursor: 'pointer', color: '#28a745' }}
                   >
-                    con {mascota.nombre} 🐾
+                    <span style={{ color: '#666' }}>con</span> {mascota.nombre} 🐾
                   </span>
                 ))}
               </div>
@@ -271,6 +301,7 @@ function Publicacion({ usuario, imagen, descripcion, fotoUsuario, comentarios = 
           <div key={index} className="categoria-item">#{cat.nombre}</div>
         ))}
       </div>
+      
       <div className="coment-frame-frame">
         {Array.isArray(comentariosList) && comentariosList.map((coment, index) => (
           <Comentario

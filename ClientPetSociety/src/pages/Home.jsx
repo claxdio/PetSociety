@@ -6,9 +6,8 @@ import Cita from "../components/Cita/index.jsx";
 import Mascotas from "../components/Mascotas/index.jsx";
 import api from "../api.js";
 import "../styles/Home.css";
-import axios from 'axios';
+import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-
 
 function Home() {
   const [mostrarForm, setMostrarForm] = useState(false); 
@@ -16,6 +15,21 @@ function Home() {
   const [categorias, setCategorias] = useState([]); 
   const [mascotas, setMascotas] = useState([]); 
   const [eventosAgenda, setEventosAgenda] = useState([]);
+
+  // Limpiar datos del usuario al hacer logout
+  useEffect(() => {
+    const handleLogout = () => {
+      setMascotas([]);
+      setEventosAgenda([]);
+      // Limpiar likes guardados localmente
+      localStorage.removeItem("likedPosts");
+    };
+
+    window.addEventListener("userLogout", handleLogout);
+    return () => {
+      window.removeEventListener("userLogout", handleLogout);
+    };
+  }, []);
 
   useEffect(() => {
         const fetchData = async () => { 
@@ -53,8 +67,8 @@ function Home() {
             }
         };
 
-        fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
     const camposFormulario = [
         {
@@ -96,19 +110,19 @@ function Home() {
       try {
         const response = await axios.post('http://localhost:8000/api/categorias/', {
           nombre: inputValue,
-          descripcion: ''
-        });
+          descripcion: "",
+        }
+      );
 
-        return {
-          label: response.data.nombre,
-          value: response.data.id
-        };
-      } catch (error) {
-        console.error('Error creando categoría en API', error);
-        throw error;
-      }
-    };
-
+      return {
+        label: response.data.nombre,
+        value: response.data.id,
+      };
+    } catch (error) {
+      console.error("Error creando categoría en API", error);
+      throw error;
+    }
+  };
 
     const handlePublicar = async (datosFormulario) =>{
         try{
@@ -159,10 +173,10 @@ function Home() {
         <div className="home-calendar">
           <div className="home-title">Agenda</div>
           <div className="calendar-div">
-           {eventosAgenda.length === 0 ? (
+            {eventosAgenda.length === 0 ? (
               <p>No hay eventos agendados.</p>
             ) : (
-              eventosAgenda.map(evento => (
+              eventosAgenda.map((evento) => (
                 <Cita
                   key={evento.id}
                   fecha={evento.fecha} // o el campo correcto que tengas
@@ -181,7 +195,7 @@ function Home() {
               onClick={() => {
                 const token = localStorage.getItem(ACCESS_TOKEN);
                 if (!token) {
-                  window.location.href = '/login';
+                  window.location.href = "/login";
                   return;
                 } else {
                   setMostrarForm(true);
@@ -193,8 +207,8 @@ function Home() {
             Publicar
           </div>
           <div className="home-posts">
-          {publicaciones.map((post, i) => (
-                <Post
+            {publicaciones.map((post, i) => (
+              <Post
                 key={post.id}
                 id={post.id} 
                 usuario={post.usuario}
@@ -205,8 +219,9 @@ function Home() {
                 categoria={post.tipo_publicacion} 
                 likes={post.likes}
                 comentarios={post.comentarios}
-                mascotas_etiquetadas={post.mascotas_etiquetadas} 
-                />
+                mascotas_etiquetadas={post.mascotas_etiquetadas}
+                user_has_liked={post.user_has_liked}
+              />
             ))}
           </div>
         </div>
@@ -215,7 +230,15 @@ function Home() {
           <Mascotas items={mascotas} />
         </div>
       </div>
-      {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)} onPublicar={handlePublicar} onCrear={onCrearCategoria} title="Crear Publicacion"/>}
+      {mostrarForm && (
+        <Form
+          camposFormulario={camposFormulario}
+          onClose={() => setMostrarForm(false)}
+          onPublicar={handlePublicar}
+          onCrear={onCrearCategoria}
+          title="Crear Publicacion"
+        />
+      )}
     </div>
   );
 } 
