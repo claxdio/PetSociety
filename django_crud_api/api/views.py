@@ -16,7 +16,7 @@ from .serializers import (
     PublicacionSerializer, CustomTokenObtainPairSerializer, ReporteSerializer,
     MascotaSerializer, AgendaSerializer, EventoAgendaSerializer, ForoPyRSerializer,
     ProcesoAdopcionSerializer, MascotaPerdidaSerializer, CategoriaSerializer,
-    AdminUserSerializer, AdminReporteSerializer, SancionSerializer
+    AdminUserSerializer, AdminReporteSerializer, SancionSerializer, PublicacionDeleteSerializer
 )
 from .models import (Publicacion, Perfil, Mascota, Agenda, EventoAgenda, ProcesoAdopcion,
     MascotaPerdida, ArchivoPublicacion, Reaccion, Comentario, Categoria, Reporte, ForoPyR, Sancion)
@@ -97,6 +97,35 @@ class PublicacionListCreateView(generics.ListCreateAPIView):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+class PublicacionDestroyView(generics.DestroyAPIView):
+    queryset = Publicacion.objects.all()
+    serializer_class = PublicacionDeleteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        try:
+            return Publicacion.objects.get(
+                pk=self.kwargs['pk'],
+                usuario=self.request.user  # Solo publicaciones del usuario
+            )
+        except Publicacion.DoesNotExist:
+            return None
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not instance:
+            return Response(
+                {"detail": "Publicación no encontrada o no tienes permiso"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Elimina la publicación (se ejecutará el método delete sobrescrito)
+        instance.delete()
+        return Response(
+            {"detail": "Publicación eliminada correctamente"},
+            status=status.HTTP_200_OK
+        )
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()

@@ -11,21 +11,21 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 
 function Home() {
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [publicaciones, setPublicaciones] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const [mascotas, setMascotas] = useState([]);
+  const [mostrarForm, setMostrarForm] = useState(false); 
+  const [publicaciones, setPublicaciones] = useState([]); 
+  const [categorias, setCategorias] = useState([]); 
+  const [mascotas, setMascotas] = useState([]); 
   const [eventosAgenda, setEventosAgenda] = useState([]);
 
   useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async () => { 
             try {
                 const token = localStorage.getItem(ACCESS_TOKEN);
 
                 if(!token){
                   const [publicacionesRes, categoriasRes, mascotasRes, eventosRes] = await Promise.all([
-                    api.get('/api/publicaciones/'),
-                    api.get('/api/categorias/'),
+                    api.get('/api/publicaciones/'), 
+                    api.get('/api/categorias/'), 
                   ]);
                   setPublicaciones(publicacionesRes.data);
                   setCategorias(categoriasRes.data);
@@ -67,31 +67,31 @@ function Home() {
             nombre: "tipo_publicacion",
             label: "Tipo de Publicación",
             tipo: "select",
-            opciones: ["general", "adopcion", "mascota_perdida"],
-            labels: ["General", "Adopción", "Mascota Perdida"]
-        },
+            opciones: ["general", "adopcion", "mascota_perdida"], 
+            labels: ["General", "Adopción", "Mascota Perdida"] 
+        }, 
         {
             nombre: "categorias",
             label: "Categorías (#hashtags)",
-            tipo: "multi-select",
+            tipo: "multi-select", 
             creable: true,
-            opciones: categorias.map(cat => ({value: cat.id, label: cat.nombre}))
+            opciones: categorias.map(cat => ({value: cat.id, label: cat.nombre})) 
         },
         {
             nombre: "mascotas_etiquetadas",
             label: "Etiquetar Mascotas",
-            tipo: "multi-select",
+            tipo: "multi-select", 
             creable: false,
-            opciones: mascotas.map(mascota => ({value: mascota.id, label: mascota.nombre}))
-        },
+            opciones: mascotas.map(mascota => ({value: mascota.id, label: mascota.nombre})) 
+        }, 
         {
             nombre: "archivo",
-            label: "Imágenes/Videos",
-            tipo: "file",
-            accept: "image/*,video/*"
-        }
-    ];
-
+            label: "Imágenes/Videos", 
+            tipo: "file", 
+            accept: "image/*,video/*" 
+        } 
+    ]; 
+    
     const onCrearCategoria = async (inputValue) => {
       try {
         const response = await axios.post('http://localhost:8000/api/categorias/', {
@@ -110,50 +110,47 @@ function Home() {
     };
 
 
-    const handlePublicar = async (datosFormulario) => {
-        try {
-            const publicacionData = {
-                descripcion: datosFormulario.descripcion || 'Test descripcion',
-                tipo_publicacion: datosFormulario.tipo_publicacion || 'general'
-            };
+    const handlePublicar = async (datosFormulario) =>{
+        try{
+            const publicacionData ={
+                descripcion: datosFormulario.descripcion || 'Test descripcion', 
+                tipo_publicacion: datosFormulario.tipo_publicacion || 'general' 
+            }; 
 
-            // Solo agregar arrays si tienen contenido
-            if (datosFormulario.categorias && datosFormulario.categorias.length > 0) {
-                publicacionData.categoria_ids = datosFormulario.categorias;
+            if (datosFormulario.categorias && datosFormulario.categorias.length > 0){
+                publicacionData.categoria_ids = datosFormulario.categorias; 
+            } 
+            if (datosFormulario.mascotas_etiquetadas && datosFormulario.mascotas_etiquetadas.length > 0){
+                publicacionData.mascota_ids = datosFormulario.mascotas_etiquetadas; 
+            } 
+
+            console.log('Enviando datos:', publicacionData) ;
+
+            const response = await api.post('/api/publicaciones/', publicacionData) ;
+            const nuevaPublicacion = response.data ;
+
+            if (datosFormulario.archivo) { 
+                const formData = new FormData(); 
+                formData.append('archivo', datosFormulario.archivo) ;
+
+                await api.post(`/api/publicaciones/${nuevaPublicacion.id}/upload/`, formData, { 
+                    headers: { 
+                        'Content-Type': 'multipart/form-data' 
+                    } 
+                }) ;
+            const publicacionesRes = await api.get('/api/publicaciones/') ;
+            setPublicaciones(publicacionesRes.data) ;
+
+            setMostrarForm(false) ;
             }
-
-            if (datosFormulario.mascotas_etiquetadas && datosFormulario.mascotas_etiquetadas.length > 0) {
-                publicacionData.mascota_ids = datosFormulario.mascotas_etiquetadas;
-            }
-
-            console.log('Enviando datos:', publicacionData);
-
-            const response = await api.post('/api/publicaciones/', publicacionData);
-            const nuevaPublicacion = response.data;
-
-            // Si hay archivo, subirlo
-            if (datosFormulario.archivo) {
-                const formData = new FormData();
-                formData.append('archivo', datosFormulario.archivo);
-
-                await api.post(`/api/publicaciones/${nuevaPublicacion.id}/upload/`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-            const publicacionesRes = await api.get('/api/publicaciones/');
-            setPublicaciones(publicacionesRes.data);
-
-            setMostrarForm(false);
-            }
-        } catch (error) {
+        }catch (error) {
             if (error.response?.status === 401 || error.response?.status === 403) {
               localStorage.removeItem(ACCESS_TOKEN);
               localStorage.removeItem(REFRESH_TOKEN);
               window.location.href = '/login';
             }
-        }
-    };
+        } 
+    }; 
 
   return (
     <div className="home-container">
@@ -199,16 +196,16 @@ function Home() {
           {publicaciones.map((post, i) => (
                 <Post
                 key={post.id}
-                id={post.id}
+                id={post.id} 
                 usuario={post.usuario}
                 imagen={post.imagen}
-                descripcion={post.descripcion}
-                fotoUsuario={null}
-                categorias={post.categorias}
-                categoria={post.tipo_publicacion}
+                descripcion={post.descripcion} 
+                fotoUsuario={null} 
+                categorias={post.categorias} 
+                categoria={post.tipo_publicacion} 
                 likes={post.likes}
                 comentarios={post.comentarios}
-                mascotas_etiquetadas={post.mascotas_etiquetadas}
+                mascotas_etiquetadas={post.mascotas_etiquetadas} 
                 />
             ))}
           </div>
@@ -221,6 +218,6 @@ function Home() {
       {mostrarForm && <Form camposFormulario={camposFormulario} onClose={() => setMostrarForm(false)} onPublicar={handlePublicar} onCrear={onCrearCategoria} title="Crear Publicacion"/>}
     </div>
   );
-}
-
-export default Home;
+} 
+ 
+export default Home ;

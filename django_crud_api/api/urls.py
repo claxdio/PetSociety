@@ -8,14 +8,16 @@ from .views import (
     ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView,
     MascotaPerdidaListCreateView, MascotaPerdidaDetailView, ForoPyRListCreateView,
     upload_archivo_publicacion, upload_foto_perfil, toggle_like, agregar_comentario,
-    CategoriaListCreateView, ReporteListCreateDestroyView, PublicacionFiltradaView,
-    AdminUsersListView, AdminUserDetailView, AdminReportesListView, 
+    CategoriaListCreateView, ReporteListCreateDestroyView,
+    AdminUsersListView, AdminUserDetailView, AdminReportesListView, PublicacionDestroyView,
     AdminReporteDetailView, AdminSancionesListView, admin_apply_sanction,
     admin_resolve_report, admin_stats, admin_remove_sanction
 )
 
 urlpatterns = [
     path('publicaciones/', PublicacionListCreateView.as_view(), name='publicacion-list-create'),
+    path('api/publicaciones/<int:pk>/eliminar/', PublicacionDestroyView.as_view(), name='publicacion-delete'),
+    path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
     path('user/info/', user_info, name='user-info'),
     path('admin/login/', admin_login, name='admin-login'),
     path('user/register/', CreateUserView.as_view(), name='user-register'),
@@ -23,7 +25,6 @@ urlpatterns = [
     path('user/detail/', UserDetailView.as_view(), name='user-detail'),
     path('usuarios/<str:username>/mascotas/', UserMascotaListView.as_view(), name='user-mascota-list'),
     path('reportes/', ReporteListCreateDestroyView.as_view(), name='reporte-create'),
-    path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
 
     path('foro/', ForoPyRListCreateView.as_view(), name='foro-list-create'),
     path('foro/<int:pk>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),

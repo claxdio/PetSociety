@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -79,6 +79,17 @@ class Publicacion(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username}: {self.descripcion[:20]}" #type: ignore
+    
+    def delete(self, *args, **kwargs):
+        # Eliminar archivos asociados primero
+        self.archivos.all().delete()
+        
+        # Limpiar relaciones ManyToMany
+        self.mascotas_etiquetadas.clear()
+        self.categorias.clear()
+        
+        # Llamar al delete original
+        super().delete(*args, **kwargs)
 
 class ArchivoPublicacion(models.Model):
     """Archivos multimedia asociados a una publicación"""
@@ -99,6 +110,10 @@ class ArchivoPublicacion(models.Model):
 
     def __str__(self):
         return f"Archivo de {self.publicacion.id} - {self.tipo_archivo}"
+    
+    def delete(self, *args, **kwargs):
+        self.archivo.delete(save=False)
+        super().delete(*args, **kwargs)
 
 
 class Comentario(models.Model):
@@ -590,3 +605,8 @@ def guardar_perfil_usuario(sender, instance, **kwargs):
 def crear_agenda_mascota(sender, instance, created, **kwargs):
     if created:
         Agenda.objects.create(mascota=instance)
+
+@receiver(pre_delete, sender=Publicacion)
+def eliminar_archivos_publicacion(sender, instance, **kwargs):
+    for archivo in instance.archivos.all():
+        archivo.archivo.delete(save=False)

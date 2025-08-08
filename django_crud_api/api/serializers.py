@@ -310,6 +310,16 @@ class ProcesoAdopcionSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['fecha_solicitud', 'solicitante', 'propietario']
 
+class PublicacionDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Publicacion
+        fields = ['id']
+
+    def validate(self, data):
+        if self.instance.usuario != self.context['request'].user:
+            raise serializers.ValidationError("No tienes permiso para eliminar esta publicación")
+        return data
+
 class MascotaPerdidaSerializer(serializers.ModelSerializer):
     publicacion = PublicacionSerializer(read_only=True)
     mascota = MascotaSerializer(read_only=True)
