@@ -26,18 +26,29 @@ from rest_framework.generics import RetrieveAPIView
 class ForoPyRListCreateView(generics.ListCreateAPIView):
     queryset = ForoPyR.objects.all()
     serializer_class = ForoPyRSerializer
-    permission_classes = [IsAuthenticated]
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAuthenticated()]
+    
     def get_queryset(self):
         queryset = ForoPyR.objects.all()
         tipo = self.request.query_params.get('tipo')  # 'pregunta' o 'respuesta'
+        parent = self.request.query_params.get('parent')  # id del post padre
+
 
         if tipo == 'pregunta':
             queryset = queryset.filter(parent__isnull=True)
         elif tipo == 'respuesta':
             queryset = queryset.filter(parent__isnull=False)
+        
+        if parent is not None:
+            queryset = queryset.filter(parent_id=parent)  # filtra respuestas al post padre
+  
 
         return queryset
+
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)

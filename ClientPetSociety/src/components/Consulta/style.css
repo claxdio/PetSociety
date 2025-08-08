@@ -35,3 +35,27 @@
   color: #7f8c8d;
   font-size: 0.9rem;
 }
+
+.avatar-initial {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4caf50db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+/* Estilos para el avatar - Añade esto al final sin modificar nada más */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 2px solid #4caf50db;
+}

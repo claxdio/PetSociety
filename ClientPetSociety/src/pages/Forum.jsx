@@ -3,6 +3,7 @@ import axios from "axios";
 import Navegador from "../components/Navegador";
 import "../styles/Forum.css";
 import { Link } from "react-router-dom";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 function Forum() {
   const [posts, setPosts] = useState([]);
@@ -19,12 +20,7 @@ function Forum() {
 
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/foro/?tipo=pregunta",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          "http://localhost:8000/api/foro/?tipo=pregunta"
         );
 
         setPosts(response.data);
@@ -76,6 +72,11 @@ function Forum() {
       setNewPost("");
       setNewDescription("");
     } catch (error) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        window.location.href = "/login";
+      }
       console.error("Error al publicar pregunta:", error);
     }
   };

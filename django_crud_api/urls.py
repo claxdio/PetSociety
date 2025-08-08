@@ -19,8 +19,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),
     path('api/', include('django_crud_api.api.urls')),
         path("forum/", ForoPyRListCreateView.as_view(), name="foro-list-create"),
-    path("forum/<int:pk>/", ForoPyRDetailView.as_view(), name="foro-detail"),
-    path("forum/<int:pk>/delete/", ForoPyRDeleteView.as_view(), name="foro-delete"),
+    path("forum/<int:id>/", ForoPyRDetailView.as_view(), name="foro-detail"),
+    path("forum/<int:id>/delete/", ForoPyRDeleteView.as_view(), name="foro-delete"),
 ]
 
 # Servir archivos media en desarrollo

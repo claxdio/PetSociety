@@ -5,7 +5,7 @@ from .views import (
     PerfilDetailView, UserDetailView, CreateUserView,
     MascotaListCreateView, MascotaDetailView, UserMascotaListView,
     AgendaDetailView, EventoAgendaListCreateView, EventoAgendaDetailView,
-    ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView,
+    ProcesoAdopcionListCreateView, ProcesoAdopcionDetailView,ForoPyRDeleteView, ForoPyRDetailView,
     MascotaPerdidaListCreateView, MascotaPerdidaDetailView, ForoPyRListCreateView,
     upload_archivo_publicacion, upload_foto_perfil, toggle_like, agregar_comentario,
     CategoriaListCreateView, ReporteListCreateDestroyView, PublicacionFiltradaView,
@@ -26,7 +26,8 @@ urlpatterns = [
     path('publicaciones/filtrar/', PublicacionListCreateView.as_view(), name='filtrar_publicaciones'),
 
     path('foro/', ForoPyRListCreateView.as_view(), name='foro-list-create'),
-    path('foro/<int:pk>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
+    path('foro/<int:id>/', ForoPyRDetailView.as_view(), name='foro-detail'),
+    path('foro/<int:id>/delete/', ForoPyRDeleteView.as_view(), name='foro-delete'),
 
     # Endpoints para Mascotas
     path('mascotas/', MascotaListCreateView.as_view(), name='mascota-list-create'),
