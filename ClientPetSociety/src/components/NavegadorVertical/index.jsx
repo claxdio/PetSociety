@@ -1,14 +1,11 @@
-//import React from "react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./style.css";
-import UserImage from "../../assets/icons/user.png";
 import { FaHome, FaSearch, FaComments, FaMapMarkerAlt } from "react-icons/fa";
 
 function NavegadorVertical() {
   const navigate = useNavigate();
-  const userName = "User";
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -36,10 +33,6 @@ function NavegadorVertical() {
 
   return (
     <nav className="navegador-vertical">
-      <div className="nav-header">
-        <img src={UserImage} alt="User" className="user-avatar" />
-        <span>{userName}</span>
-      </div>
       <div className="nav-menu">
         <button className="nav-item" onClick={() => navigate("/")}>
           <FaHome className="link-icon" />

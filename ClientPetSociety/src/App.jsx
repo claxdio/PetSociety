@@ -35,7 +35,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/mascota/:nombreMascota" element={<PetProfile />} />
+        <Route path="/mascota/:id" element={<PetProfile />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/panel" element={<AdminPanel />} />
         <Route path="*" element={<NotFound />} />

@@ -5,11 +5,15 @@ const Mascotas = ({ items }) => {
   const handleMascotaClick = (mascotaId) => {
     window.location.href = `/mascota/${mascotaId}`;
   };
+
   return (
     <div className="scrollable-list">
       {items.map((item, index) => (
         <div key={index} className="list-item">
-          <div className="circle circle-normal" onClick={() => handleMascotaClick(items.id)}>
+          <div 
+            className="circle circle-normal" 
+            onClick={() => handleMascotaClick(item.id)}
+          >
             {item.foto ? (
               <img 
                 src={item.foto} 
@@ -25,8 +29,6 @@ const Mascotas = ({ items }) => {
           <div className="name">{item.nombre}</div>
         </div>
       ))}
-
-      {/* Item fijo al final */}
     </div>
   );
 };
