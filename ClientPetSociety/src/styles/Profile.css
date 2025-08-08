@@ -1,7 +1,7 @@
 .app-container {
   display: flex;
   min-height: 100vh;
-  background-color: #f8faf7 ; 
+  background-color: #f8faf7;
 }
 
 .profile-container {
@@ -25,22 +25,23 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 10px rgba(94, 168, 47, 0.1);
-  border: 1px solid #e1e8da; 
+  border: 1px solid #e1e8da;
 }
 
 .profile-header {
   text-align: center;
+  align-items: center;
 }
 
 .profile-name {
   margin: 0.5rem 0 0.2rem;
   font-size: 1.4rem;
-  color: #2c4a1d; 
+  color: #2c4a1d;
 }
 
 .profile-description {
   font-size: 0.95rem;
-  color: #4a6a3a; 
+  color: #4a6a3a;
   margin-bottom: 1.5rem;
   padding: 0 1rem;
 }
@@ -53,23 +54,23 @@
 }
 
 .stat-box {
-  background-color: #e9f0e3; 
+  background-color: #e9f0e3;
   padding: 0.8rem 1.2rem;
   border-radius: 10px;
   text-align: center;
   min-width: 80px;
-  border: 1px solid #c8d8bb; 
+  border: 1px solid #c8d8bb;
 }
 
 .stat-number {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #2c4a1d; 
+  color: #2c4a1d;
 }
 
 .stat-label {
   font-size: 0.85rem;
-  color: #5a8c3a; 
+  color: #5a8c3a;
   margin-top: 0.3rem;
 }
 
@@ -81,7 +82,7 @@
 }
 
 .profile-buttons button {
-  background-color: #5ea82f; 
+  background-color: #5ea82f;
   color: white;
   border: none;
   padding: 0.7rem 1.5rem;
@@ -92,7 +93,7 @@
 }
 
 .profile-buttons button:hover {
-  background-color: #4a8c26; 
+  background-color: #4a8c26;
   transform: translateY(-2px);
 }
 
@@ -114,7 +115,7 @@
 
 .section-title {
   font-size: 1.3rem;
-  color: #2c4a1d; 
+  color: #2c4a1d;
   margin-bottom: 1.5rem;
   text-align: center;
   position: relative;
@@ -125,7 +126,7 @@
   display: block;
   width: 50px;
   height: 3px;
-  background: #5ea82f; 
+  background: #5ea82f;
   margin: 0.5rem auto 0;
 }
 
@@ -167,7 +168,7 @@
 
 .mascota-name {
   font-size: 0.85rem;
-  color: #4a6a3a; 
+  color: #4a6a3a;
   font-weight: 500;
 }
 
@@ -181,7 +182,7 @@
 }
 
 .posts {
-  background-color: #f8faf7; 
+  background-color: #f8faf7;
   border-radius: 10px;
   padding: 1rem;
 }
@@ -212,14 +213,14 @@
 .mini-avatar {
   width: 40px;
   height: 40px;
-  background-color: #e9f0e3; 
+  background-color: #e9f0e3;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: #2c4a1d; 
-  border: 2px solid #5ea82f; 
+  color: #2c4a1d;
+  border: 2px solid #5ea82f;
 }
 
 .post-image-container {
@@ -241,7 +242,7 @@
   bottom: 15px;
   right: 15px;
   background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #5ea82f; 
+  border: 1px solid #5ea82f;
   padding: 6px 12px;
   border-radius: 20px;
   cursor: pointer;
@@ -249,12 +250,12 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #5ea82f; 
+  color: #5ea82f;
   transition: all 0.2s;
 }
 
 .like-button:hover {
-  background-color: #5ea82f; 
+  background-color: #5ea82f;
   color: white;
 }
 
@@ -265,15 +266,15 @@
     padding: 0.5rem;
     background-color: white;
   }
-  
+
   .stats-container {
     gap: 0.5rem;
   }
-  
+
   .mascotas-grid {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   .publicacion {
     border-radius: 10px;
   }
@@ -345,5 +346,6 @@
   /* Mantén tus estilos existentes */
   width: 80px;
   height: 80px;
+
   /* ... */
 }
