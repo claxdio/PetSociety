@@ -104,11 +104,13 @@ function Forum() {
       );
 
       // Actualizar el estado local
-      setPosts(posts.map(post => 
+      const updatedPosts = posts.map(post => 
         post.id === postId 
           ? { ...post, total_votos: response.data.total_votos, user_vote: response.data.user_vote }
           : post
-      ));
+      );
+      setPosts(updatedPosts);
+      setFilteredPosts(updatedPosts);
     } catch (error) {
       console.error("Error al votar:", error);
       if (error.response?.data?.error) {
