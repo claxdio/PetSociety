@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 import Navegador from "../components/Navegador";
 import "../styles/SpecificForum.css";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 function SpecificForum() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
-  const [loadingPost, setLoadingPost] = useState(true);
-  const [loadingResponse, setLoadingResponse] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [newAnswer, setNewAnswer] = useState("");
   const [answerSortOrder, setAnswerSortOrder] = useState("newest");
-  const [resps, setResps] = useState([]);
-  const [newPost, setNewPost] = useState("");
-  const [newDescription, setNewDescription] = useState("");
 
   const fetchPost = async () => {
     const token = localStorage.getItem("access");
@@ -30,7 +24,7 @@ function SpecificForum() {
     } catch (error) {
       console.error("Error al cargar el post:", error);
     } finally {
-      setLoadingPost(false);
+      setLoading(false);
     }
   };
 
@@ -98,80 +92,7 @@ function SpecificForum() {
     return `hace ${days} días`;
   };
 
-  useEffect(() => {
-    const fetchResps = async () => {
-      const token = localStorage.getItem("access"); // Asegúrate de que el token exista
-
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/foro/?parent=${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setResps(response.data);
-      } catch (error) {
-        console.error("Error al obtener preguntas del foro:", error);
-      } finally {
-        setLoadingResponse(false);
-      }
-    };
-
-    fetchResps();
-  }, [id]);
-
-  const getAvatarContent = (username, fotoPerfil) => {
-    if (fotoPerfil) {
-      return <img src={fotoPerfil} alt="Avatar" className="user-avatar" />;
-    }
-
-    // Obtener la primera letra del username
-    const initial = username ? username.charAt(0).toUpperCase() : "U";
-
-    return <div className="avatar-initial">{initial}</div>;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!newPost.trim() || !newDescription.trim()) return;
-
-    const nuevaRespuesta = {
-      titulo: newPost,
-      contenido: newDescription,
-      parent: id,
-    };
-
-    const token = localStorage.getItem("access");
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/foro/",
-        nuevaRespuesta,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setResps([response.data, ...resps]);
-      setNewPost("");
-      setNewDescription("");
-    } catch (error) {
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        localStorage.removeItem(ACCESS_TOKEN);
-        localStorage.removeItem(REFRESH_TOKEN);
-        window.location.href = "/login";
-      }
-      console.error("Error al publicar pregunta:", error);
-    }
-  };
-
-  if (loadingPost) return <p>Cargando...</p>;
-  if (loadingResponse) return <p>Cargando...</p>;
+  if (loading) return <p>Cargando...</p>;
   if (!post) return <p>No se encontró el post.</p>;
 
   const sortedAnswers = post.respuestas

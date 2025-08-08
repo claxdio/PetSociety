@@ -42,7 +42,7 @@ function NavegadorVertical() {
           <FaSearch className="link-icon" />
           <span>Buscar</span>
         </button>
-        <button className="nav-item" onClick={() => navigate("/locate")}>
+        <button className="nav-item" onClick={() => navigate("/forum")}>
           <FaComments className="link-icon" />
           <span>Foro</span>
         </button>

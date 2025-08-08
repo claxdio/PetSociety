@@ -39,11 +39,15 @@ function DescripcionMascota({ mascotaData, isOwner }) {
 
   return (
     <div className="descripcion-mascota">
-      <img 
-        src={mascotaData?.foto || UserImage} 
-        alt={mascotaData?.nombre || "Mascota"} 
+      <img
+        src={mascotaData?.foto || UserImage}
+        alt={mascotaData?.nombre || "Mascota"}
       />
-      <h2>{mascotaData?.nombre || mascotaLocal.nombreMascota || "Nombre de mascota"}</h2>
+      <h2>
+        {mascotaData?.nombre ||
+          mascotaLocal.nombreMascota ||
+          "Nombre de mascota"}
+      </h2>
       <div className="informacion">
         <div className="mascota-info">
           <h4>Especie </h4>
@@ -83,7 +87,7 @@ function DescripcionMascota({ mascotaData, isOwner }) {
             </div>
 
             <div className="formulario-item">
-              <label htmlFor="especie">Descripción del caso:</label>
+              <label htmlFor="especie">Especie</label>
               <input
                 id="especie"
                 placeholder={mascotaData?.especie || "Especie de la mascota"}
